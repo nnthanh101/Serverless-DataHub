@@ -3,7 +3,7 @@
 This [CDK Pattern](https://cdkpatterns.com/patterns/) to make deploying a SPA Website (React/Vue/Angular) to **AWS S3** behind **Cloudfront CDN**, **Route53 DNS**, **AWS Certificate Manager SSL** easier.
 
 ### Architecture:
-![Architecture](../README/images/s3-website-architecture.png)
+![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/s3-website/images/s3-website-architecture.png)
 
 ### Project Directory
 
