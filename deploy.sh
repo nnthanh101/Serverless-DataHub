@@ -1,19 +1,10 @@
 #!/bin/bash
-set -euo pipefail
-
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-function _logger() {
-    echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
-}
 
 source ./.env.sh
 
 echo
 echo "#########################################################"
-_logger "[+] Verify the prerequisites environment"
+echo "[+] Verify the prerequisites environment"
 echo "#########################################################"
 echo
 
@@ -40,14 +31,14 @@ echo "[x] Verify CDK":     $(cdk  --version)
 
 echo
 echo "#########################################################"
-_logger "[+] Install TypeScript node_modules ..."
+echo "[+] Install TypeScript node_modules ..."
 echo "#########################################################"
 echo
 
 npm install
 npm run build
 
-cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+echo cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
     --termination-protection                     \
     --tags Cost=cdk
@@ -57,13 +48,13 @@ cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
 echo "#########################################################"
-_logger "[+] [START] Deploy CDK at ${started_time}"
+echo "[+] [START] Deploy CDK at ${started_time}"
 echo "#########################################################"
 echo
 
 echo
 echo "#########################################################"
-_logger "[+] 1. [AWS Infrastructure] S3, VPC, Cloud9"
+echo "[+] 1. [AWS Infrastructure] S3, VPC, Cloud9"
 echo "#########################################################"
 echo
 
@@ -72,7 +63,7 @@ echo
 
 ## cdk diff
 ## cdk synth
-cdk deploy --all --require-approval never
+echo cdk deploy --all --require-approval never
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."
