@@ -1,7 +1,5 @@
-===
-## Reference: https://docs.github.com/en/actions/guides/deploying-to-amazon-elastic-container-service?learn=deploy_to_the_cloud
 ## This workflow is triggered on pushes to the repository branch main/master.
-
+## Reference: https://docs.github.com/en/actions/guides/deploying-to-amazon-elastic-container-service?learn=deploy_to_the_cloud
 name: CDK TypeScript CI
 
 on:
@@ -33,9 +31,9 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.REGION }}
-          role-to-assume: ${{ secrets.CROSS_ACCOUNT_ROLE }}
-          role-duration-seconds: 1200
-          role-session-name: GitActionDeploymentSession
+          # role-to-assume: ${{ secrets.CROSS_ACCOUNT_ROLE }}
+          # role-duration-seconds: 1200
+          # role-session-name: GitActionDeploymentSession
       ## Installs CDK and other prerequisites
       - name: Prerequisite Installation
         run: |
