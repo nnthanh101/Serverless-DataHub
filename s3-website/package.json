@@ -1,11 +1,15 @@
 {
   "name": "s3-website",
+  "description": "This CDK Pattern deploy a SPA React/Vue/Angular website to AWS S3 behind Cloudfront, Route53, ACM.",
   "version": "0.1.0",
   "bin": {
     "s3-website": "bin/s3-website.js"
   },
   "scripts": {
-    "build": "tsc",
+    "buildwebsite": "cd ../projects/website && npm i && npm run build && cd ../",
+    "buildcdk": "npm i && npm run build",
+    "build": "npm run buildwebsite && npm run buildcdk",
+    "deploy": "npm run build && cd cdk && npm run deploy",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
@@ -23,5 +27,8 @@
   "dependencies": {
     "@aws-cdk/core": "1.90.1",
     "source-map-support": "^0.5.16"
+  },
+  "author": {
+    "name": "nnthanh101@gmail.com"
   }
 }
