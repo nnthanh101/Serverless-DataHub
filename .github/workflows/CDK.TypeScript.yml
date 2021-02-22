@@ -39,6 +39,7 @@ jobs:
         run: |
           sudo npm install -g aws-cdk@1.90.1
           cdk --version
+          sudo apt-get install awscli
           aws s3 ls
       ## Build and Deploy CDK application
       - name: Build & Deploy
