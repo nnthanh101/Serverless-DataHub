@@ -18,7 +18,7 @@ echo "#########################################################"
 echo
 
 ## DEBUG
-echo "[x] Verify AWS CLI": $(aws  --version)
+# echo "[x] Verify AWS CLI": $(aws  --version)
 echo "[x] Verify git":     $(git  --version)
 echo "[x] Verify jq":      $(jq   --version)
 # echo "[x] Verify nano":    $(nano --version)
@@ -31,11 +31,11 @@ echo "[x] Verify CDK":     $(cdk  --version)
 # echo "[x] Verify Python3": $(python3 -V)
 # echo "[x] Verify kubectl":  $(kubectl version --client)
 
-echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET + $AWS_CDK_STACK
-currentPrincipalArn=$(aws sts get-caller-identity --query Arn --output text)
-## Just in case, you are using an IAM role, we will switch the identity from your STS arn to the underlying role ARN.
-currentPrincipalArn=$(sed 's/\(sts\)\(.*\)\(assumed-role\)\(.*\)\(\/.*\)/iam\2role\4/' <<< $currentPrincipalArn)
-echo $currentPrincipalArn
+# echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET
+# currentPrincipalArn=$(aws sts get-caller-identity --query Arn --output text)
+# ## Just in case, you are using an IAM role, we will switch the identity from your STS arn to the underlying role ARN.
+# currentPrincipalArn=$(sed 's/\(sts\)\(.*\)\(assumed-role\)\(.*\)\(\/.*\)/iam\2role\4/' <<< $currentPrincipalArn)
+# echo $currentPrincipalArn
 
 
 echo
