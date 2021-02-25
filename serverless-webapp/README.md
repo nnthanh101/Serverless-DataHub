@@ -1,24 +1,24 @@
-# [CDK Pattern - SPA] AWS S3 Website Pattern (React / Vue / Angular)
+# [CDK Pattern - SPA] Dynamic Serverless Website
 
-This [CDK Pattern](https://cdkpatterns.com/patterns/) to make deploying a SPA Website (React/Vue/Angular) to **AWS S3** behind **Cloudfront CDN**, **Route53 DNS**, **AWS Certificate Manager SSL** easier.
+This [CDK Pattern](https://cdkpatterns.com/patterns/) to make deploying a Dynamic Serverless Website.
 
 ### Architecture:
-![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/s3-website-architecture.png)
+![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/serverless-webapp-architecture.png)
 
 ### Project Directory
 
 ```
-/modernapps/s3-website
+/modernapps/serverless-webapp
 ├── README.md
 ├── bin
-|  └── s3-website.ts
+|  └── sserverless-webapp.ts
 ├── cdk.json
 ├── jest.config.js
 ├── lib
-|  └── s3-website-stack.ts
+|  └── sserverless-webapp-stack.ts
 ├── package.json
 ├── test
-|  └── s3-website.test.ts
+|  └── sserverless-webapp.test.ts
 └── tsconfig.json
 ```
 
