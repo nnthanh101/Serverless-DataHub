@@ -11,14 +11,14 @@ This [CDK Pattern](https://cdkpatterns.com/patterns/) to make deploying a Dynami
 /modernapps/serverless-webapp
 ├── README.md
 ├── bin
-|  └── sserverless-webapp.ts
+|  └── serverless-webapp.ts
 ├── cdk.json
 ├── jest.config.js
 ├── lib
-|  └── sserverless-webapp-stack.ts
+|  └── serverless-webapp-stack.ts
 ├── package.json
 ├── test
-|  └── sserverless-webapp.test.ts
+|  └── serverless-webapp.test.ts
 └── tsconfig.json
 ```
 
