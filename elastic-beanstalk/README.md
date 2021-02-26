@@ -4,8 +4,17 @@ This pattern provides guidance for **Enterprise Customers migrating on-premises 
 
 > **E301**: great customer experience: **3 seconds** to reach any feature; **zero** downtime; and **one hour** to deploy code changes into production.
 
+
 ### Architecture:
+
+* ElasticBeanstalk Architecture
+
 ![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/elastic-beanstalk-architecture.png)
+
+* CI/CD Pipeline: the steps required to add Continuous Integration and Continuous  Delivery (CI/CD) to an existing AWS Elastic Beanstalk application.
+
+![CI/CD Pipeline](https://github.com/nnthanh101/modernapps/raw/main/README/images/elastic-beanstalk-cicd.png)
+
 
 ### Technology Stack
 
