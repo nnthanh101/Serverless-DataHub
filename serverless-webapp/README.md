@@ -2,6 +2,10 @@
 
 This [CDK Pattern](https://cdkpatterns.com/patterns/) to make deploying a Dynamic Serverless Website.
 
+* [ ] [S3 Website Pattern](../README/s3-website/README.md) `React / Vue / Angular` Production build 
+* [ ] Setting up CloudFront to serve HTTPS requests for S3 Bucket
+* [ ] The Website executes on the client-side to display and/or fetch data (RESTful services << API-Gateway, Lambda, DynamoDB).
+
 ### Architecture:
 ![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/serverless-webapp-architecture.png)
 

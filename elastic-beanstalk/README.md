@@ -5,16 +5,21 @@ This pattern provides guidance for **Enterprise Customers migrating on-premises 
 > **E301**: great customer experience: **3 seconds** to reach any feature; **zero** downtime; and **one hour** to deploy code changes into production.
 
 
-### Architecture:
-
-* ElasticBeanstalk Architecture
+### ElasticBeanstalk Architecture:
 
 ![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/elastic-beanstalk-architecture.png)
 
-* CI/CD Pipeline: the steps required to add Continuous Integration and Continuous  Delivery (CI/CD) to an existing AWS Elastic Beanstalk application.
+### CI/CD Pipeline
+
+The steps required to add Continuous Integration and Continuous  Delivery (CI/CD) to an existing AWS Elastic Beanstalk application.
 
 ![CI/CD Pipeline](https://github.com/nnthanh101/modernapps/raw/main/README/images/elastic-beanstalk-cicd.png)
 
+* [ ] **AWS CodeCommit** to create a Git repository, clone the repository to the local drive, and then add and push all required source files.
+* [ ]  **AWS CodeBuild** to create a project and configure the environment required to compile and build the source code. Next, you specify all actions required by **AWS CodeBuild** using the `buildspec.yml`.
+* [ ] **AWS CodePipeline**: automate release pipelines for fast and reliable application and infrastructure updates. 
+
+> Any code changes that are pushed to **AWS CodeCommit** trigger an event in **AWS CodePipeline**, which in turn triggers **AWS CodeBuild** to start the build and the deployment.
 
 ### Technology Stack
 
