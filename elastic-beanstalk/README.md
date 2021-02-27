@@ -5,11 +5,22 @@ This pattern provides guidance for **Enterprise Customers migrating on-premises 
 > **E301**: great customer experience: **3 seconds** to reach any feature; **zero** downtime; and **one hour** to deploy code changes into production.
 
 
-### ElasticBeanstalk Architecture:
+### 1. ElasticBeanstalk Architecture:
 
 ![Architecture](https://github.com/nnthanh101/modernapps/raw/main/README/images/elastic-beanstalk-architecture.png)
 
-### CI/CD Pipeline
+**AWS Elastic Beanstalk** is an even easier way for you to quickly deploy and manage applications in the AWS cloud, and deliver the same highly reliable, scalable, and cost-effective infrastructure that hundreds of thousands of businesses depend on today.
+
+You simply upload your application and Elastic Beanstalk automatically handles the deployment details of capacity provisioning, load balancing, auto-scaling and application health monitoring. Here are some of the benefits of using Elastic Beanstalk:
+
+* Automatically handles capacity provisioning, load balancing, and application health monitoring.
+* Automatically scales your application based on your application’s specific needs using easily adjustable Auto Scaling settings.
+* Keeps the underlying platform running your application up-to-date with the latest patches and updates.
+* Provides the freedom to select the AWS resources, such as an Amazon EC2 instance type, that are optimal for your application.
+
+> [Manual Deployment - step by step guidance](./README.Manual.md)
+
+### 2. CI/CD Pipeline
 
 The steps required to add Continuous Integration and Continuous  Delivery (CI/CD) to an existing AWS Elastic Beanstalk application.
 
@@ -21,7 +32,21 @@ The steps required to add Continuous Integration and Continuous  Delivery (CI/CD
 
 > Any code changes that are pushed to **AWS CodeCommit** trigger an event in **AWS CodePipeline**, which in turn triggers **AWS CodeBuild** to start the build and the deployment.
 
-### Technology Stack
+
+### 3. Elastic Beanstalk .Net Application Migration
+
+* [x] [Business] [A .NET application](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-sourcebundle.html#using-features.deployment.source.dotnet) deployment/migration, adhering to best practice of performance, high availability, security, and monitoring.
+* [x] A .NET running on AWS deployed via **Elastic Beanstalk**, and integrate with the managed services.
+    * [ ] Environment >> Web server environment >> `IIS`
+    * [ ] Configuration
+* [x] **Amazon RDS for SQL Server**, server managed fully by AWS, customer is responsible for DB optimization.
+    * [ ] SQL Server Homogeneous Migration-EC2
+    * [ ] SQL Server Homogeneous Migration-RDS
+* [ ] Hybrid Scenarios: Inter-operability between On-prem and RDS SQL-Server in the cloud.
+* [ ] Active Directory
+* [ ] DNS
+
+### 4. Technology Stack
 
 * [ ] Amazon VPC
     * [ ] VPC CIDR: 
@@ -40,7 +65,7 @@ The steps required to add Continuous Integration and Continuous  Delivery (CI/CD
     * [ ] MS.SQL / *Oracle*
 
 
-### Project Directory
+### 5.2. CDK >> Project Directory
 
 ```
 /modernapps/elastic-beanstalk
@@ -57,7 +82,7 @@ The steps required to add Continuous Integration and Continuous  Delivery (CI/CD
 └── tsconfig.json
 ```
 
-### Useful commands
+### 5.2. CDK >> Useful commands
 
  * `npm run build`   compile typescript to js
  * `npm run watch`   watch for changes and compile
@@ -65,27 +90,4 @@ The steps required to add Continuous Integration and Continuous  Delivery (CI/CD
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
-
-
-### [Manual] Deploy ElasticBeanstak Step-by-Step
-
-|Epic |Epic Title|Story |Story Name|Story Description|
-|:----|:----|:----|:----|:----|
-|1|VPC Setup|1|Create a VPC|Create a VPC with required info|
-|1|VPC Setup|2|Create Subnets|Create Subnets within the VPC. Required minimum of 2 Subnets|
-|1|VPC Setup|3|Create a Route Table|Create a Route Table as per our requirements|
-|2|Elastic Beanstalk|1|Go to Elastic Beanstalk dashboard|Open the Elastic Beanstalk Dashboard|
-|2|Elastic Beanstalk|2|Create New application|Select Web Server environment|
-|2|Elastic Beanstalk|3|Select platform|Select the Preconfigured platform as `Tomcat`|
-|2|Elastic Beanstalk|4|Create S3 bucket|Create S3 bucket and upload the war file to it|
-|2|Elastic Beanstalk|5|Upload the code|Provide the S3 bucket file URL or Zip file from local system files|
-|2|Elastic Beanstalk|6|Configure Environment Type|In Configuration Capacity settings, Select Single instance or Load Balancer|
-|2|Elastic Beanstalk|7|Load Balancer Configuration|If you are selecting load balancer, then configure the AZs|
-|2|Elastic Beanstalk|8|Create an IAM role|Create an IAM role with aws-elasticbeanstalk-ec2-role or elastic beanstalk will create automatically|
-|2|Elastic Beanstalk|9|Configure IAM|In Configuration Security settings, Select the above created IAM role|
-|2|Elastic Beanstalk|10|Configure Key pair|In Configuration Security settings, If you have existing key pair, use it or create new EC2 key pair|
-|2|Elastic Beanstalk|11|Configure Cloud Watch|In Configuration Monitoring, Configure cloud watch settings|
-|2|Elastic Beanstalk|12| Configure VPC|In Configuration Security settings, Select the above created VPC|
-|2|Elastic Beanstalk|13|Create environment|Click on Create Environment|
-|2|Elastic Beanstalk|14|Test the Application|Once environment is created, a application URL will be provided, where we can test the application|
-|2|Elastic Beanstalk|15|Change DNS |Apply DNS changes in Route53|
+ 
