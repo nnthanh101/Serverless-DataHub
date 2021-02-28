@@ -6,10 +6,7 @@
     "s3-website": "bin/s3-website.js"
   },
   "scripts": {
-    "buildwebsite": "cd ../projects/website && npm i && npm run build && cd ../",
-    "buildcdk": "npm i && npm run build",
-    "build": "npm run buildwebsite && npm run buildcdk",
-    "deploy": "npm run build && cd cdk && npm run deploy",
+    "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk"
@@ -18,9 +15,9 @@
     "@aws-cdk/assert": "1.90.1",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
+    "aws-cdk": "1.90.1",
     "jest": "^26.4.2",
     "ts-jest": "^26.2.0",
-    "aws-cdk": "1.90.1",
     "ts-node": "^9.0.0",
     "typescript": "~3.9.7"
   },
