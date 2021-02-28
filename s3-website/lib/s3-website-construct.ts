@@ -14,6 +14,10 @@ import {
   import cdk = require('@aws-cdk/core');
   import s3deploy= require('@aws-cdk/aws-s3-deployment');
   import s3 = require('@aws-cdk/aws-s3');
+import { S3Construct } from './s3-construct';
+import { Route53Construct } from './route53-construct';
+import { AcmConstruct } from './acm-construct';
+import { CloudfrontConstruct } from './cloudfront-construct';
   
   export interface SPADeployConfig {
     readonly indexDoc:string,
@@ -35,7 +39,7 @@ import {
     readonly cfBehaviors?: Behavior[],
     readonly websiteFolder: string,
     readonly zoneName: string,
-    readonly subdomain?: string,
+    readonly subdomain?: string, 
   }
   
   export interface SPAGlobalConfig {
@@ -54,9 +58,11 @@ import {
   
   export class S3WebsiteConstruct extends cdk.Construct {
       globalConfig: SPAGlobalConfig;
+      id: string;
   
       constructor(scope: cdk.Construct, id:string, config?:SPAGlobalConfig) {
-        super(scope, id);
+        super(scope, id); 
+        this.id=id;
   
         if (typeof config !== 'undefined') {
           this.globalConfig = config;
@@ -72,6 +78,7 @@ import {
        * Helper method to provide a configured s3 bucket
        */
       private getS3Bucket(config:SPADeployConfig, isForCloudFront: boolean) {
+        
         const bucketConfig:any = {
           websiteIndexDocument: config.indexDoc,
           websiteErrorDocument: config.errorDoc,
@@ -88,8 +95,9 @@ import {
             bucketConfig.blockPublicAccess = config.blockPublicAccess;
           }
         }
-  
-        const bucket = new s3.Bucket(this, 'WebsiteBucket', bucketConfig);
+        
+        const bucket =new S3Construct(this, this.id+'-S3construct', bucketConfig).s3Bucket;
+        // const bucket = new s3.Bucket(this, this.id+'-WebsiteBucket', bucketConfig);
   
         if (this.globalConfig.ipFilter === true && isForCloudFront === false) {
           if (typeof this.globalConfig.ipList === 'undefined') {
@@ -135,7 +143,7 @@ import {
             responsePagePath: (config.errorDoc ? `/${config.errorDoc}` : `/${config.indexDoc}`),
             responseCode: 200,
           }],
-        };
+        }; 
   
         if (typeof config.certificateARN !== 'undefined' && typeof config.cfAliases !== 'undefined') {
           cfConfig.aliasConfiguration = {
@@ -154,6 +162,7 @@ import {
         if (typeof config.zoneName !== 'undefined' && typeof cert !== 'undefined') {
           cfConfig.viewerCertificate = ViewerCertificate.fromAcmCertificate(cert, {
             aliases: [config.subdomain ? `${config.subdomain}.${config.zoneName}` : config.zoneName],
+
           });
         }
   
@@ -166,7 +175,7 @@ import {
       public createBasicSite(config:SPADeployConfig): SPADeployment {
         const websiteBucket = this.getS3Bucket(config, false);
   
-        new s3deploy.BucketDeployment(this, 'BucketDeployment', {
+        new s3deploy.BucketDeployment(this, this.id+'-BucketDeployment', {
           sources: [s3deploy.Source.asset(config.websiteFolder)],
           destinationBucket: websiteBucket,
         });
@@ -183,7 +192,7 @@ import {
           cfnOutputConfig.exportName = config.exportWebsiteUrlName;
         }
   
-        new cdk.CfnOutput(this, 'URL', cfnOutputConfig);
+        new cdk.CfnOutput(this, this.id+'-URL', cfnOutputConfig);
   
         return { websiteBucket };
       }
@@ -194,10 +203,10 @@ import {
        */
       public createSiteWithCloudfront(config:SPADeployConfig): SPADeploymentWithCloudFront {
         const websiteBucket = this.getS3Bucket(config, true);
-        const accessIdentity = new OriginAccessIdentity(this, 'OriginAccessIdentity', { comment: `${websiteBucket.bucketName}-access-identity` });
-        const distribution = new CloudFrontWebDistribution(this, 'cloudfrontDistribution', this.getCFConfig(websiteBucket, config, accessIdentity));
+        const accessIdentity = new OriginAccessIdentity(this, this.id+'-OriginAccessIdentity', { comment: `${websiteBucket.bucketName}-access-identity` });
+        const distribution = new CloudFrontWebDistribution(this, this.id+'cfDistribution', this.getCFConfig(websiteBucket, config, accessIdentity));
   
-        new s3deploy.BucketDeployment(this, 'BucketDeployment', {
+        new s3deploy.BucketDeployment(this, this.id+'-BucketDeployment', {
           sources: [s3deploy.Source.asset(config.websiteFolder)],
           destinationBucket: websiteBucket,
           // Invalidate the cache for / and index.html when we deploy so that cloudfront serves latest site
@@ -219,18 +228,21 @@ import {
        */
       public createSiteFromHostedZone(config:HostedZoneConfig): SPADeploymentWithCloudFront {
         const websiteBucket = this.getS3Bucket(config, true);
-        const zone = HostedZone.fromLookup(this, 'HostedZone', { domainName: config.zoneName });
+        const zone = new Route53Construct(this, this.id+'-R53construct', { domainName: config.zoneName }).newHostedZone;
+        // const zone = HostedZone.fromLookup(this, this.id+'-HostedZone', { domainName: config.zoneName });
         const domainName = config.subdomain ? `${config.subdomain}.${config.zoneName}` : config.zoneName;
-        const cert = new DnsValidatedCertificate(this, 'Certificate', {
+
+        const cert = new AcmConstruct(this, this.id+'-AcmConstruct', {
           hostedZone: zone,
           domainName,
-          region: 'us-east-1',
-        });
+          region: 'us-east-1', /** cloudfront cert "MUST" created in us-east-1 */
+        }).newCert;
   
-        const accessIdentity = new OriginAccessIdentity(this, 'OriginAccessIdentity', { comment: `${websiteBucket.bucketName}-access-identity` });
-        const distribution = new CloudFrontWebDistribution(this, 'cloudfrontDistribution', this.getCFConfig(websiteBucket, config, accessIdentity, cert));
-  
-        new s3deploy.BucketDeployment(this, 'BucketDeployment', {
+        const accessIdentity = new OriginAccessIdentity(this, this.id+'-OriginAccessIdentity', { comment: `${websiteBucket.bucketName}-access-identity` });
+        // const distribution = new CloudFrontWebDistribution(this, this.id+'CfDistribution', this.getCFConfig(websiteBucket, config, accessIdentity, cert));
+        const distribution = new CloudfrontConstruct(this, this.id+'CFConstruct', this.getCFConfig(websiteBucket, config, accessIdentity, cert)).newDistribution;
+
+        new s3deploy.BucketDeployment(this, this.id+'-BucketDeployment', { 
           sources: [s3deploy.Source.asset(config.websiteFolder)],
           destinationBucket: websiteBucket,
           // Invalidate the cache for / and index.html when we deploy so that cloudfront serves latest site
@@ -238,14 +250,14 @@ import {
           distributionPaths: ['/', `/${config.indexDoc}`],
         });
   
-        new ARecord(this, 'Alias', {
+        new ARecord(this, this.id+'-Alias', {
           zone,
           recordName: domainName,
           target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
         });
   
         if (!config.subdomain) {
-          new HttpsRedirect(this, 'Redirect', {
+          new HttpsRedirect(this, this.id+'-Redirect', {
               zone,
               recordNames: [`www.${config.zoneName}`],
               targetDomain: config.zoneName,

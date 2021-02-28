@@ -1,16 +1,22 @@
-import { Construct  } from '@aws-cdk/core';
-import { PolicyStatement, Effect, AnyPrincipal } from '@aws-cdk/aws-iam';
+import { Construct } from '@aws-cdk/core';
+import { DnsValidatedCertificate, DnsValidatedCertificateProps } from '@aws-cdk/aws-certificatemanager';
 
 export class AcmConstruct extends Construct {
-
+    newCert: DnsValidatedCertificate;
     /** Define new bucket variables here: */
 
-    constructor( scope: Construct, id: string) {
+    constructor(scope: Construct, id: string, props: DnsValidatedCertificateProps) {
         super(scope, id)
 
-        /**
-         * FIXME
-         */
-        
+        function __get_cert(id: string, props: DnsValidatedCertificateProps) {
+
+            const cert = new DnsValidatedCertificate(scope, id+'-DnsCert', props);
+
+            return cert;
+        }
+
+        this.newCert = __get_cert(id, props);
+
+
     }
 }
