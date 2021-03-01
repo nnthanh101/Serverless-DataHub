@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+   <head>
+      <title>Login</title>
+   </head>
+   <body>
+      <!-- Include _menu.html -->
+      <th:block th:include="/_menu"></th:block>
+       
+      <h1>Login</h1>
+       
+      <!-- /login?error=true -->
+      <div th:if="${#request.getParameter('error') == 'true'}"
+            style="color:red;margin:10px 0px;">
+         Login Failed!!!<br />
+         Reason :
+         <span th:if="${#session!= null and #session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION') != null}"
+            th:utext="${#session.getAttribute('SPRING_SECURITY_LAST_EXCEPTION').message}">
+                Static summary
+         </span>
+            
+      </div>
+      
+      <h3>Enter user name and password:</h3>
+      <form name='f' th:action="@{/j_spring_security_check}" method='POST'>
+         <table>
+            <tr>
+               <td>User abc:</td>
+               <td><input type='text' name='username' value=''></td>
+            </tr>
+            <tr>
+               <td>Password:</td>
+               <td><input type='password' name='password' /></td>
+            </tr>
+            <tr>
+               <td>Remember Me?</td>
+               <td><input type="checkbox" name="remember-me" /></td>
+            </tr>            
+            <tr>
+               <td><input name="submit" type="submit" value="submit" /></td>
+            </tr>
+         </table>
+      </form>
+       
+      <br>
+      Username/pass:
+      <ul>
+        <li>dbuser1/645219</li>
+        <li>dbadmin1/645219</li>
+      </ul>  
+       
+   </body>
+    
+</html>
