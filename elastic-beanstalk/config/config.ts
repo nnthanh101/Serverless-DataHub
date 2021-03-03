@@ -3,7 +3,7 @@ require('dotenv').config();
 
 export const envVars = {
   PROJECT_ID:  process.env.PROJECT_ID    || '',
-  ACCOUNT_ID:  process.env.AWS_ACCOUNT_ID,
+  ACCOUNT_ID:  process.env.AWS_ACCOUNT,
   REGION:      process.env.AWS_REGION,
   BUCKET_NAME: process.env.AWS_S3_BUCKET || '',
   
@@ -31,15 +31,8 @@ export const envVars = {
   
   /** Config Elastic Beanstalk */
   EB_APP_NAME:            process.env.AWS_EB_APP_NAME        || '',
-  EB_APP_PATH_SOURCE_ZIP: process.env.AWS_EB_APP_PATH_SOURCE_ZIP||'',
-  EB_EC2_KEYNAME:         process.env.AWS_EB_EC2_KEYNAME     || '',
-  EB_MEASURE_NAME:        process.env.AWS_EB_MEASURE_NAME    || '',
-  EB_UNIT:                process.env.AWS_EB_UNIT            || '',
-  EB_LOWER_THRESHOLD:     process.env.AWS_EB_LOWER_THRESHOLD || '',
-  EB_UPPER_THRESHOLD:     process.env.AWS_EB_UPPER_THRESHOLD || '',
-  EB_MIN_SIZE:            process.env.AWS_EB_MIN_SIZE        || '',
-  EB_MAX_SIZE:            process.env.AWS_EB_MAX_SIZE        || '',
-  EB_INSTANCE_TYPE:       process.env.AWS_EB_INSTANCE_TYPE   || '',
+  EB_PATH_CONFIG_JSON:    process.env.AWS_EB_PATH_CONFIG_JSON|| '',
+  EB_PATH_SOURCE_ZIP:     process.env.AWS_EB_PATH_SOURCE_ZIP || '',
   EB_PLATFORMS:           process.env.AWS_EB_PLATFORMS       || '',
   EB_DESCRIPTION:         process.env.AWS_EB_DESCRIPTION     || '',
   

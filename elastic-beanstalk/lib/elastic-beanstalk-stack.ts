@@ -1,238 +1,85 @@
-import {Stack, Construct, CfnOutput, Environment} from '@aws-cdk/core';
-import {CfnApplication, CfnEnvironment, CfnApplicationVersion} from '@aws-cdk/aws-elasticbeanstalk';
-import {Asset} from '@aws-cdk/aws-s3-assets' ;
-import {Vpc, IVpc, SecurityGroup, InstanceClass, InstanceType, InstanceSize, AmazonLinuxImage, Port, Peer}  from '@aws-cdk/aws-ec2';
-import {Role, CfnInstanceProfile} from '@aws-cdk/aws-iam';
-import {ServicePrincipal } from '@aws-cdk/aws-iam';
-import {ApplicationLoadBalancer, ListenerAction} from '@aws-cdk/aws-elasticloadbalancingv2';
-import {envVars } from '../config/config';
-import {IBucket } from '@aws-cdk/aws-s3';
+import { StackProps, Stack, Construct, App }  from '@aws-cdk/core';
+import { VpcConstruct }              from './vpc-construct';
+import { RDSMySQLConstruct }         from './rds-construct';
+import { LoadBalancerConstruct }         from './lb-construct';
+import { ElasticBeanstalkConstruct } from './elastic-beanstalk-construct';
+import { envVars }               from '../config/config';
 
-/**
- * 
- */
-export interface EBStackProps {
-  readonly vpc: IVpc;
-  readonly elbApplication: CfnApplication | null;
-  readonly alb: ApplicationLoadBalancer;
-  readonly albSecurityGroup: SecurityGroup;
-  readonly pathSourceZIP: string;
-  readonly platforms: string;
-  readonly description: string;
-  readonly ec2KeyName: string;
-  readonly measureName: string;
-  readonly unit: string;
-  readonly lowerThreshold: string;
-  readonly upperThreshold: string;
-  readonly minSize: string;
-  readonly maxSize: string;
-  readonly instanceType: string;
-  readonly optionsOthers: string[][]
-  readonly env?: Environment;
-  readonly tags?: {
-    [key: string]: string;
-  };
-}
 
-/**
- * FIXME
- * AutoScaling
- * JSON
- */
 export class ElasticBeanstalkStack extends Stack {
-  readonly vpc: IVpc;
-  readonly elbApp: CfnApplication;
-  readonly elbEnv: CfnEnvironment;
-  readonly elbAppVer: CfnApplicationVersion;
-  readonly instanceSecurityGroup: SecurityGroup;
-  readonly s3artifact: IBucket;
-  constructor(scope: Construct, id: string, props: EBStackProps) {
-    super(scope, id, props);
-
-    // The code that defines your stack goes here
-    // const vpc = getGetVpc(this);
-    this.vpc = props.vpc;
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
     
-    
-    // Construct an S3 asset from the ZIP located from directory up.cd
-    const elbZipArchive = new Asset(this, id+'-ElbAppZip', {
-      path: props.pathSourceZIP,
+    /** 1. VPC */
+    const vpc = new VpcConstruct(this, id + '-vpc',
+    {
+        cidr:          envVars.VPC_CIDR,
+        maxAzs:        envVars.VPC_MAX_AZ,
+        natGateways:   envVars.VPC_NAT_GW,
+        cidrPublic:    envVars.VPC_PUBLIC_CIDRMASK,
+        cidrPrivate:   envVars.VPC_PRIVATE_CIDRMASK,
+        cidrIsolated:  envVars.VPC_ISOLATED_CIDRMASK,
+        useDefaultVpc: envVars.USE_DEFAULT_VPC,
+        useExistVpc:   envVars.USE_EXIST_VPC,
+        vpcId:         envVars.VPC_ID,
+        vpcName:       envVars.VPC_NAME
     });
     
-    this.s3artifact = elbZipArchive.bucket;
-    new CfnOutput(this, id+'-S3BucketSourceCode', { value: elbZipArchive.s3BucketName })
-
-    const appName = envVars.EB_APP_NAME;
-    if(props.elbApplication === null){
-      this.elbApp = new CfnApplication(this, id+'-ELBApplication', {
-        applicationName: appName,
-      });
-    }else{
-      this.elbApp = props.elbApplication;
-    }
-
-    // This is the role that your application will assume
-    const ebRole = new Role(this, id+'-CustomEBRole', {
-      assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+    /** 2. RDS */
+    const rdsmysql =  new RDSMySQLConstruct(this, id + '-MysqlRDS', {
+        vpc:                 vpc.vpc,
+        rdsInstanceName:     envVars.RDS_INSTANCE_NAME,
+        rdsCredentiallUser:  envVars.RDS_CREDENTIAL_USERNAME,
+        rdsCredentialPass:   envVars.RDS_CREDENTIAL_PAWSSWORD,
+        rdsDatabaseName:     envVars.RDS_DATABASE_NAME,
+        allocatedStorage:    envVars.RDS_ALLOCATED_STORAGE,
+        maxAllocatedStorage: envVars.RDS_MAX_ALLOCATED_STORAGE,
+        env: {
+            account: process.env.AWS_ACCOUNT, 
+            region: process.env.AWS_REGION,
+        }
     });
-
-    // This is the Instance Profile which will allow the application to use the above role
-    const ebInstanceProfile = new CfnInstanceProfile(this, id+'-CustomEBInstanceProfile', {
-      roles: [ebRole.roleName],
-    });
-
     
-    this.instanceSecurityGroup = new SecurityGroup(this, id+'-instanceEBSecurityGroup', {
-      allowAllOutbound: true,
-      securityGroupName: id+'-ins-sg',
-      vpc: this.vpc,
+    /** 3. Application Loadbalancer */
+    const loadbalancer =  new LoadBalancerConstruct(this, id + '-LB', {
+        vpc: vpc.vpc,
+        env: {
+            account: process.env.AWS_ACCOUNT, 
+            region: process.env.AWS_REGION,
+        }
     });
-    this.instanceSecurityGroup.addIngressRule(props.albSecurityGroup, Port.tcp(80));
     
-
-    const optionSettingProperties: CfnEnvironment.OptionSettingProperty[] = [
-      {
-          namespace: 'aws:autoscaling:launchconfiguration',
-          optionName: 'SecurityGroups',
-          value: this.instanceSecurityGroup.securityGroupId,
-      },
-      {
-        namespace: 'aws:ec2:vpc',
-        optionName: 'VPCId',
-        value: this.vpc.vpcId,
-      },
-      {
-        namespace: 'aws:ec2:vpc',
-        optionName: 'ELBSubnets',
-        value: this.vpc.publicSubnets.map(value => value.subnetId).join(','),
-      },
-      {
-        namespace: 'aws:ec2:vpc',
-        optionName: 'Subnets',
-        value: this.vpc.privateSubnets.map(value => value.subnetId).join(','),
-      },
-      {
-        namespace: 'aws:autoscaling:launchconfiguration',
-        optionName: 'IamInstanceProfile',
-        // Here you could reference an instance profile by ARN (e.g. myIamInstanceProfile.attrArn)
-        // For the default setup, leave this as is (it is assumed this role exists)
-        // https://stackoverflow.com/a/55033663/6894670
-        value: ebInstanceProfile.attrArn,
-      },
-      {
-          namespace: 'aws:elasticbeanstalk:container:tomcat:jvmoptions',
-          optionName: 'Xms',
-          value: '256m',
-      },
-      {
-        namespace: 'aws:elasticbeanstalk:container:tomcat:jvmoptions',
-        optionName: 'Xmx',
-        value: '512m  ',
-      },
-      {
-        namespace: 'aws:elasticbeanstalk:environment:proxy',
-        optionName: 'ProxyServer',
-        value: 'apache',
-      },
-      { namespace: 'aws:autoscaling:launchconfiguration',
-        optionName: 'EC2KeyName',
-        value: props.ec2KeyName
-      },
-      {
-          namespace: 'aws:elasticbeanstalk:environment:process:default',
-          optionName: 'StickinessEnabled',
-          value: 'true',
-      },
-      
-      //Loadbalance
-      { namespace: 'aws:elasticbeanstalk:environment',
-        optionName: 'LoadBalancerType',
-        value: 'application',
-      },
-      { namespace: 'aws:elasticbeanstalk:environment',
-        optionName: 'LoadBalancerIsShared',
-        value: 'true',
-      },
-      { namespace: 'aws:elbv2:loadbalancer',
-        optionName: 'SharedLoadBalancer',
-        value: props.alb.loadBalancerArn,
-      },
-      {
-          namespace: 'aws:elbv2:loadbalancer',
-          optionName: 'SecurityGroups',
-          value: props.albSecurityGroup.securityGroupId,
-      },
-      
-      //Scale
-      {
-          namespace: 'aws:autoscaling:trigger',
-          optionName: 'LowerThreshold',
-          value: props.lowerThreshold,
-      },
-      {
-          namespace: 'aws:autoscaling:trigger',
-          optionName: 'MeasureName',
-          value: props.measureName,
-      },
-      {
-          namespace: 'aws:autoscaling:trigger',
-          optionName: 'Unit',
-          value: props.unit,
-      },
-      {
-          namespace: 'aws:autoscaling:trigger',
-          optionName: 'UpperThreshold',
-          value: props.upperThreshold,
-      },
-      {
-        namespace: 'aws:autoscaling:asg',
-        optionName: 'MinSize',
-        value: props.minSize,
-      },
-      {
-        namespace: 'aws:autoscaling:asg',
-        optionName: 'MaxSize',
-        value: props.maxSize,
-      },
-      {
-        namespace: 'aws:autoscaling:launchconfiguration',
-        optionName: 'InstanceType',
-        value: props.instanceType,
-      },
-      
-      //Config extend
-      ...props.optionsOthers.map(([namespace, optionName, value]) => ({
-        namespace,
-        optionName,
-        value,
-      })),
+    
+    /** https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html */
+    const configDynamic = [
+        ['aws:elasticbeanstalk:application:environment', 'JDBC_PWD'                ,envVars.RDS_CREDENTIAL_PAWSSWORD],
+        ['aws:elasticbeanstalk:application:environment', 'JDBC_UID'                ,envVars.RDS_CREDENTIAL_USERNAME],
+        ['aws:elasticbeanstalk:application:environment', 'JDBC_CONNECTION_STRING'  ,rdsmysql.jdbcConnection],
+        /** Config use VPC */
+        ['aws:ec2:vpc'                                 , 'VPCId'                   ,vpc.vpc.vpcId],
+        ['aws:ec2:vpc'                                 , 'ELBSubnets'              ,vpc.vpc.publicSubnets.map(value => value.subnetId).join(',')],
+        ['aws:ec2:vpc'                                 , 'Subnets'                 ,vpc.vpc.privateSubnets.map(value => value.subnetId).join(',')],
+        /** Config use Shared Load Balancer */
+        ['aws:elasticbeanstalk:environment'            , 'LoadBalancerType'        ,'application'],
+        ['aws:elasticbeanstalk:environment'            , 'LoadBalancerIsShared'    ,'true'],
+        ['aws:elbv2:loadbalancer'                      , 'SharedLoadBalancer'      ,loadbalancer.lb.loadBalancerArn],
+        ['aws:elbv2:loadbalancer'                      , 'SecurityGroups'          ,loadbalancer.albSecurityGroup.securityGroupId],
     ];
 
-    // Create an app version from the S3 asset defined above
-    // The S3 "putObject" will occur first before CF generates the template
-    this.elbAppVer = new CfnApplicationVersion(this, id+'-EBAppVersion', {
-      applicationName: appName,
-      sourceBundle: {
-          s3Bucket: elbZipArchive.s3BucketName,
-          s3Key: elbZipArchive.s3ObjectKey,
-      },
-    }); 
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars  aws elasticbeanstalk list-available-solution-stacks (command)
-    this.elbEnv = new CfnEnvironment(this, id+'-EBEnvironment', {
-      environmentName: id+'-EBEnvironment',
-      applicationName: this.elbApp.applicationName||'',
-      solutionStackName: props.platforms,
-      optionSettings: optionSettingProperties,
-      // cnamePrefix:'ep',
-      description:props.description,
-      // This line is critical - reference the label created in this same stack
-      versionLabel: this.elbAppVer.ref,
+    /** 4. ElasticBeanstalk Tomcat */
+    const elbTomcat = new ElasticBeanstalkConstruct(this, id + '-elbTomcat', {
+        elbApplication:    null,
+        albSecurityGroup:  loadbalancer.albSecurityGroup,
+        pathSourceZIP:     envVars.EB_PATH_SOURCE_ZIP,
+        platforms:         envVars.EB_PLATFORMS,
+        description:       envVars.EB_DESCRIPTION,
+        optionsOthers:     configDynamic,
+        pathConfigStatic:  envVars.EB_PATH_CONFIG_JSON,
+        env: {
+            account: process.env.AWS_ACCOUNT, 
+            region:  process.env.AWS_REGION,
+        }
     });
-    // Also very important - make sure that `app` exists before creating an app version
-    this.elbAppVer.addDependsOn(this.elbApp);
-  
-  new CfnOutput(this, id+'-EndpointUrl', { value: this.elbEnv.attrEndpointUrl })
+    
   }
-  
 }

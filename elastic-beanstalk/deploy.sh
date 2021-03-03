@@ -33,7 +33,7 @@ echo "[x] Verify CDK":     $(cdk  --version)
 echo "[x] Verify java":    $(java -version)
 echo "[x] Verify maven":   $(mvn  -version)
 
-echo $AWS_ACCOUNT_ID + $AWS_REGION + $AWS_S3_BUCKET + $AWS_RDS_CREDENTIAL_PAWSSWORD
+echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET + $AWS_RDS_CREDENTIAL_PAWSSWORD
 currentPrincipalArn=$(aws sts get-caller-identity --query Arn --output text)
 ## Just in case, you are using an IAM role, we will switch the identity from your STS arn to the underlying role ARN.
 currentPrincipalArn=$(sed 's/\(sts\)\(.*\)\(assumed-role\)\(.*\)\(\/.*\)/iam\2role\4/' <<< $currentPrincipalArn)
@@ -82,7 +82,12 @@ _logger "[+] 2. [AWS Infrastructure] S3, VPC, Cloud9"
 echo "#########################################################"
 echo
 
-cdk bootstrap aws://${AWS_ACCOUNT_ID}/${AWS_REGION} \
+echo cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+    --bootstrap-bucket-name ${AWS_S3_BUCKET}        \
+    --termination-protection                        \
+    --tags cost=Job4U 
+
+cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
     --bootstrap-bucket-name ${AWS_S3_BUCKET}        \
     --termination-protection                        \
     --tags cost=Job4U 
@@ -97,8 +102,13 @@ rm -rf cdk.out/*.* cdk.context.json
 ## cdk deploy $AWS_CDK_STACK --require-approval never
 cdk deploy --all --require-approval never
 
+HostInstanceDBMySQL=$(aws rds --region ${AWS_REGION} describe-db-instances --max-results 1 --query "DBInstances[${AWS_RDS_INSTANCE_NAME}].Endpoint.Address" --output text)
+echo ${HostInstanceDBMySQL}
+
 ## FIXME: 
-# ./AddRecordDB-RDS.sql
+mysql -h ${HostInstanceDBMySQL} -u ${AWS_RDS_CREDENTIAL_USERNAME} ${AWS_RDS_DATABASE_NAME}
+source ./AddRecordDB-RDS.sql;
+exit;
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."

@@ -1,8 +1,8 @@
-import {Stack, Construct, StackProps, Duration, SecretValue, CfnOutput, Environment, RemovalPolicy} from '@aws-cdk/core';
+import { Construct, Duration, SecretValue, CfnOutput, Environment, RemovalPolicy} from '@aws-cdk/core';
 import {InstanceType, InstanceClass, InstanceSize, SubnetType, Vpc, IVpc, SecurityGroup, Port, Peer} from '@aws-cdk/aws-ec2';
 import {StorageType, DatabaseInstance, DatabaseInstanceEngine, LicenseModel} from '@aws-cdk/aws-rds';
 
-export interface RDSMySQLStackProps {
+export interface RDSMySQLConstructProps {
 	readonly vpc: IVpc;
 	readonly rdsInstanceName: string;
 	readonly rdsCredentiallUser: string;
@@ -20,17 +20,17 @@ export interface RDSMySQLStackProps {
  * FIXME
  * Stack --> Construct
  */
-export class RDSMySQLStack extends Stack {
+export class RDSMySQLConstruct extends Construct {
 	readonly vpc: IVpc;
 	readonly jdbcConnection : string;
 	readonly rdsSecurityGroup: SecurityGroup;
-	constructor(scope: Construct, id: string, props: RDSMySQLStackProps) {
-		super(scope, id, props);
+	constructor(scope: Construct, id: string, props: RDSMySQLConstructProps) {
+		super(scope, id);
 
 		// const vpc = getGetVpc(this);
 		this.vpc = props.vpc;
 		
-		this.rdsSecurityGroup = new SecurityGroup(this, id + '-MySQLSecurityGroup', {
+		this.rdsSecurityGroup = new SecurityGroup(scope, id + '-MySQLSecurityGroup', {
 			vpc: this.vpc,
 			securityGroupName: id + "-MySQL-SG",
 			description: 'Allow http access to RDS from anywhere',
@@ -38,7 +38,7 @@ export class RDSMySQLStack extends Stack {
 		});
 		this.rdsSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(3306));
 		
-		const rdsInstance = new DatabaseInstance(this, id +'-'+ props.rdsDatabaseName, {
+		const rdsInstance = new DatabaseInstance(scope, id +'-'+ props.rdsDatabaseName, {
 			engine: DatabaseInstanceEngine.MYSQL,
 			// micro database should be available on free tier
 			instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),

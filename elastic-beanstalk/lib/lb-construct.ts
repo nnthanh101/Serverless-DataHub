@@ -1,8 +1,8 @@
 import {Vpc, IVpc, SecurityGroup, Port, Peer} from '@aws-cdk/aws-ec2';
 import {ApplicationLoadBalancer, ListenerAction} from '@aws-cdk/aws-elasticloadbalancingv2';
-import {Stack, Construct, CfnOutput, Environment} from '@aws-cdk/core';
+import {Construct, CfnOutput, Environment} from '@aws-cdk/core';
 
-export interface ALBStackProps {
+export interface ALBConstructProps {
   readonly vpc: IVpc;
   readonly env?: Environment;
   readonly tags?: {
@@ -13,16 +13,16 @@ export interface ALBStackProps {
 /**
  * 
  */
-export class LoadBalancerStack extends Stack {
+export class LoadBalancerConstruct extends Construct {
   readonly vpc: IVpc;
   readonly albSecurityGroup: SecurityGroup;
   readonly lb: ApplicationLoadBalancer;
-  constructor(app: Construct, id: string, props: ALBStackProps) {
-    super(app, id, props);
+  constructor(scope: Construct, id: string, props: ALBConstructProps) {
+    super(scope, id);
     
     this.vpc = props.vpc;
 
-    this.albSecurityGroup = new SecurityGroup(this, id + '-albSG', {
+    this.albSecurityGroup = new SecurityGroup(scope, id + '-albSG', {
       allowAllOutbound: true,
       securityGroupName: id + '-alb-sg',
       vpc: this.vpc,
@@ -30,7 +30,7 @@ export class LoadBalancerStack extends Stack {
     this.albSecurityGroup.addIngressRule(Peer.anyIpv4(), Port.tcp(80));
   // albSecurityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(443));
 
-    this.lb = new ApplicationLoadBalancer(this, id + '-alb', {
+    this.lb = new ApplicationLoadBalancer(scope, id + '-alb', {
       vpc: this.vpc,
       internetFacing: true,
       securityGroup: this.albSecurityGroup // Optional - will be automatically created otherwise
