@@ -1,57 +1,53 @@
 import * as cdk from "@aws-cdk/core";
-import {Vpc ,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService,CfnEIP,Port} from "@aws-cdk/aws-ec2";
+import {Vpc ,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService } from "@aws-cdk/aws-ec2";
 
-export interface VpcConstructProps   {
-  readonly cidr?:         string;
-  readonly maxAzs?:       number;
-  readonly natGateways?:  number;
-  readonly ports:         number[];
+export interface VpcConstructProps  {
+  readonly cidr?: string;
+  readonly maxAzs?: number;
+  readonly natGateways?: number;
+  readonly ports: number[];
   readonly tags?: {
-    [key: string]:        string;
+    [key: string]: string;
   };
   readonly useDefaultVpc: string;
-  readonly useExistVpc:   string;
-  readonly vpcId:         string;
+  readonly useExistVpc: string;
+  readonly vpcId: string;
 }
 
 /** 
- * Creating VPC best practice for security
+ * Creating VPC Without NAT Gateway 
  * 
- * This required Public and Private subnet and NATGW
+ * This required only use PublicSubnet because PrivateSubnet and IsolatedSubnet automatically create NAT Gateway
  * 
  */
-export class VpcConstruct extends cdk.Construct {
+export class VpcNoNatConstruct extends cdk.Construct {
   public readonly vpc: IVpc;
   readonly securityGrp: SecurityGroup;
-
+ 
   constructor(parent: cdk.Construct, id: string, props: VpcConstructProps) {
     super(parent, id );
 
     if (props.useExistVpc === '1') {
       if (props.useDefaultVpc === '1') {
-        this.vpc = Vpc.fromLookup(parent, id, { isDefault: true });
+        this.vpc = Vpc.fromLookup(parent, id+'VPC', { isDefault: true });
       } else {
         if (props.vpcId) {
-          this.vpc = Vpc.fromLookup(parent, id, { isDefault: false, vpcId: props.vpcId });
-        } 
+          this.vpc = Vpc.fromLookup(parent, id+'VPC', { isDefault: false, vpcId: props.vpcId });
+        }  
       }
     } else {
-      this.vpc = new Vpc(parent, id, {
-        cidr: props.cidr,
+      this.vpc = new Vpc(parent, id+'VPC', {
+        cidr: props.cidr, 
         maxAzs: props.maxAzs,
         natGateways: props.natGateways,
-        
+        natGatewaySubnets: { subnets: [] },
         subnetConfiguration: [
           {
             name: 'PUBLIC',
             subnetType: SubnetType.PUBLIC,
-            cidrMask: 24,
+            cidrMask: 24, 
+            
           }, 
-          {
-            name: 'PRIVATE',
-            subnetType: SubnetType.PRIVATE, 
-            cidrMask: 28,
-          },
         ],
         gatewayEndpoints: {
           S3: {

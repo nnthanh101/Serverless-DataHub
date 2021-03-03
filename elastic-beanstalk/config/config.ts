@@ -1,23 +1,32 @@
 const chalk = require('chalk');
 require('dotenv').config();
 
-export const envVars = {
+export const applicationMetaData = {
   PROJECT_ID:  process.env.PROJECT_ID    || '',
   ACCOUNT_ID:  process.env.AWS_ACCOUNT,
   REGION:      process.env.AWS_REGION,
   BUCKET_NAME: process.env.AWS_S3_BUCKET || '',
   
   /** Config VPC */
-  USE_EXIST_VPC:         process.env.AWS_USE_EXIST_VPC   ||'',
-  USE_DEFAULT_VPC:       process.env.AWS_USE_DEFAULT_VPC ||'',
-  VPC_ID:                process.env.AWS_VPC_ID          ||'',
-  VPC_NAME:              process.env.AWS_VPC_NAME        ||'',
-  VPC_CIDR:              process.env.AWS_VPC_CIDR,
-  VPC_ISOLATED_CIDRMASK: parseInt(process.env.AWS_VPC_ISOLATED_CIDRMASK || ''),
-  VPC_PUBLIC_CIDRMASK:   parseInt(process.env.AWS_VPC_PUBLIC_CIDRMASK   || ''),
-  VPC_PRIVATE_CIDRMASK:  parseInt(process.env.AWS_VPC_PRIVATE_CIDRMASK  || ''),
-  VPC_MAX_AZ:            parseInt(process.env.AWS_VPC_MAX_AZ || ''),
-  VPC_NAT_GW:            parseInt(process.env.AWS_VPC_NAT_GW || ''),
+  cidr:                "10.10.0.0/18",
+  maxAzs:              2,
+  natGateways:         1,
+  publicPorts:         [80, 443],
+  vpcId:               "vpc-11111111111111111",
+  vpcConstructId:      "ElasticBeanstalk-VPC",
+  useExistVpc:         "0",
+  useDefaultVpc:       "0",
+
+  // USE_EXIST_VPC:         process.env.AWS_USE_EXIST_VPC   ||'',
+  // USE_DEFAULT_VPC:       process.env.AWS_USE_DEFAULT_VPC ||'',
+  // VPC_ID:                process.env.AWS_VPC_ID          ||'',
+  // VPC_NAME:              process.env.AWS_VPC_NAME        ||'',
+  // VPC_CIDR:              process.env.AWS_VPC_CIDR,
+  // VPC_ISOLATED_CIDRMASK: parseInt(process.env.AWS_VPC_ISOLATED_CIDRMASK || ''),
+  // VPC_PUBLIC_CIDRMASK:   parseInt(process.env.AWS_VPC_PUBLIC_CIDRMASK   || ''),
+  // VPC_PRIVATE_CIDRMASK:  parseInt(process.env.AWS_VPC_PRIVATE_CIDRMASK  || ''),
+  // VPC_MAX_AZ:            parseInt(process.env.AWS_VPC_MAX_AZ || ''),
+  // VPC_NAT_GW:            parseInt(process.env.AWS_VPC_NAT_GW || ''),
   
   
   /** Config RDS MySQL */

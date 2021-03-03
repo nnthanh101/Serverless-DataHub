@@ -10,7 +10,7 @@ export interface RDSMySQLConstructProps {
 	readonly rdsDatabaseName: string;
 	readonly allocatedStorage: number;
 	readonly maxAllocatedStorage: number;
-	readonly env?: Environment;
+	// readonly env?: Environment;
 	readonly tags?: {
 	  [key: string]: string;
 	};

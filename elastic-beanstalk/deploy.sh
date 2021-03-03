@@ -82,11 +82,6 @@ _logger "[+] 2. [AWS Infrastructure] S3, VPC, Cloud9"
 echo "#########################################################"
 echo
 
-echo cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
-    --bootstrap-bucket-name ${AWS_S3_BUCKET}        \
-    --termination-protection                        \
-    --tags cost=Job4U 
-
 cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
     --bootstrap-bucket-name ${AWS_S3_BUCKET}        \
     --termination-protection                        \
@@ -102,13 +97,13 @@ rm -rf cdk.out/*.* cdk.context.json
 ## cdk deploy $AWS_CDK_STACK --require-approval never
 cdk deploy --all --require-approval never
 
-HostInstanceDBMySQL=$(aws rds --region ${AWS_REGION} describe-db-instances --max-results 1 --query "DBInstances[${AWS_RDS_INSTANCE_NAME}].Endpoint.Address" --output text)
-echo ${HostInstanceDBMySQL}
-
 ## FIXME: 
-mysql -h ${HostInstanceDBMySQL} -u ${AWS_RDS_CREDENTIAL_USERNAME} ${AWS_RDS_DATABASE_NAME}
-source ./AddRecordDB-RDS.sql;
-exit;
+# echo HostInstanceDBMySQL=$(aws rds --region ${AWS_REGION} describe-db-instances --max-results 1 --query "DBInstances[${AWS_RDS_INSTANCE_NAME}].Endpoint.Address" --output text)
+# echo ${HostInstanceDBMySQL}
+
+# echo mysql -h ${HostInstanceDBMySQL} -u ${AWS_RDS_CREDENTIAL_USERNAME} ${AWS_RDS_DATABASE_NAME}
+# echo source ./AddRecordDB-RDS.sql;
+# echo exit;
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."

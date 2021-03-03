@@ -56,6 +56,9 @@ function prerequisites_with_brew() {
 
     ## Install k9s
     # brew install k9s
+
+    ## Install Maven
+    brew install maven
     
     echo "[END][MacOS] prerequisites_with_brew() !!!"
 }

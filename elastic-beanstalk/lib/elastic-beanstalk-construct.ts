@@ -5,7 +5,7 @@ import {Vpc, IVpc, SecurityGroup, InstanceClass, InstanceType, InstanceSize, Ama
 import {Role, CfnInstanceProfile} from '@aws-cdk/aws-iam';
 import {ServicePrincipal } from '@aws-cdk/aws-iam';
 import {ApplicationLoadBalancer, ListenerAction} from '@aws-cdk/aws-elasticloadbalancingv2';
-import {envVars } from '../config/config';
+import { applicationMetaData } from '../config/config';
 import {IBucket } from '@aws-cdk/aws-s3';
 import fs = require('fs');
 
@@ -51,7 +51,7 @@ export class ElasticBeanstalkConstruct extends Construct {
     this.s3artifact = elbZipArchive.bucket;
     new CfnOutput(scope, id+'-S3BucketSourceCode', { value: elbZipArchive.s3BucketName })
 
-    const appName = envVars.EB_APP_NAME;
+    const appName = applicationMetaData.EB_APP_NAME;
     if(props.elbApplication === null){
       this.elbApp = new CfnApplication(scope, id+'-ELBApplication', {
         applicationName: appName,
