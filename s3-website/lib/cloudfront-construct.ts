@@ -9,7 +9,7 @@ export class CloudfrontConstruct extends Construct {
     constructor( scope: Construct, id: string, props:CloudFrontWebDistributionProps) {
         super(scope, id)
  
-        const distribution = new CloudFrontWebDistribution(this, id+'CfDistribution',props );
+        const distribution = new CloudFrontWebDistribution(this, id+'CFDistribution',props );
   
         this.newDistribution=distribution;
     }
