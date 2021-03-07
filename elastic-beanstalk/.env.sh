@@ -38,3 +38,5 @@ export AWS_RDS_MAX_ALLOCATED_STORAGE='30'
 ## Config Elastic Beanstalk
 export AWS_EB_PATH_CONFIG_JSON='./config-eb.json'
 export AWS_EB_PATH_SOURCE_ZIP="./Tomcat/ebproject/target/ebproject-${AWS_EB_APP_VERSION}.war"
+
+export ElasticBeanstalk_Repo=SpringBootWithTomcat

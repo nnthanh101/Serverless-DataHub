@@ -4,7 +4,7 @@ source ./.env.sh
 
 echo
 echo "#########################################################"
-echo "[+] Verify the prerequisites environment"
+echo "[+] 0. Verify the prerequisites environment"
 echo "#########################################################"
 echo
 
@@ -31,7 +31,7 @@ echo "[x] Verify CDK":     $(cdk  --version)
 
 echo
 echo "#########################################################"
-echo "[+] Install TypeScript node_modules ..."
+echo "[+] Install TypeScript node_modules & CDK Bootstrap ..."
 echo "#########################################################"
 echo
 
@@ -65,9 +65,18 @@ echo
 ## cdk synth
 echo cdk deploy --all --require-approval never
 
+echo
+echo "#########################################################"
+_logger "[+] 2. [Code Commit] Init repository "
+echo "#########################################################"
+echo
+
+## FIXME
+# ./codecommit.sh
+
 ## Danger!!! Cleanup
 # echo "Cleanup ..."
-# cdk destroy
+# cdk destroy --all --require-approval never
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
