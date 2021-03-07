@@ -4,7 +4,6 @@ import {Construct, CfnOutput, Environment} from '@aws-cdk/core';
 
 export interface ALBConstructProps {
   readonly vpc: IVpc;
-  readonly env?: Environment;
   readonly tags?: {
     [key: string]: string;
   };

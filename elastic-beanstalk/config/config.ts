@@ -16,18 +16,6 @@ export const applicationMetaData = {
   vpcConstructId:      "ElasticBeanstalk-VPC",
   useExistVpc:         "0",
   useDefaultVpc:       "0",
-
-  // USE_EXIST_VPC:         process.env.AWS_USE_EXIST_VPC   ||'',
-  // USE_DEFAULT_VPC:       process.env.AWS_USE_DEFAULT_VPC ||'',
-  // VPC_ID:                process.env.AWS_VPC_ID          ||'',
-  // VPC_NAME:              process.env.AWS_VPC_NAME        ||'',
-  // VPC_CIDR:              process.env.AWS_VPC_CIDR,
-  // VPC_ISOLATED_CIDRMASK: parseInt(process.env.AWS_VPC_ISOLATED_CIDRMASK || ''),
-  // VPC_PUBLIC_CIDRMASK:   parseInt(process.env.AWS_VPC_PUBLIC_CIDRMASK   || ''),
-  // VPC_PRIVATE_CIDRMASK:  parseInt(process.env.AWS_VPC_PRIVATE_CIDRMASK  || ''),
-  // VPC_MAX_AZ:            parseInt(process.env.AWS_VPC_MAX_AZ || ''),
-  // VPC_NAT_GW:            parseInt(process.env.AWS_VPC_NAT_GW || ''),
-  
   
   /** Config RDS MySQL */
   RDS_DATABASE_NAME:         process.env.AWS_RDS_DATABASE_NAME                  || '',
@@ -39,11 +27,13 @@ export const applicationMetaData = {
   
   
   /** Config Elastic Beanstalk */
-  EB_APP_NAME:            process.env.AWS_EB_APP_NAME        || '',
-  EB_PATH_CONFIG_JSON:    process.env.AWS_EB_PATH_CONFIG_JSON|| '',
-  EB_PATH_SOURCE_ZIP:     process.env.AWS_EB_PATH_SOURCE_ZIP || '',
-  EB_PLATFORMS:           process.env.AWS_EB_PLATFORMS       || '',
-  EB_DESCRIPTION:         process.env.AWS_EB_DESCRIPTION     || '',
+  EB_APP_NAME:            process.env.AWS_EB_APP_NAME           || '',
+  EB_APP_VERSION:         process.env.AWS_EB_APP_VERSION        || '',
+  EB_PATH_CONFIG_JSON:    process.env.AWS_EB_PATH_CONFIG_JSON   || '',
+  EB_PATH_SOURCE_ZIP:     process.env.AWS_EB_PATH_SOURCE_ZIP    || '',
+  EB_PLATFORMS:           '64bit Amazon Linux 2 v4.1.6 running Tomcat 8.5 Corretto 11',
+  /**  https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html  */
+  EB_DESCRIPTION:         'Application is deployed in Elastic Beanstalk with Tomcat',
   
   // you can change this to the branch of your choice (currently main)
   // BUILD_BRANCH: process.env.BUILD_BRANCH || '^refs/heads/main$',

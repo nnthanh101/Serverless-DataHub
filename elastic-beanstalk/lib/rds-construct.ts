@@ -10,7 +10,6 @@ export interface RDSMySQLConstructProps {
 	readonly rdsDatabaseName: string;
 	readonly allocatedStorage: number;
 	readonly maxAllocatedStorage: number;
-	// readonly env?: Environment;
 	readonly tags?: {
 	  [key: string]: string;
 	};
@@ -44,7 +43,7 @@ export class RDSMySQLConstruct extends Construct {
 			instanceType: InstanceType.of(InstanceClass.BURSTABLE3, InstanceSize.MICRO),
 			credentials : {username:props.rdsCredentiallUser, password: SecretValue.plainText(props.rdsCredentialPass)},
 			vpc: this.vpc,
-			vpcPlacement: {subnetType: SubnetType.PUBLIC},
+			vpcPlacement: {subnetType: SubnetType.PRIVATE},
 			storageType: StorageType.GP2,
 			storageEncrypted: true,
 			allocatedStorage: props.allocatedStorage, // GiB

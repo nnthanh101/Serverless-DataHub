@@ -97,13 +97,23 @@ rm -rf cdk.out/*.* cdk.context.json
 ## cdk deploy $AWS_CDK_STACK --require-approval never
 cdk deploy --all --require-approval never
 
-## FIXME: 
-# echo HostInstanceDBMySQL=$(aws rds --region ${AWS_REGION} describe-db-instances --max-results 1 --query "DBInstances[${AWS_RDS_INSTANCE_NAME}].Endpoint.Address" --output text)
-# echo ${HostInstanceDBMySQL}
 
-# echo mysql -h ${HostInstanceDBMySQL} -u ${AWS_RDS_CREDENTIAL_USERNAME} ${AWS_RDS_DATABASE_NAME}
-# echo source ./AddRecordDB-RDS.sql;
-# echo exit;
+# HostInstanceDBMySQL=$(aws rds --region ${AWS_REGION} describe-db-instances --db-instance-identifier ${AWS_RDS_DATABASE_NAME}  --query "DBInstances[*].Endpoint.Address" --output text)
+
+# echo
+# echo "#########################################################"
+# _logger "[+] 3. [MySQL RDS] Restore Data test"
+# echo "#########################################################"
+# echo
+# ## Check table exist
+# AllTables="$(mysql -u $AWS_RDS_CREDENTIAL_USERNAME -h $HostInstanceDBMySQL --password="${AWS_RDS_CREDENTIAL_PAWSSWORD}" ${AWS_RDS_DATABASE_NAME} -Bse 'show tables')"
+
+# if test -z "$AllTables"; then
+#     echo Restore Data
+#     mysql -u ${AWS_RDS_CREDENTIAL_USERNAME} --password="${AWS_RDS_CREDENTIAL_PAWSSWORD}" -h ${HostInstanceDBMySQL} ${AWS_RDS_DATABASE_NAME} < Test-Data-MySQL-RDS.sql
+# else
+#     echo Table exist!
+# fi
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."

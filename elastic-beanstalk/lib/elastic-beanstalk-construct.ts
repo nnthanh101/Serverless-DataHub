@@ -13,6 +13,7 @@ import fs = require('fs');
  * 
  */
 export interface EBConstructProps {
+  readonly vpc: IVpc;
   readonly elbApplication: CfnApplication | null;
   readonly albSecurityGroup: SecurityGroup;
   readonly pathSourceZIP: string;
@@ -20,7 +21,6 @@ export interface EBConstructProps {
   readonly description: string;
   readonly optionsOthers: string[][]
   readonly pathConfigStatic: string;
-  readonly env?: Environment;
   readonly tags?: {
     [key: string]: string;
   };
@@ -42,10 +42,11 @@ export class ElasticBeanstalkConstruct extends Construct {
   constructor(scope: Construct, id: string, props: EBConstructProps) {
     super(scope, id);
     
+    this.vpc = props.vpc;
     
     // Construct an S3 asset from the ZIP located from directory up.cd
-    const elbZipArchive = new Asset(scope, id+'-ElbAppZip', {
-      path: props.pathSourceZIP,
+    const elbZipArchive = new Asset(scope, id+'-AppZip', {
+      path: props.pathSourceZIP
     });
     
     this.s3artifact = elbZipArchive.bucket;
@@ -53,7 +54,7 @@ export class ElasticBeanstalkConstruct extends Construct {
 
     const appName = applicationMetaData.EB_APP_NAME;
     if(props.elbApplication === null){
-      this.elbApp = new CfnApplication(scope, id+'-ELBApplication', {
+      this.elbApp = new CfnApplication(scope, id+'-Application', {
         applicationName: appName,
       });
     }else{
@@ -78,8 +79,12 @@ export class ElasticBeanstalkConstruct extends Construct {
     });
     this.instanceSecurityGroup.addIngressRule(props.albSecurityGroup, Port.tcp(80));
     
+    
+    const json = fs.readFileSync(props.pathConfigStatic, 'utf8');
+    const loadConfig = JSON.parse(json.toString().replace(/(\r\n|\n|\r|\s)/gm, "")) as CfnEnvironment.OptionSettingProperty[];
 
     const optionSettingProperties: CfnEnvironment.OptionSettingProperty[] = [
+      ...loadConfig,
       {
           namespace: 'aws:autoscaling:launchconfiguration',
           optionName: 'SecurityGroups',
@@ -101,15 +106,11 @@ export class ElasticBeanstalkConstruct extends Construct {
         value,
       })),
     ];
-    
-    fs.readFile(props.pathConfigStatic, 'utf8', (err, data) => {
-      const loadConfig = JSON.parse(data) as CfnEnvironment.OptionSettingProperty[]
-      optionSettingProperties.concat(loadConfig);
-    });
+
 
     // Create an app version from the S3 asset defined above
     // The S3 "putObject" will occur first before CF generates the template
-    this.elbAppVer = new CfnApplicationVersion(scope, id+'-EBAppVersion', {
+    this.elbAppVer = new CfnApplicationVersion(scope, id+'-AppVersion', {
       applicationName: appName,
       sourceBundle: {
           s3Bucket: elbZipArchive.s3BucketName,
@@ -118,8 +119,8 @@ export class ElasticBeanstalkConstruct extends Construct {
     }); 
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars  aws elasticbeanstalk list-available-solution-stacks (command)
-    this.elbEnv = new CfnEnvironment(scope, id+'-EBEnvironment', {
-      environmentName: id+'-EBEnvironment',
+    this.elbEnv = new CfnEnvironment(scope, id+'-Environment', {
+      environmentName: id+'-Environment',
       applicationName: this.elbApp.applicationName||'',
       solutionStackName: props.platforms,
       optionSettings: optionSettingProperties,

@@ -62,15 +62,14 @@ create table persistent_logins (
      
 );
  
---------------------------------------
- 
+/*  password is __ENCRYPTED_PASSWORD__ */
 insert into app_user (user_id, user_name, encryted_password, enabled)
-values (2, 'dbuser', '__ENCRYPTED_PASSWORD__', 1);
- 
+values (2, 'user', '$2a$10$Gph22Hnr8qSUN4UQK/cAVuMuE0atmKFkKSTLDl2WczS6BQqgGyRPq', 1);
+
 insert into app_user (user_id, user_name, encryted_password, enabled)
-values (1, 'dbadmin', '__ENCRYPTED_PASSWORD__', 1);
+values (1, 'admin', '$2a$10$Gph22Hnr8qSUN4UQK/cAVuMuE0atmKFkKSTLDl2WczS6BQqgGyRPq', 1);
  
----
+
  
 insert into app_role (role_id, role_name)
 values (1, 'ROLE_ADMIN');
@@ -78,7 +77,7 @@ values (1, 'ROLE_ADMIN');
 insert into app_role (role_id, role_name)
 values (2, 'ROLE_USER');
  
----
+
  
 insert into user_role (id, user_id, role_id)
 values (1, 1, 1);
@@ -88,4 +87,3 @@ values (2, 1, 2);
  
 insert into user_role (id, user_id, role_id)
 values (3, 2, 2);
----

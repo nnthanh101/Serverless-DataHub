@@ -5,6 +5,8 @@ import { VpcConstruct } from './vpc-construct';
 import { RDSMySQLConstruct } from './rds-construct';
 import { LoadBalancerConstruct } from './lb-construct';
 import { ElasticBeanstalkConstruct } from './elastic-beanstalk-construct';
+import { CicdPipelineConstruct } from './cicd-pipeline-construct';
+import { Cloud9Construct } from './cloud9-construct';
 
 export class ElasticBeanstalkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -42,20 +44,12 @@ export class ElasticBeanstalkStack extends Stack {
       rdsCredentialPass:   applicationMetaData.RDS_CREDENTIAL_PAWSSWORD,
       rdsDatabaseName:     applicationMetaData.RDS_DATABASE_NAME,
       allocatedStorage:    applicationMetaData.RDS_ALLOCATED_STORAGE,
-      maxAllocatedStorage: applicationMetaData.RDS_MAX_ALLOCATED_STORAGE,
-      // env: {
-      //     account: process.env.AWS_ACCOUNT, 
-      //     region: process.env.AWS_REGION,
-      // }
+      maxAllocatedStorage: applicationMetaData.RDS_MAX_ALLOCATED_STORAGE
     });
 
     /** 3. Application Loadbalancer */
     const loadbalancer =  new LoadBalancerConstruct(this, id + '-LB', {
-      vpc: vpc.vpc,
-      // env: {
-      //     account: process.env.AWS_ACCOUNT, 
-      //     region: process.env.AWS_REGION,
-      // }
+      vpc: vpc.vpc
     });
     
     /** https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html */
@@ -75,7 +69,8 @@ export class ElasticBeanstalkStack extends Stack {
     ];
   
     /** 4. ElasticBeanstalk Tomcat */
-    const elasticBeanstalk = new ElasticBeanstalkConstruct(this, id + '-EB-Tomcat', {
+    const elasticBeanstalk = new ElasticBeanstalkConstruct(this, id + '-EB', {
+      vpc:               vpc.vpc,
       elbApplication:    null,
       albSecurityGroup:  loadbalancer.albSecurityGroup,
       pathSourceZIP:     applicationMetaData.EB_PATH_SOURCE_ZIP,
@@ -83,26 +78,21 @@ export class ElasticBeanstalkStack extends Stack {
       description:       applicationMetaData.EB_DESCRIPTION,
       optionsOthers:     configDynamic,
       pathConfigStatic:  applicationMetaData.EB_PATH_CONFIG_JSON,
-      // env: {
-      //     account: process.env.AWS_ACCOUNT, 
-      //     region:  process.env.AWS_REGION,
-      // }
     });
 
-    /** 
-     * FIXME
-     * 5. CI/CD CodePipeline 
-     */
-    // const cicd = new CiCdPipelineStack(app, applicationMetaData.EB_APP_NAME + '-CicdTomcat', {
-    //      applicationName: elasticBeanstalk.elbApp.applicationName || ''
-    //      , environmentName: elasticBeanstalk.elbEnv.environmentName || ''
-    //      , s3artifact: elasticBeanstalk.s3artifact
-    //      , repoName: 'SpringBootWithTomcat'
-    //      , env: {
-    //         account: process.env.AWS_ACCOUNT_ID, 
-    //         region: process.env.AWS_REGION,
-    //     }
-    // });
-    // cicd.addDependency(elasticBeanstalk);
+    /** 5. CI/CD CodePipeline */
+     
+    const cicd = new CicdPipelineConstruct(this, id + '-Cicd', {
+          applicationName: elasticBeanstalk.elbApp.applicationName || '',
+          environmentName: elasticBeanstalk.elbEnv.environmentName || '',
+          s3artifact:      elasticBeanstalk.s3artifact,
+          repoName:        'SpringBootWithTomcat'
+    });
+    
+    /** 6. Cloud9 Development Environment  */
+     
+    const c9Env = new Cloud9Construct(this, id + '-C9', {
+          vpc: vpc.vpc
+    });
     
   }}

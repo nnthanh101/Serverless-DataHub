@@ -8,23 +8,23 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
  
 @Entity
-@Table(name = "App_User", //
+@Table(name = "APP_USER", //
         uniqueConstraints = { //
-                @UniqueConstraint(name = "APP_USER_UK", columnNames = "User_Name") })
+                @UniqueConstraint(name = "APP_USER_UK", columnNames = "USER_NAME") })
 public class AppUser {
  
     @Id
     @GeneratedValue
-    @Column(name = "User_Id", nullable = false)
+    @Column(name = "USER_ID", nullable = false)
     private Long userId;
  
-    @Column(name = "User_Name", length = 36, nullable = false)
+    @Column(name = "USER_NAME", length = 36, nullable = false)
     private String userName;
  
-    @Column(name = "Encryted_Password", length = 128, nullable = false)
+    @Column(name = "ENCRYTED_PASSWORD", length = 128, nullable = false)
     private String encrytedPassword;
  
-    @Column(name = "Enabled", length = 1, nullable = false)
+    @Column(name = "ENABLED", length = 1, nullable = false)
     private boolean enabled;
  
     public Long getUserId() {
