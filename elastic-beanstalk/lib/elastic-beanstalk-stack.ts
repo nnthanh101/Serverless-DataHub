@@ -14,7 +14,18 @@ export class ElasticBeanstalkStack extends Stack {
 
     // The code that defines your stack goes here
     
-    /** VpcNoNatConstruct: NAT-Gateway == 0 */
+    /** 1.1. VpcConstruct: NAT-Gateway >= 1 */
+    const vpc = new VpcConstruct(this, applicationMetaData.vpcConstructId, {
+        maxAzs: applicationMetaData.maxAzs,
+        cidr: applicationMetaData.cidr,
+        ports: applicationMetaData.publicPorts,
+        natGateways: applicationMetaData.natGateways,
+        useDefaultVpc: applicationMetaData.useDefaultVpc,
+        vpcId: applicationMetaData.vpcId,
+        useExistVpc: applicationMetaData.useExistVpc
+    });
+    
+    /** 1.2. VpcNoNatConstruct: NAT-Gateway == 0 */
     // const vpc = new VpcNoNatConstruct(this, applicationMetaData.vpcConstructId, {
     //   maxAzs: applicationMetaData.maxAzs,
     //   cidr: applicationMetaData.cidr,
@@ -25,18 +36,12 @@ export class ElasticBeanstalkStack extends Stack {
     //   useExistVpc: applicationMetaData.useExistVpc
     // });
     
-    /** VpcConstruct: NAT-Gateway >= 1 */
-    const vpc = new VpcConstruct(this, applicationMetaData.vpcConstructId, {
-        maxAzs: applicationMetaData.maxAzs,
-        cidr: applicationMetaData.cidr,
-        ports: applicationMetaData.publicPorts,
-        natGateways: applicationMetaData.natGateways,
-        useDefaultVpc: applicationMetaData.useDefaultVpc,
-        vpcId: applicationMetaData.vpcId,
-        useExistVpc: applicationMetaData.useExistVpc
+    /** 2. Cloud9 Development Environment  */
+    const c9Env = new Cloud9Construct(this, id + '-C9', {
+          vpc: vpc.vpc
     });
 
-    /** 2. RDS */
+    /** 3. RDS */
     const rdsmysql =  new RDSMySQLConstruct(this, id + '-MysqlRDS', {
       vpc:                 vpc.vpc,
       rdsInstanceName:     applicationMetaData.RDS_INSTANCE_NAME,
@@ -47,7 +52,7 @@ export class ElasticBeanstalkStack extends Stack {
       maxAllocatedStorage: applicationMetaData.RDS_MAX_ALLOCATED_STORAGE
     });
 
-    /** 3. Application Loadbalancer */
+    /** 4. Application Load Balancer */
     const loadbalancer =  new LoadBalancerConstruct(this, id + '-LB', {
       vpc: vpc.vpc
     });
@@ -66,9 +71,12 @@ export class ElasticBeanstalkStack extends Stack {
         ['aws:elasticbeanstalk:environment'            , 'LoadBalancerIsShared'    ,'true'],
         ['aws:elbv2:loadbalancer'                      , 'SharedLoadBalancer'      ,loadbalancer.lb.loadBalancerArn],
         ['aws:elbv2:loadbalancer'                      , 'SecurityGroups'          ,loadbalancer.albSecurityGroup.securityGroupId],
+        /** Config EC2 key-pair to securely log into your EC2 instance. */
+        // ['aws:autoscaling:launchconfiguration'         , 'EC2KeyName'             ,'asg-ec2-keypair'],
+
     ];
   
-    /** 4. ElasticBeanstalk Tomcat */
+    /** 5. ElasticBeanstalk Tomcat */
     const elasticBeanstalk = new ElasticBeanstalkConstruct(this, id + '-EB', {
       vpc:               vpc.vpc,
       elbApplication:    null,
@@ -80,19 +88,13 @@ export class ElasticBeanstalkStack extends Stack {
       pathConfigStatic:  applicationMetaData.EB_PATH_CONFIG_JSON,
     });
 
-    /** 5. CI/CD CodePipeline */
-     
+    /** 6. CI/CD CodePipeline */
     const cicd = new CicdPipelineConstruct(this, id + '-Cicd', {
           applicationName: elasticBeanstalk.elbApp.applicationName || '',
           environmentName: elasticBeanstalk.elbEnv.environmentName || '',
           s3artifact:      elasticBeanstalk.s3artifact,
           repoName:        'SpringBootWithTomcat'
     });
-    
-    /** 6. Cloud9 Development Environment  */
-     
-    const c9Env = new Cloud9Construct(this, id + '-C9', {
-          vpc: vpc.vpc
-    });
+
     
   }}

@@ -17,7 +17,7 @@ public class MainController {
     @RequestMapping(value = { "/", "/welcome" }, method = RequestMethod.GET)
     public String welcomePage(Model model) {
         model.addAttribute("title", "Welcome");
-        model.addAttribute("message", "Welcome page!");
+        model.addAttribute("message", "Welcome to E301 ElasticBeanstalk PaaS!");
         return "welcomePage";
     }
  

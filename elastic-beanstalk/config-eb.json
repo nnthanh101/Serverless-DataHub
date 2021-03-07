@@ -14,11 +14,6 @@
         "optionName": "ProxyServer",
         "value": "apache"
       },
-      { 
-        "namespace": "aws:autoscaling:launchconfiguration",
-        "optionName": "EC2KeyName",
-        "value": "ee-default-keypair"
-      },
       {
         "namespace": "aws:elasticbeanstalk:environment:process:default",
         "optionName": "StickinessEnabled",
@@ -47,7 +42,7 @@
       {
         "namespace": "aws:autoscaling:asg",
         "optionName": "MinSize",
-        "value": "2"
+        "value": "1"
       },
       {
         "namespace": "aws:autoscaling:asg",

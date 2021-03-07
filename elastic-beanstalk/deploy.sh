@@ -115,6 +115,14 @@ cdk deploy --all --require-approval never
 #     echo Table exist!
 # fi
 
+echo
+echo "#########################################################"
+_logger "[+] 2. [Code Commit] Init repository "
+echo "#########################################################"
+echo
+
+./codecommit.sh
+
 ## Danger!!! Cleanup
 # echo "Cleanup ..."
 # cdk destroy --all --require-approval never

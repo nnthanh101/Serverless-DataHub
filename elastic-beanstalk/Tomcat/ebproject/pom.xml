@@ -10,10 +10,10 @@
 	</parent>
 	<groupId>io.job4u</groupId>
 	<artifactId>ebproject</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 	<packaging>war</packaging>
 	<name>ebproject</name>
-	<description>Demo project for Spring Boot</description>
+	<description>SpringBoot Starter</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

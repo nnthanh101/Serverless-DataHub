@@ -29,14 +29,14 @@ export class VpcConstruct extends cdk.Construct {
 
     if (props.useExistVpc === '1') {
       if (props.useDefaultVpc === '1') {
-        this.vpc = Vpc.fromLookup(parent, id + '-VPC', { isDefault: true });
+        this.vpc = Vpc.fromLookup(parent, id, { isDefault: true });
       } else {
         if (props.vpcId) {
-          this.vpc = Vpc.fromLookup(parent, id + '-VPC', { isDefault: false, vpcId: props.vpcId });
+          this.vpc = Vpc.fromLookup(parent, id, { isDefault: false, vpcId: props.vpcId });
         } 
       }
     } else {
-      this.vpc = new Vpc(parent, id + '-VPC', {
+      this.vpc = new Vpc(parent, id, {
         cidr: props.cidr,
         maxAzs: props.maxAzs,
         natGateways: props.natGateways,

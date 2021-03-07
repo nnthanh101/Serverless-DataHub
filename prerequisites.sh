@@ -22,7 +22,7 @@ function prerequisites_with_brew() {
     sudo installer -pkg AWSCLIV2.pkg -target /
     rm ./AWSCLIV2.pkg
 
-    brew install node@14
+    brew install node@12
     sudo npm install -g aws-cdk
 
     ### TODO Installing Python3 & Pip3
@@ -126,7 +126,7 @@ function prerequisites_with_yum() {
 	fi
 
     curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
-    sudo yum install -y nodejs
+    sudo yum install -y nodejs@12
     npm i -g aws-cdk
     
     sudo curl --silent --location -o /usr/local/bin/kubectl \
@@ -145,6 +145,14 @@ function prerequisites_with_yum() {
     installing_k9s
 
     # upgrade_ebs_storage_AmazonLinux
+    
+    sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+    sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+    sudo yum install -y apache-maven
+    
+    sudo yum install java-11-amazon-corretto
+    sudo alternatives --config java #enter the number for corretto 11
+    sudo alternatives --config javac #enter the number for corretto 11
     
     echo "[END][CenOS/RedHat/AmazonLinux] prerequisites_with_yum() ..."
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 export PROJECT_ID=e301
 export AWS_EB_APP_NAME="ELB301"
-export AWS_EB_APP_VERSION="0.0.1"
+export AWS_EB_APP_VERSION="0.1.0"
 
 ## 0. Configuring AWS
 export AWS_PROFILE=default
@@ -18,7 +18,8 @@ if [ $(uname -s) == 'Darwin' ] ; then
     export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
 else
     export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account)
-    export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+    # export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+    export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
 fi
 
 ## 2. AWS Infra: S3, VPC 

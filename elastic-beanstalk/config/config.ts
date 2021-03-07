@@ -13,7 +13,7 @@ export const applicationMetaData = {
   natGateways:         1,
   publicPorts:         [80, 443],
   vpcId:               "vpc-11111111111111111",
-  vpcConstructId:      "ElasticBeanstalk-VPC",
+  vpcConstructId:      "E301-VPC",
   useExistVpc:         "0",
   useDefaultVpc:       "0",
   
@@ -31,8 +31,8 @@ export const applicationMetaData = {
   EB_APP_VERSION:         process.env.AWS_EB_APP_VERSION        || '',
   EB_PATH_CONFIG_JSON:    process.env.AWS_EB_PATH_CONFIG_JSON   || '',
   EB_PATH_SOURCE_ZIP:     process.env.AWS_EB_PATH_SOURCE_ZIP    || '',
+  /** https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html */
   EB_PLATFORMS:           '64bit Amazon Linux 2 v4.1.6 running Tomcat 8.5 Corretto 11',
-  /**  https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html  */
   EB_DESCRIPTION:         'Application is deployed in Elastic Beanstalk with Tomcat',
   
   // you can change this to the branch of your choice (currently main)
