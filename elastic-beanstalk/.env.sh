@@ -26,6 +26,8 @@ fi
 export AWS_S3_BUCKET=${PROJECT_ID}-${AWS_ACCOUNT}
 # export AWS_S3_BUCKET=${PROJECT_ID}
 
+## Config ACM
+export AWS_ACM_ARN="arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT}:certificate/47f14be9-beaa-4652-a076-0c5bfe0644c2"
 
 ## Config RDS MYSQL
 export AWS_RDS_CREDENTIAL_PAWSSWORD='YOUR_PASSWORD'

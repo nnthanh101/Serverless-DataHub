@@ -54,26 +54,39 @@ export class ElasticBeanstalkStack extends Stack {
 
     /** 4. Application Load Balancer */
     const loadbalancer =  new LoadBalancerConstruct(this, id + '-LB', {
-      vpc: vpc.vpc
+      vpc: vpc.vpc,
+      route53HostedZone:           applicationMetaData.route53HostedZone,
+      route53HostedZoneRecordName: applicationMetaData.route53HostedZoneRecordName,
+      listerPort:                  applicationMetaData.listenerPort,
+      acmArn:                      applicationMetaData.acmArn || '',
+      publicLoadBalancer:          applicationMetaData.publicLoadBalancer
     });
     
     /** https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html */
     const configDynamic = [
-        ['aws:elasticbeanstalk:application:environment', 'JDBC_PWD'                ,applicationMetaData.RDS_CREDENTIAL_PAWSSWORD],
-        ['aws:elasticbeanstalk:application:environment', 'JDBC_UID'                ,applicationMetaData.RDS_CREDENTIAL_USERNAME],
-        ['aws:elasticbeanstalk:application:environment', 'JDBC_CONNECTION_STRING'  ,rdsmysql.jdbcConnection],
+        ['aws:elasticbeanstalk:application:environment'                 , 'JDBC_PWD'                ,applicationMetaData.RDS_CREDENTIAL_PAWSSWORD],
+        ['aws:elasticbeanstalk:application:environment'                 , 'JDBC_UID'                ,applicationMetaData.RDS_CREDENTIAL_USERNAME],
+        ['aws:elasticbeanstalk:application:environment'                 , 'JDBC_CONNECTION_STRING'  ,rdsmysql.jdbcConnection],
         /** Config use VPC */
-        ['aws:ec2:vpc'                                 , 'VPCId'                   ,vpc.vpc.vpcId],
-        ['aws:ec2:vpc'                                 , 'ELBSubnets'              ,vpc.vpc.publicSubnets.map(value => value.subnetId).join(',')],
-        ['aws:ec2:vpc'                                 , 'Subnets'                 ,vpc.vpc.privateSubnets.map(value => value.subnetId).join(',')],
+        ['aws:ec2:vpc'                                                  , 'VPCId'                   ,vpc.vpc.vpcId],
+        ['aws:ec2:vpc'                                                  , 'ELBSubnets'              ,vpc.vpc.publicSubnets.map(value => value.subnetId).join(',')],
+        ['aws:ec2:vpc'                                                  , 'Subnets'                 ,vpc.vpc.privateSubnets.map(value => value.subnetId).join(',')],
         /** Config use Shared Load Balancer */
-        ['aws:elasticbeanstalk:environment'            , 'LoadBalancerType'        ,'application'],
-        ['aws:elasticbeanstalk:environment'            , 'LoadBalancerIsShared'    ,'true'],
-        ['aws:elbv2:loadbalancer'                      , 'SharedLoadBalancer'      ,loadbalancer.lb.loadBalancerArn],
-        ['aws:elbv2:loadbalancer'                      , 'SecurityGroups'          ,loadbalancer.albSecurityGroup.securityGroupId],
+        ['aws:elasticbeanstalk:environment'                             , 'LoadBalancerType'        ,'application'],
+        ['aws:elasticbeanstalk:environment'                             , 'LoadBalancerIsShared'    ,'true'],
+        ['aws:elbv2:loadbalancer'                                       , 'SharedLoadBalancer'      ,loadbalancer.lb.loadBalancerArn],
+        ['aws:elbv2:loadbalancer'                                       , 'SecurityGroups'          ,loadbalancer.albSecurityGroup.securityGroupId],
         /** Config EC2 key-pair to securely log into your EC2 instance. */
         // ['aws:autoscaling:launchconfiguration'         , 'EC2KeyName'             ,'asg-ec2-keypair'],
-
+        /** Config use Route53 */
+        ['aws:elbv2:listenerrule:tomcat'                                , 'HostHeaders'             ,applicationMetaData.route53HostedZoneRecordName + applicationMetaData.route53HostedZone],
+        ['aws:elbv2:listenerrule:tomcat'                                , 'PathPatterns'            ,'/*'],
+        /** Config use SSL port 443 */
+        ['aws:elbv2:listener:443'                                       , 'Rules'                   ,'tomcat,default'],
+        ['aws:elbv2:listener:443'                                       , 'ListenerEnabled'         ,'true'],
+        ['aws:elbv2:listener:443'                                       , 'DefaultProcess'          ,'default'],
+        ['aws:elbv2:listener:80'                                        , 'ListenerEnabled'         ,'false'],
+        ['aws:elbv2:listener:default'                                   , 'ListenerEnabled'         ,'false'],
     ];
   
     /** 5. ElasticBeanstalk Tomcat */

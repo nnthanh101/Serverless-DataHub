@@ -7,15 +7,25 @@ export const applicationMetaData = {
   REGION:      process.env.AWS_REGION,
   BUCKET_NAME: process.env.AWS_S3_BUCKET || '',
   
+  /** Primary Route53 Domain */
+  route53HostedZone:           "aws-study.cyou",
+  route53HostedZoneRecordName: "",
+  
   /** Config VPC */
   cidr:                "10.10.0.0/18",
   maxAzs:              2,
   natGateways:         1,
   publicPorts:         [80, 443],
   vpcId:               "vpc-11111111111111111",
-  vpcConstructId:      "E301-VPC",
+  vpcConstructId:      "E301-VPCConstruct",
   useExistVpc:         "0",
   useDefaultVpc:       "0",
+  
+  /** ApplicationLoadbalancer config */
+  loadBalancerConstructName: "EB-ALBConstruct",
+  listenerPort:              443,
+  publicLoadBalancer:        true,
+  acmArn:                    process.env.AWS_ACM_ARN,
   
   /** Config RDS MySQL */
   RDS_DATABASE_NAME:         process.env.AWS_RDS_DATABASE_NAME                  || '',

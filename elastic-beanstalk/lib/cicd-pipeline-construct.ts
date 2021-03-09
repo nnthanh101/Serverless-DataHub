@@ -59,7 +59,7 @@ export class CicdPipelineConstruct extends Construct {
           build: {
             commands: [
               'mvn install -DskipTests',
-              'mv target/ebproject-0.0.1.war ROOT.war',
+              'mv target/ebproject-0.1.0.war ROOT.war',
             ]
           }
         },

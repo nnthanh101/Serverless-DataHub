@@ -121,8 +121,7 @@ _logger "[+] 2. [Code Commit] Init repository "
 echo "#########################################################"
 echo
 
-## FIXME
-# ./codecommit.sh
+./codecommit.sh
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."
