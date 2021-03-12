@@ -79,14 +79,14 @@ export class ElasticBeanstalkStack extends Stack {
         /** Config EC2 key-pair to securely log into your EC2 instance. */
         // ['aws:autoscaling:launchconfiguration'         , 'EC2KeyName'             ,'asg-ec2-keypair'],
         /** Config use Route53 */
-        ['aws:elbv2:listenerrule:tomcat'                                , 'HostHeaders'             ,applicationMetaData.route53HostedZoneRecordName + applicationMetaData.route53HostedZone],
-        ['aws:elbv2:listenerrule:tomcat'                                , 'PathPatterns'            ,'/*'],
+        // ['aws:elbv2:listenerrule:tomcat'                                , 'HostHeaders'             ,applicationMetaData.route53HostedZoneRecordName + applicationMetaData.route53HostedZone],
+        // ['aws:elbv2:listenerrule:tomcat'                                , 'PathPatterns'            ,'/*'],
         /** Config use SSL port 443 */
-        ['aws:elbv2:listener:443'                                       , 'Rules'                   ,'tomcat,default'],
-        ['aws:elbv2:listener:443'                                       , 'ListenerEnabled'         ,'true'],
-        ['aws:elbv2:listener:443'                                       , 'DefaultProcess'          ,'default'],
-        ['aws:elbv2:listener:80'                                        , 'ListenerEnabled'         ,'false'],
-        ['aws:elbv2:listener:default'                                   , 'ListenerEnabled'         ,'false'],
+        // ['aws:elbv2:listener:443'                                       , 'Rules'                   ,'tomcat,default'],
+        // ['aws:elbv2:listener:443'                                       , 'ListenerEnabled'         ,'true'],
+        // ['aws:elbv2:listener:443'                                       , 'DefaultProcess'          ,'default'],
+        // ['aws:elbv2:listener:80'                                        , 'ListenerEnabled'         ,'false'],
+        // ['aws:elbv2:listener:default'                                   , 'ListenerEnabled'         ,'false'],
     ];
   
     /** 5. ElasticBeanstalk Tomcat */

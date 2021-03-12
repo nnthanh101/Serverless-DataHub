@@ -8,7 +8,7 @@ export const applicationMetaData = {
   BUCKET_NAME: process.env.AWS_S3_BUCKET || '',
   
   /** Primary Route53 Domain */
-  route53HostedZone:           "aws-study.cyou",
+  route53HostedZone:           "",
   route53HostedZoneRecordName: "",
   
   /** Config VPC */
@@ -23,7 +23,7 @@ export const applicationMetaData = {
   
   /** ApplicationLoadbalancer config */
   loadBalancerConstructName: "EB-ALBConstruct",
-  listenerPort:              443,
+  listenerPort:              80,
   publicLoadBalancer:        true,
   acmArn:                    process.env.AWS_ACM_ARN,
   
