@@ -1,5 +1,6 @@
 import * as cdk from '@aws-cdk/core';
 import { Config } from '../config/config';
+import { ApplicationLoadBalancerConstruct } from './alb-construct';
 import { VpcConstruct } from './vpc-construct';
 import { VpcNoNatConstruct } from './vpc-no-nat-construct';
 
@@ -19,7 +20,7 @@ export class EcsFargateStack extends cdk.Stack {
 
     // The code that defines your stack goes here
 
-    /** VpcConstruct: NAT-Gateway >= 1 */
+    /** 1.1. VpcConstruct: NAT-Gateway >= 1 */
     const vpc = new VpcConstruct(this, Config.vpcConstructId, {
       maxAzs:         Config.maxAzs,
       cidr:           Config.cidr,
@@ -39,7 +40,18 @@ export class EcsFargateStack extends cdk.Stack {
     //     useDefaultVpc: Config.useDefaultVpc,
     //     vpcId: Config.vpcId,
     //     useExistVpc: Config.useExistVpc
-    // }); 
+    // });
+    
+    /** 1.2. Application Load Balancer */
+    const applicationLoadBalancer = new ApplicationLoadBalancerConstruct(this,Config.loadBalancerConstructName,{
+      listerPort:                  Config.listenerPort,
+      publicLoadBalancer:          Config.publicLoadBalancer,
+      vpc:                         vpc.vpc,
+      securityGrp:                 vpc.securityGrp,
+      route53HostedZone:           Config.route53HostedZone,
+      route53HostedZoneRecordName: Config.route53HostedZoneRecordName,
+      acmArn:                      Config.acmArn,
+    })
 
   }
 }
