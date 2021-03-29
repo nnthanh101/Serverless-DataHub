@@ -4,6 +4,7 @@ import { ApplicationLoadBalancerConstruct } from './alb-construct';
 import { CiCdPipelineConstruct } from './cicd-pipeline-construct';
 import { EcsFargateClusterConstruct } from './ecs-fargate-cluster-construct';
 import { EcsFargateServiceConstruct } from './ecs-fargate-service-construct';
+import { FargateAutoscalerConstruct } from './fargate-autoscaler-construct';
 import { VpcConstruct } from './vpc-construct';
 import { VpcNoNatConstruct } from './vpc-no-nat-construct';
 
