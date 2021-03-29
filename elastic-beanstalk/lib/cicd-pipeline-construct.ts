@@ -12,6 +12,7 @@ export interface CicdPipelineProps {
   readonly environmentName: string;
   readonly s3artifact: IBucket | null;
   readonly repoName:string;
+  readonly pathBuildSpec:string;
   readonly tags?: {
     [key: string]: string;
   };
@@ -48,29 +49,7 @@ export class CicdPipelineConstruct extends Construct {
         privileged: true,
 
       },
-      buildSpec: BuildSpec.fromObject({
-        version: '0.2',
-        phases: {
-          pre_build: {
-            commands: [
-              'env',
-            ]
-          },
-          build: {
-            commands: [
-              'mvn install -DskipTests',
-              'mv target/ebproject-0.1.0.war ROOT.war',
-            ]
-          }
-        },
-        artifacts: {
-          files: [
-            'ROOT.war',
-            // '.ebextensions/**/*'
-          ],
-
-        }
-      })
+      buildSpec: BuildSpec.fromSourceFilename(props.pathBuildSpec)
     }); 
 
     // ***PIPELINE ACTIONS***

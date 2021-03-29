@@ -15,6 +15,7 @@ import fs = require('fs');
 export interface EBConstructProps {
   readonly vpc: IVpc;
   readonly elbApplication: CfnApplication | null;
+  readonly appName: string;
   readonly albSecurityGroup: SecurityGroup;
   readonly pathSourceZIP: string;
   readonly platforms: string;
@@ -52,10 +53,9 @@ export class ElasticBeanstalkConstruct extends Construct {
     this.s3artifact = elbZipArchive.bucket;
     new CfnOutput(scope, id+'-S3BucketSourceCode', { value: elbZipArchive.s3BucketName })
 
-    const appName = applicationMetaData.EB_APP_NAME;
     if(props.elbApplication === null){
       this.elbApp = new CfnApplication(scope, id+'-Application', {
-        applicationName: appName,
+        applicationName: props.appName,
       });
     }else{
       this.elbApp = props.elbApplication;
@@ -111,7 +111,7 @@ export class ElasticBeanstalkConstruct extends Construct {
     // Create an app version from the S3 asset defined above
     // The S3 "putObject" will occur first before CF generates the template
     this.elbAppVer = new CfnApplicationVersion(scope, id+'-AppVersion', {
-      applicationName: appName,
+      applicationName: props.appName,
       sourceBundle: {
           s3Bucket: elbZipArchive.s3BucketName,
           s3Key: elbZipArchive.s3ObjectKey,
@@ -119,8 +119,8 @@ export class ElasticBeanstalkConstruct extends Construct {
     }); 
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars  aws elasticbeanstalk list-available-solution-stacks (command)
-    this.elbEnv = new CfnEnvironment(scope, id+'-Environment', {
-      environmentName: id+'-Environment',
+    this.elbEnv = new CfnEnvironment(scope, id+'-Env', {
+      environmentName: id+'-Env',
       applicationName: this.elbApp.applicationName||'',
       solutionStackName: props.platforms,
       optionSettings: optionSettingProperties,

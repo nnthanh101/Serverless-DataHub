@@ -33,7 +33,7 @@ echo "[x] Verify CDK":     $(cdk  --version)
 echo "[x] Verify java":    $(java -version)
 echo "[x] Verify maven":   $(mvn  -version)
 
-echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET + $AWS_RDS_CREDENTIAL_PAWSSWORD
+echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET
 currentPrincipalArn=$(aws sts get-caller-identity --query Arn --output text)
 ## Just in case, you are using an IAM role, we will switch the identity from your STS arn to the underlying role ARN.
 currentPrincipalArn=$(sed 's/\(sts\)\(.*\)\(assumed-role\)\(.*\)\(\/.*\)/iam\2role\4/' <<< $currentPrincipalArn)
@@ -70,11 +70,11 @@ cd Tomcat/ebproject
 mvn install -DskipTests
 cd ../..
 
-## FIXME: 
-## Build SpringBoot project for Java + PostgreSQL
-# cd Springboot
-# mvn install -DskipTests
-# cd ..
+
+# Build SpringBoot project for Java + PostgreSQL
+cd Springboot
+mvn install -DskipTests
+cd ..
 
 echo
 echo "#########################################################"
