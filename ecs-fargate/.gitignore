@@ -1,4 +1,9 @@
-*.js
+# *.js
+bin/*.js
+lib/*.js
+config/*.js
+test/*.js
+
 !jest.config.js
 *.d.ts
 node_modules

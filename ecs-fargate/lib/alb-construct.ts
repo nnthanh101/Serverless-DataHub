@@ -106,7 +106,7 @@ export class ApplicationLoadBalancerConstruct extends Construct {
           protocol: ApplicationProtocol.HTTP,
           port: 80,
           open: true,
-           defaultAction: ListenerAction.redirect({protocol: 'HTTP', port: '80',path:'/beantalk/' }),
+           defaultAction: ListenerAction.redirect({protocol: 'HTTP', port: '80',path:'/web/' }),
           //defaultTargetGroups: [targetGrp], 
         });
 

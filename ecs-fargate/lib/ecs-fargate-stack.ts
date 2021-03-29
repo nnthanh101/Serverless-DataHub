@@ -75,7 +75,7 @@ export class EcsFargateStack extends cdk.Stack {
       hostPort:             Config.TgrAllowPort,
       desiredCount:         Config.desiredCount,
       healthCheckPath:      Config.job4uwebHealthCheckPath,
-      priority: 2,          /* => root path must have lowest priority */
+      priority: 1,          /* => root path must have lowest priority */
       pathPattern:          Config.job4uwebPathPattern, 
       // noNatVpc:false /** => set to true if use VpcNoNatConstruct for service's vpc */
       noNatVpc:true     /** Provision the EcsFargateService in Public Subnet */
