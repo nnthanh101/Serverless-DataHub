@@ -46,4 +46,24 @@ export const Config = {
       /** CI/CD Pipeline */
       CicdPipelineConstructId:     "CICD-Pipeline",
       dockerUsername:              "nnthanh101",
+
+      /** Scaler Config */
+      FargateAutoscalerConstructId:"Fargate-Auto-Scaler",
+      minCapacity: 1,
+      maxCapacity: 5,
+      
+      /** Scale Out Action Config */
+      scaleOutAvgPeriod: 60,  /** second */
+      scaleOutAvgNumber: 500, /** quantity number */
+
+      /** Scale In Action Config */
+      scaleInAvgPeriod:  300, /** second */
+      scaleInAvgNumber:  100, /** quantity number */
+    
+      cpuTargetValue:    60,  /** CPU   (%) */
+      memoryTargetValue: 80,  /** Memory(%) */
+
+      /** minutes between scaling actions */
+      scaleInCooldown:   10,  /** minutes */
+      scaleOutCooldown:  1,   /** minutes */
 }

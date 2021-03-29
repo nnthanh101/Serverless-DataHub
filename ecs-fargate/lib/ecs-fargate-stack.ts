@@ -93,5 +93,22 @@ export class EcsFargateStack extends cdk.Stack {
         repoName:       Config.job4uwebRepoName
     });
 
+    /** Step 5. ECS AutoScaler */
+     const job4UWebAutoScaler = new FargateAutoscalerConstruct(this,"Job4U-Web"+Config.FargateAutoscalerConstructId,{
+      cluster:   ecsFargateCluster.cluster,
+      ecsService:job4UWeb.fgservice,  
+      maxCapacity:      Config.maxCapacity,
+      minCapacity:      Config.minCapacity,
+      cpuTargetValue:   Config.cpuTargetValue,
+      memoryTargetValue:Config.memoryTargetValue,
+      scaleInCooldown:  Config.scaleInCooldown,
+      scaleOutCooldown: Config.scaleOutCooldown,
+      alb:              applicationLoadBalancer.alb,
+      scaleOutAvgPeriod:Config.scaleOutAvgPeriod,
+      scaleOutAvgNumber:Config.scaleOutAvgNumber,
+      scaleInAvgPeriod: Config.scaleInAvgPeriod,
+      scaleInAvgNumber: Config.scaleInAvgNumber
+    });
+
   }
 }
