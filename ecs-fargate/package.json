@@ -23,6 +23,7 @@
   "dependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.95.1",
     "@aws-cdk/aws-ec2": "^1.95.1",
+    "@aws-cdk/aws-ecs": "^1.95.1",
     "@aws-cdk/aws-elasticloadbalancingv2": "^1.95.1",
     "@aws-cdk/aws-route53": "^1.95.1",
     "@aws-cdk/aws-route53-targets": "^1.95.1",

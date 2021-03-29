@@ -1,6 +1,8 @@
 import * as cdk from '@aws-cdk/core';
 import { Config } from '../config/config';
 import { ApplicationLoadBalancerConstruct } from './alb-construct';
+import { EcsFargateClusterConstruct } from './ecs-fargate-cluster-construct';
+import { EcsFargateServiceConstruct } from './ecs-fargate-service-construct';
 import { VpcConstruct } from './vpc-construct';
 import { VpcNoNatConstruct } from './vpc-no-nat-construct';
 
@@ -20,7 +22,7 @@ export class EcsFargateStack extends cdk.Stack {
 
     // The code that defines your stack goes here
 
-    /** 1.1. VpcConstruct: NAT-Gateway >= 1 */
+    /** Step 1. VpcConstruct: NAT-Gateway >= 1 */
     const vpc = new VpcConstruct(this, Config.vpcConstructId, {
       maxAzs:         Config.maxAzs,
       cidr:           Config.cidr,
@@ -31,7 +33,7 @@ export class EcsFargateStack extends cdk.Stack {
       useExistVpc:    Config.useExistVpc
     });
 
-    /** VpcNoNatConstruct: NAT-Gateway == 0 */
+    /** Step 1*. VpcNoNatConstruct: NAT-Gateway == 0 */
     // const vpc = new VpcNoNatConstruct(this, Config.vpcConstructId, {
     //     maxAzs: Config.maxAzs,
     //     cidr: Config.cidr,
@@ -42,7 +44,7 @@ export class EcsFargateStack extends cdk.Stack {
     //     useExistVpc: Config.useExistVpc
     // });
     
-    /** 1.2. Application Load Balancer */
+    /** Step 2. Application Load Balancer */
     const applicationLoadBalancer = new ApplicationLoadBalancerConstruct(this,Config.loadBalancerConstructName,{
       listerPort:                  Config.listenerPort,
       publicLoadBalancer:          Config.publicLoadBalancer,
@@ -52,6 +54,31 @@ export class EcsFargateStack extends cdk.Stack {
       route53HostedZoneRecordName: Config.route53HostedZoneRecordName,
       acmArn:                      Config.acmArn,
     })
+
+    /** Step 3.1. ECS Cluster */
+    const ecsFargateCluster = new EcsFargateClusterConstruct(this, Config.ecsClusterConstructName, {
+      vpc:         vpc.vpc,
+      // allowPort:   Config.TgrAllowPort,
+      clusterName: Config.clusterName, 
+      containerInsights:           true
+    });
+
+    /** Step 3.2. ECS Service & Task */
+    const job4UWeb = new EcsFargateServiceConstruct(this,"Job4U-Web"+ Config.ecsServiceConstructName, {
+      alb: applicationLoadBalancer.alb,
+      vpc: vpc.vpc,
+      loadBalancerListener: applicationLoadBalancer.loadBalancerListener,
+      cluster:              ecsFargateCluster.cluster,
+      codelocation:         Config.job4uwebCodeLocation,
+      containerPort:        Config.containerPort,
+      hostPort:             Config.TgrAllowPort,
+      desiredCount:         Config.desiredCount,
+      healthCheckPath:      Config.job4uwebHealthCheckPath,
+      priority: 2,          /* => root path must have lowest priority */
+      pathPattern:          Config.job4uwebPathPattern, 
+      // noNatVpc:false /** => set to true if use VpcNoNatConstruct for service's vpc */
+      noNatVpc:true     /** Provision the EcsFargateService in Public Subnet */
+    });
 
   }
 }

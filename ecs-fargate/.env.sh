@@ -37,6 +37,6 @@ export AWS_S3_BUCKET=${PROJECT_ID}-${AWS_ACCOUNT}
 # export DOCKER_REGISTRY_EMAIL=nnthanh101@gmail.com
 
 ## 3. CodeCommit
-# export Job4UWebRepo="Job4U-Web"
+export Job4UWebRepo="Job4U-Web"
 # export Job4UCrawlRepo="Job4U-Crawl"
 # export Job4USyncRepo="Job4U-Sync"
