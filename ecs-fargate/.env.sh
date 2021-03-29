@@ -2,7 +2,7 @@
 export PROJECT_ID=ecs-fargate
 
 ## 1.1. Configuring AWS
-export AWS_PROFILE=default
+export AWS_PROFILE=nnthanh
 
 ## 1.2. AWS Account & Region
 if [ $(uname -s) == 'Darwin' ] ; then
@@ -16,21 +16,18 @@ fi
 
 ## 2.1. AWS Infra: S3, VPC 
 export AWS_S3_BUCKET=${PROJECT_ID}-${AWS_ACCOUNT}
-# export AWS_S3_BUCKET=${PROJECT_ID}
-export AWS_VPC_NAME=${PROJECT_ID}-VPC
-export AWS_VPC_CIDR="10.10.0.0/18"
 
-export AWS_CDK_STACK="EcsFargateStack"
+# export AWS_CDK_STACK="EcsFargateStack"
 # export RDS_DATABASE_STACK='RDS-DB-Stack'
 # export RDS_DATABASE_NAME='RDS-DB'
 # export EFS_STACK='EFS-Stack'
 
 ## 2.2. Configuring ECR
-export CONTAINER_REGISTRY_URL=${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
-export ECR_REPOSITORY_JOB4U_WEB=job4u-web
-export ECR_REPOSITORY_JOB4U_CRAWL=job4u-crawl
-export ECR_REPOSITORY_JOB4U_SYNC=job4u-sync
-export ECR_REPOSITORY=${ECR_REPOSITORY_JOB4U_WEB}
+# export CONTAINER_REGISTRY_URL=${AWS_ACCOUNT}.dkr.ecr.${AWS_REGION}.amazonaws.com
+# export ECR_REPOSITORY_JOB4U_WEB=job4u-web
+# export ECR_REPOSITORY_JOB4U_CRAWL=job4u-crawl
+# export ECR_REPOSITORY_JOB4U_SYNC=job4u-sync
+# export ECR_REPOSITORY=${ECR_REPOSITORY_JOB4U_WEB}
 
 ## 2.3. Configuring DockerHub
 # export DOCKER_REGISTRY_NAMESPACE=nnthanh101
@@ -40,6 +37,6 @@ export ECR_REPOSITORY=${ECR_REPOSITORY_JOB4U_WEB}
 # export DOCKER_REGISTRY_EMAIL=nnthanh101@gmail.com
 
 ## 3. CodeCommit
-export Job4UWebRepo="Job4U-Web"
-export Job4UCrawlRepo="Job4U-Crawl"
-export Job4USyncRepo="Job4U-Sync"
+# export Job4UWebRepo="Job4U-Web"
+# export Job4UCrawlRepo="Job4U-Crawl"
+# export Job4USyncRepo="Job4U-Sync"
