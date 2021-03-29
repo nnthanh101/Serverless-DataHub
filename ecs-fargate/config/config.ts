@@ -42,4 +42,8 @@ export const Config = {
       job4uwebHealthCheckPath:    "/web/",
       job4uwebPathPattern:        "/web/*",
       job4uwebRepoName:           process.env.Job4UWebRepo+"",
+
+      /** CI/CD Pipeline */
+      CicdPipelineConstructId:     "CICD-Pipeline",
+      dockerUsername:              "nnthanh101",
 }

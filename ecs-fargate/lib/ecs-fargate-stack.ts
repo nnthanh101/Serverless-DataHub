@@ -1,6 +1,7 @@
 import * as cdk from '@aws-cdk/core';
 import { Config } from '../config/config';
 import { ApplicationLoadBalancerConstruct } from './alb-construct';
+import { CiCdPipelineConstruct } from './cicd-pipeline-construct';
 import { EcsFargateClusterConstruct } from './ecs-fargate-cluster-construct';
 import { EcsFargateServiceConstruct } from './ecs-fargate-service-construct';
 import { VpcConstruct } from './vpc-construct';
@@ -78,6 +79,18 @@ export class EcsFargateStack extends cdk.Stack {
       pathPattern:          Config.job4uwebPathPattern, 
       // noNatVpc:false /** => set to true if use VpcNoNatConstruct for service's vpc */
       noNatVpc:true     /** Provision the EcsFargateService in Public Subnet */
+    });
+
+    /** Step 4. CI/CD Pipeline */
+    const job4UWebCicdPipeline = new CiCdPipelineConstruct(this,"Job4U-Web" + Config.CicdPipelineConstructId,{
+        clusterName:    ecsFargateCluster.cluster.clusterName,
+        ecsService:     job4UWeb.fgservice,
+        containerName:  job4UWeb.containerName,
+        dockerUsername: Config.dockerUsername,
+        // dockerCredentialSecretArn: Config.dockerCredentialSecretArn,
+        // runtimeEnv:                Config.runtimeEnv,
+        s3artifact:     ecsFargateCluster.s3artifact,
+        repoName:       Config.job4uwebRepoName
     });
 
   }
