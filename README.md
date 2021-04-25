@@ -18,7 +18,7 @@ Building Modern Applications >> to build modern cloud-native applications that a
 Module | Feature | Description
 ------------ | ------------- | -------------
 [1](./s3-website/README.md) | **[Cloud Developer & SPA CDK-Patterns](https://www.facebook.com/groups/modernapps/permalink/794258977836330/)** | Infrastructure as Code (**IaC**) and Application Infrastructure using the AWS Cloud Development Kit (**CDK**) and/or HashiCorp **Terraform**.
-[2](./elasticbeanstalk/README.md) | **AWS ElasticBeanstalk** | Deploy, Scale and Modernize Web Applications using Platform as a Service (**PaaS**).
+[2](./elasticbeanstalk/README.md) | **[AWS ElasticBeanstalk](https://www.facebook.com/groups/modernapps/permalink/796401030955458/)** | Deploy, Scale and Modernize Web Applications using Platform as a Service (**PaaS**).
 [3](./ecs-fargate/README.md) | **Amazon ECS Fargate** | Simplified the task of running Docker Container securely, at scale.
 [4](./eks/README.md) | **Amazon EKS & K8s** | Enterprise-class platform to run production-grade **Kubernetes** workloads.
 [5](./docker/README.md) | **Docker DevSecOps** | Docker **CI/CD pipeline** & open-source **security vulnerability scanning** tools.
