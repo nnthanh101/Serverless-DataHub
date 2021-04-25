@@ -10,9 +10,8 @@ Building Modern Applications >> to build modern cloud-native applications that a
 
 ## Prerequisites
 
-* [x] [🌥 AWS Free Tier](https://aws.amazon.com/free)
-* [x] [🚀 Get READY](https://devsecops.job4u.io/en/prerequisites)
-* [ ] Setup the development environment
+* [x] [🚀 Get READY](https://devsecops.job4u.io/en/prerequisites) || [🌥 AWS Free Tier](https://aws.amazon.com/free)
+* [x] Setup the development environment: [Cloud9-IDE](https://devsecops.job4u.io/en/prerequisites/bootstrap/)
 
 ## Building Modern Applications
 
