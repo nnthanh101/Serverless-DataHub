@@ -2,7 +2,7 @@
 
 ```
 git submodule init && git submodule update --checkout --recursive
-# ls elastic-beanstalk/projects/spring-petclinic
+# ls elastic-beanstalk/projects/springboot
 
 ./mvnw package
 

@@ -1,3 +1,3 @@
-[submodule "elastic-beanstalk/projects/spring-petclinic"]
-	path = elastic-beanstalk/projects/spring-petclinic
+[submodule "elastic-beanstalk/projects/springboot"]
+	path = elastic-beanstalk/projects/springboot
 	url = https://github.com/spring-projects/spring-petclinic.git

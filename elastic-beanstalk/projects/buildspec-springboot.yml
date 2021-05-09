@@ -1,0 +1,14 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+	    # - git submodule init && git submodule update --checkout --recursive
+      - echo Build started on `date`
+      - echo Building the jar
+	    - mvn spring-javaformat:apply
+      - mvn package
+      - mv target/spring-petclinic-2.3.0.jar app.jar
+artifacts:
+  files:
+    - app.jar
