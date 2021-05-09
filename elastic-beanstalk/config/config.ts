@@ -18,7 +18,7 @@ export const applicationMetaData = {
   publicPorts:         [80, 443],
   vpcId:               "vpc-11111111111111111",
   vpcConstructId:      "E301-VPCConstruct",
-  useExistVpc:         "0",
+  useExistVpc:         "0", //1: vpcId: __YOUR_EXISTING_VPC__
   useDefaultVpc:       "0",
   
   /** ApplicationLoadbalancer config */
