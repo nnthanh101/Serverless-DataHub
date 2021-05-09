@@ -7,11 +7,9 @@ This pattern provides guidance for **Enterprise Customers migrating on-premises 
 * [x] https://devsecops.job4u.io/en/prerequisites/bootstrap/
 
 ```
-git clone https://github.com/nnthanh101/DevAx -b ElasticBeanstalkPaaS
+git clone https://github.com/nnthanh101/DevAx -b ElasticBeanstalk
 
 cd DevAx
-# git submodule add https://github.com/spring-projects/spring-petclinic.git projects/springboot
-# git submodule init && git submodule update --checkout --recursive
 git clone https://github.com/spring-projects/spring-petclinic.git projects/springboot
 
 cd projects/springboot

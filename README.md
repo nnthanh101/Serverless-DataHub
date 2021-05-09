@@ -4,35 +4,30 @@ This pattern provides guidance for **Enterprise Customers migrating on-premises 
 
 > **E301**: great customer experience: **3 seconds** to reach any feature; **zero** downtime; and **one hour** to deploy code changes into production.
 
-* [x] https://devsecops.job4u.io/en/prerequisites/bootstrap/
+* [x] 0. Installing Cloud9: https://devsecops.job4u.io/en/prerequisites/bootstrap/: `./cloud9.sh`
+
+* [x] 1. Clone DevAx>>ElasticBeanstalk & SpringBoot>>spring-petclinic
 
 ```
-git clone https://github.com/nnthanh101/DevAx -b ElasticBeanstalkPaaS
+git clone https://github.com/nnthanh101/DevAx -b ElasticBeanstalk
 
 cd DevAx
-# git submodule add https://github.com/spring-projects/spring-petclinic.git elastic-beanstalk/projects/spring-petclinic
-git submodule init && git submodule update --checkout --recursive
+git clone https://github.com/spring-projects/spring-petclinic.git projects/springboot
+```
 
-cd elastic-beanstalk/projects/spring-petclinic
-# ls
+* [x] 2. Local Development
+
+```
+cd projects/spring-boot
 ./mvnw package
 
 java -jar target/*.jar
-
-# ./mvnw spring-boot:run
 ```
 
-```
-mkdir elastic-beanstalk
-cd elastic-beanstalk
-
-cdk init --language typescript
-```
+* [x] 3. Deploy to AWS Cloud
 
 ```
-# git submodule add https://github.com/spring-projects/spring-petclinic.git elastic-beanstalk/projects/spring-petclinic
-
-git submodule init && git submodule update --checkout --recursive
+./deploy.sh
 ```
 
 ### 1. ElasticBeanstalk Architecture:
@@ -120,3 +115,10 @@ The steps required to add Continuous Integration and Continuous  Delivery (CI/CD
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
+
+### Submodule
+
+```
+# git submodule add https://github.com/spring-projects/spring-petclinic.git elastic-beanstalk/projects/spring-boot
+# git submodule init && git submodule update --checkout --recursive
+```
