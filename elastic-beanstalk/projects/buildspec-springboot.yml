@@ -3,12 +3,16 @@ version: 0.2
 phases:
   build:
     commands:
-	    # - git submodule init && git submodule update --checkout --recursive
+      - cd springboot/
       - echo Build started on `date`
       - echo Building the jar
-	    - mvn spring-javaformat:apply
+      - mvn spring-javaformat:apply
       - mvn package
-      - mv target/spring-petclinic-2.3.0.jar app.jar
+      - cd ..
+      - mv springboot/target/spring-petclinic-2.4.5.jar application.jar
 artifacts:
   files:
-    - app.jar
+    - application.jar
+cache:
+  paths:
+  - '/root/.m2/**/*'

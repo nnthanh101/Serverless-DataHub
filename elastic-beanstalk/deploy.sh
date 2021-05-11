@@ -46,9 +46,13 @@ _logger "[+] 1. [SpringBoot] Build war and jar"
 echo "#########################################################"
 echo
 
-git clone https://github.com/spring-projects/spring-petclinic.git projects/springboot
+
+git clone https://github.com/spring-projects/spring-petclinic.git projects/springboot 2> /dev/null || (echo No thing!)
 cd projects/springboot
-./mvnw package
+mvn spring-javaformat:apply
+mvn package
+
+cd ../..
 ## DEBUG
 # java -jar target/*.jar
 
@@ -70,7 +74,7 @@ echo
 
 echo
 echo "#########################################################"
-_logger "[+] 2. [AWS Infrastructure] S3, VPC, Cloud9"
+_logger "[+] 3. [AWS Infrastructure] S3, VPC, Cloud9"
 echo "#########################################################"
 echo
 
@@ -113,7 +117,7 @@ _logger "[+] 2. [Code Commit] Init repository "
 echo "#########################################################"
 echo
 
-# ./codecommit.sh
+./codecommit.sh
 
 ## Danger!!! Cleanup
 # echo "Cleanup ..."

@@ -6,27 +6,24 @@ https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.4.3
 ├── deploy.sh
 ├── .env.sh
 ├── config
+|  ├── config-eb-springboot.json
 |  └── config.ts
 ├── bin
 |  └── elastic-beanstalk.ts
-├── config-eb.json
-├── lib
+├── constructs
 |  ├── vpc-construct.ts
-|  ├── lb-construct.ts
+|  ├── alb-construct.ts
 |  ├── rds-construct.ts
 |  ├── elastic-beanstalk-construct.ts
-|  ├── elastic-beanstalk-stack.ts
 |  ├── cicd-pipeline-construct.ts
 |  ├── cloud9-construct.ts
 |  └── [vpc-no-nat-construct.ts]
+├── lib
+|  ├── code-deploy-eb-action.ts
+|  └── elastic-beanstalk-stack.ts
 ├── test
 |  └── elastic-beanstalk.test.ts
-├── Tomcat
-|  └── ebproject
-|     ├── mvnw
-|     ├── mvnw.cmd
-|     ├── pom.xml
-|     └── src
+├── projects
+|  └── buildspec-springboot
 ├── package.json
-├── Test-Data-MySQL-RDS.sql
 └── README.md

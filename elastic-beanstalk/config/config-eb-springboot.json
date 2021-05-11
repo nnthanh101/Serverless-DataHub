@@ -38,5 +38,15 @@
         "namespace": "aws:autoscaling:launchconfiguration",
         "optionName": "InstanceType",
         "value": "t3.small"
+      },
+      {
+        "namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+        "optionName": "StreamLogs",
+        "value": "true"
+      },
+      {
+        "namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+        "optionName": "DeleteOnTerminate",
+        "value": "true"
       }
 ]

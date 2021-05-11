@@ -1,12 +1,12 @@
-import { StackProps, Stack, Construct, App }  from '@aws-cdk/core';
-import { applicationMetaData }       from '../config/config';
-import { VpcConstruct }              from '../constructs/vpc-construct';
+import { StackProps, Stack, Construct, App }    from '@aws-cdk/core';
+import { applicationMetaData }                  from '../config/config';
+import { VpcConstruct }                         from '../constructs/vpc-construct';
 // import { VpcNoNatConstruct } from './vpc-no-nat-construct';
-import { RDSConstruct }              from '../constructs/rds-construct';
-import { LoadBalancerConstruct }     from '../constructs/lb-construct';
-import { ElasticBeanstalkConstruct } from '../constructs/elastic-beanstalk-construct';
-import { CicdPipelineConstruct }     from '../constructs/cicd-pipeline-construct';
-import { Cloud9Construct }           from '../constructs/cloud9-construct';
+import { RDSConstruct }                         from '../constructs/rds-construct';
+import { ApplicationLoadBalancerConstruct }     from '../constructs/alb-construct';
+import { ElasticBeanstalkConstruct }            from '../constructs/elastic-beanstalk-construct';
+import { CicdPipelineConstruct }                from '../constructs/cicd-pipeline-construct';
+import { Cloud9Construct }                      from '../constructs/cloud9-construct';
 
 export class ElasticBeanstalkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
@@ -55,7 +55,7 @@ export class ElasticBeanstalkStack extends Stack {
     });
 
     /** 4. Application Load Balancer */
-    const loadbalancer =  new LoadBalancerConstruct(this, id + '-LB', {
+    const loadbalancer =  new ApplicationLoadBalancerConstruct(this, id + '-LB', {
       vpc: vpc.vpc,
       route53HostedZone:           applicationMetaData.route53HostedZone,
       route53HostedZoneRecordName: applicationMetaData.route53HostedZoneRecordName,
@@ -71,6 +71,8 @@ export class ElasticBeanstalkStack extends Stack {
         ['aws:elasticbeanstalk:application:environment'                 , 'spring.datasource.password'      ,applicationMetaData.RDS_MYSQL_CREDENTIAL_PAWSSWORD],
         ['aws:elasticbeanstalk:application:environment'                 , 'spring.datasource.username'      ,applicationMetaData.RDS_MYSQL_CREDENTIAL_USERNAME],
         ['aws:elasticbeanstalk:application:environment'                 , 'spring.datasource.url'           ,rdsmysql.jdbcConnection],
+        ['aws:elasticbeanstalk:application:environment'                 , 'spring.datasource.initialize'    ,'yes'],
+        ['aws:elasticbeanstalk:application:environment'                 , 'spring.profiles.active'          ,'mysql'],
         ['aws:elasticbeanstalk:application:environment'                 , 'SERVER_PORT'                     ,'5000'],
         /** Config use VPC */
         ['aws:ec2:vpc'                                                  , 'VPCId'                           ,vpc.vpc.vpcId],
