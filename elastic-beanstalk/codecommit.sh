@@ -12,6 +12,8 @@ else
     git clone $CodeCommit_URL $DIR
     cp -a ${WORKING_DIR}/projects/* $DIR/ ; rm -rf $DIR/springboot/target ; rm -rf $DIR/springboot/.git
 
+    yes | cp -i ${WORKING_DIR}/source/welcome.html $DIR/springboot/src/main/resources/templates/
+    
     cd $DIR &&           \
     git add . &&           \
     git commit -m "🚀 CI/CD Pipeline >> First Commit" &&           \

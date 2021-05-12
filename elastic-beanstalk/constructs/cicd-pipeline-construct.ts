@@ -1,6 +1,6 @@
 import { CfnOutput, Construct } from "@aws-cdk/core";
 import { Repository } from "@aws-cdk/aws-codecommit";
-import { Project, Source, LinuxBuildImage, BuildSpec } from "@aws-cdk/aws-codebuild";
+import { Project, Source, LinuxBuildImage, BuildSpec, Cache } from "@aws-cdk/aws-codebuild";
 import { Artifact, Pipeline } from "@aws-cdk/aws-codepipeline";
 import { CodeCommitSourceAction, CodeBuildAction, ManualApprovalAction } from "@aws-cdk/aws-codepipeline-actions";
 import { PolicyStatement } from "@aws-cdk/aws-iam";
@@ -32,9 +32,7 @@ export class CicdPipelineConstruct extends Construct {
     
     // ***CodeCommit Contructs***
     const codecommitRepo = new Repository(scope, props.repoName, { repositoryName: props.repoName });
-
     
-
     // ***CodeBuild Contructs***  
     const project = new Project(scope, name + '-Project', {
       projectName: name + '-Project',
@@ -49,7 +47,11 @@ export class CicdPipelineConstruct extends Construct {
         privileged: true,
 
       },
-      buildSpec: BuildSpec.fromSourceFilename(props.pathBuildSpec)
+      // buildSpec: BuildSpec.fromSourceFilename(props.pathBuildSpec)
+      buildSpec: BuildSpec.fromSourceFilename(props.pathBuildSpec),
+      cache: Cache.bucket(this.s3artifact, {
+        prefix: 'caches/codebuild/' + name + '-Project'
+      })
     }); 
 
     // ***PIPELINE ACTIONS***
