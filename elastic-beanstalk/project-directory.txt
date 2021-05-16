@@ -1,0 +1,29 @@
+cdk init --language typescript
+
+https://start.spring.io/#!type=maven-project&language=java&platformVersion=2.4.3.RELEASE&packaging=jar&jvmVersion=11&groupId=io.job4u&artifactId=ebproject&name=ebproject&description=SpringBoot%20Starter&packageName=io.job4u.ebproject
+
+/modernapps/elastic-beanstalk
+├── deploy.sh
+├── .env.sh
+├── config
+|  ├── config-eb-springboot.json
+|  └── config.ts
+├── bin
+|  └── elastic-beanstalk.ts
+├── constructs
+|  ├── vpc-construct.ts
+|  ├── alb-construct.ts
+|  ├── rds-construct.ts
+|  ├── elastic-beanstalk-construct.ts
+|  ├── cicd-pipeline-construct.ts
+|  ├── cloud9-construct.ts
+|  └── [vpc-no-nat-construct.ts]
+├── lib
+|  ├── code-deploy-eb-action.ts
+|  └── elastic-beanstalk-stack.ts
+├── test
+|  └── elastic-beanstalk.test.ts
+├── projects
+|  └── buildspec-springboot
+├── package.json
+└── README.md
