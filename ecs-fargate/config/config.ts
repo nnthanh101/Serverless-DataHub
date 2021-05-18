@@ -38,19 +38,19 @@ export const Config = {
       TgrAllowPort:        80,  // PROTOCOL PORT, EX: HTTP-80,HTTPS-443
 
       /** [React >> SEO] Job4U-Web Config */
-      job4uWebCodeLocation:       "projects/job4u-web", 
+      job4uWebCodeLocation:       "../projects/job4u-web", 
       job4uWebHealthCheckPath:    "/",
       job4uWebPathPattern:        "/*",
       job4uWebRepoName:           process.env.Job4UWebRepo+"",
 
       /** [Node.js] Job4U-Byod Config */
-      job4UByodCodeLocation:       "projects/job4u-byod", 
+      job4UByodCodeLocation:       "../projects/job4u-byod", 
       job4UByodHealthCheckPath:    "/crawl/",
       job4UByodPathPattern:        "/crawl/*",
       job4UByodRepoName:           process.env.Job4UByodRepo+"",
 
       /** [SpringBoot] SpringBoot Config */
-      // springbootCodeLocation:       "projects/springboot", 
+      // springbootCodeLocation:       "../projects/springboot", 
       // springbootHealthCheckPath:    "/springboot/",
       // springbootPathPattern:        "/springboot/*",
       // springbootRepoName:           process.env.SpringbootRepo+"",

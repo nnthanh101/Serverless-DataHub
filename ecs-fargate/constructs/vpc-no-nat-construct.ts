@@ -50,7 +50,7 @@ export class VpcNoNatConstruct extends Construct {
             cidrMask: 24, 
           }, 
           {
-            name: 'PRIVATE',
+            name: 'ISOLATED',
             subnetType: SubnetType.ISOLATED, 
             cidrMask: 28,
           },

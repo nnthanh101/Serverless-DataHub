@@ -46,54 +46,55 @@ export class EcsFargateStack extends Stack {
         useDefaultVpc: Config.useDefaultVpc,
         vpcId:         Config.vpcId,
         useExistVpc:   Config.useExistVpc
-    }).vpc;
+    // }).vpc;
+    });
 
     /**
      * FIXME: Interface VPC Endpoint: SSM, API-Gateway, ...
      * @see InterfaceVpcEndpointAwsService
      */
 
-    /** [Interface VPC Endpoint] >> SSM */
-    const ssmVPCEndpoint = new VpcEndpointConstruct(this, id + "ssmvpce", {
-      service: {
-        name:             `com.amazonaws.${Stack.of(this).region}.ssm`,
-        port:             22
-      },
-      vpc:                vpc,
-      lookupSupportedAzs: true,
-      open:               true,
-      privateDnsEnabled:  true,
-      subnets: {
-        subnetType:       SubnetType.ISOLATED,
-        onePerAz:         true
-      }
-    });
+    // /** [Interface VPC Endpoint] >> SSM */
+    // const ssmVPCEndpoint = new VpcEndpointConstruct(this, id + "ssmvpce", {
+    //   service: {
+    //     name:             `com.amazonaws.${Stack.of(this).region}.ssm`,
+    //     port:             22
+    //   },
+    //   vpc:                vpc,
+    //   lookupSupportedAzs: true,
+    //   open:               true,
+    //   privateDnsEnabled:  true,
+    //   subnets: {
+    //     subnetType:       SubnetType.ISOLATED,
+    //     onePerAz:         true
+    //   }
+    // });
 
-    /** [Interface VPC Endpoint] >> SSM Messages */
-    const ssmMessagesVPCE = new VpcEndpointConstruct(this, id + "ssmmessagesvpce", {
-      service: {
-        name:             `com.amazonaws.${Stack.of(this).region}.ssmmessages`,
-        port:             22
-      },
-      vpc:                vpc,
-      lookupSupportedAzs: true,
-      open:               true,
-      privateDnsEnabled:  true,
-      subnets: {
-        subnetType:       SubnetType.ISOLATED,
-        onePerAz:         true
-      }
-    });
+    // /** [Interface VPC Endpoint] >> SSM Messages */
+    // const ssmMessagesVPCE = new VpcEndpointConstruct(this, id + "ssmmessagesvpce", {
+    //   service: {
+    //     name:             `com.amazonaws.${Stack.of(this).region}.ssmmessages`,
+    //     port:             22
+    //   },
+    //   vpc:                vpc,
+    //   lookupSupportedAzs: true,
+    //   open:               true,
+    //   privateDnsEnabled:  true,
+    //   subnets: {
+    //     subnetType:       SubnetType.ISOLATED,
+    //     onePerAz:         true
+    //   }
+    // });
 
-    /** [Interface VPC Endpoint] >> API-Gateway */
-    const vpce = new InterfaceVpcEndpoint(this, 'VPC Private Interface Endpoint', {
-      service: InterfaceVpcEndpointAwsService.APIGATEWAY,
-      vpc: vpc,
-      privateDnsEnabled: true,
-      subnets: vpc.selectSubnets({
-          subnetType: SubnetType.ISOLATED
-      })
-    })
+    // /** [Interface VPC Endpoint] >> API-Gateway */
+    // const vpce = new InterfaceVpcEndpoint(this, 'VPC Private Interface Endpoint', {
+    //   service: InterfaceVpcEndpointAwsService.APIGATEWAY,
+    //   vpc: vpc,
+    //   privateDnsEnabled: true,
+    //   subnets: vpc.selectSubnets({
+    //       subnetType: SubnetType.ISOLATED
+    //   })
+    // })
     
     /** Step 2. Application Load Balancer */
     const applicationLoadBalancer = new ApplicationLoadBalancerConstruct(this,Config.loadBalancerConstructName,{
