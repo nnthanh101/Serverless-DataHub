@@ -72,13 +72,13 @@ export class EcsFargateStack extends cdk.Stack {
       vpc: vpc.vpc,
       loadBalancerListener: applicationLoadBalancer.loadBalancerListener,
       cluster:              ecsFargateCluster.cluster,
-      codelocation:         Config.job4uwebCodeLocation,
+      codelocation:         Config.job4uWebCodeLocation,
       containerPort:        Config.containerPort,
       hostPort:             Config.TgrAllowPort,
       desiredCount:         Config.desiredCount,
-      healthCheckPath:      Config.job4uwebHealthCheckPath,
+      healthCheckPath:      Config.job4uWebHealthCheckPath,
       priority: 1,          /* => root path must have lowest priority */
-      pathPattern:          Config.job4uwebPathPattern, 
+      pathPattern:          Config.job4uWebPathPattern, 
       // noNatVpc:false /** => set to true if use VpcNoNatConstruct for service's vpc */
       noNatVpc:true     /** Provision the EcsFargateService in Public Subnet */
     });
@@ -92,7 +92,7 @@ export class EcsFargateStack extends cdk.Stack {
         // dockerCredentialSecretArn: Config.dockerCredentialSecretArn,
         // runtimeEnv:                Config.runtimeEnv,
         s3artifact:     ecsFargateCluster.s3artifact,
-        repoName:       Config.job4uwebRepoName
+        repoName:       Config.job4uWebRepoName
     });
 
     /** Step 5. ECS AutoScaler */

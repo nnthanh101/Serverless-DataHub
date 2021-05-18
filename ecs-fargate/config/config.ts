@@ -34,13 +34,13 @@ export const Config = {
       taskmemoryLimitMiB:  512,
       taskCPU:             256,
       desiredCount:        1, 
-      containerPort:       3000,
+      containerPort:       5000,
       TgrAllowPort:        80,  // PROTOCOL PORT, EX: HTTP-80,HTTPS-443
 
       /** [React >> SEO] Job4U-Web Config */
       job4uWebCodeLocation:       "projects/job4u-web", 
-      job4uWebHealthCheckPath:    "/web/",
-      job4uWebPathPattern:        "/web/*",
+      job4uWebHealthCheckPath:    "/",
+      job4uWebPathPattern:        "/*",
       job4uWebRepoName:           process.env.Job4UWebRepo+"",
 
       /** [Node.js] Job4U-Crawl Config */

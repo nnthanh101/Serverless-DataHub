@@ -1,5 +1,5 @@
 {
-	"name": "job4u-crawl",
+	"name": "job4u-byod",
 	"version": "1.0.1",
 	"main": "src/index.js",
 	"scripts": {
