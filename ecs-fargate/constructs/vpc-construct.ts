@@ -88,9 +88,9 @@ export class VpcConstruct extends cdk.Construct {
     //   }
     // });
 
-    new cdk.CfnOutput(this, 'VpcId', {
+    new cdk.CfnOutput(this, 'VpcId' + id, {
       value: this.vpc.vpcId,
-      exportName: 'VpcId'
+      exportName: 'VpcId' + id
     })
     
   }

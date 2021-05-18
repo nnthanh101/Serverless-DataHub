@@ -1,4 +1,4 @@
-import * as cdk from "@aws-cdk/core";
+import { Construct, CfnOutput } from "@aws-cdk/core";
 import {Vpc ,IVpc,SecurityGroup,SubnetType,GatewayVpcEndpointAwsService } from "@aws-cdk/aws-ec2";
 
 export interface VpcConstructProps  {
@@ -15,16 +15,18 @@ export interface VpcConstructProps  {
 }
 
 /** 
- * Creating VPC Without NAT Gateway 
+ * Creating simple & cost-effective VPC: without NAT Gateway + VPC-ENdpoints
  * 
- * This required only use PublicSubnet because PrivateSubnet and IsolatedSubnet automatically create NAT Gateway
+ * This required only use PublicSubnet & IsolatedSubnet; because PrivateSubnet automatically create NAT Gateway!
+ * 
+ * Gateway VPC Endpoint: S3, DynamoDB
  * 
  */
-export class VpcNoNatConstruct extends cdk.Construct {
+export class VpcNoNatConstruct extends Construct {
   public readonly vpc: IVpc;
   readonly securityGrp: SecurityGroup;
  
-  constructor(parent: cdk.Construct, id: string, props: VpcConstructProps) {
+  constructor(parent: Construct, id: string, props: VpcConstructProps) {
     super(parent, id );
 
     if (props.useExistVpc === '1') {
@@ -46,8 +48,12 @@ export class VpcNoNatConstruct extends cdk.Construct {
             name: 'PUBLIC',
             subnetType: SubnetType.PUBLIC,
             cidrMask: 24, 
-            
           }, 
+          {
+            name: 'PRIVATE',
+            subnetType: SubnetType.ISOLATED, 
+            cidrMask: 28,
+          },
         ],
         gatewayEndpoints: {
           S3: {
@@ -84,7 +90,7 @@ export class VpcNoNatConstruct extends cdk.Construct {
     //   }
     // });
 
-    new cdk.CfnOutput(this, 'VpcId' + id, {
+    new CfnOutput(this, 'VpcId' + id, {
       value: this.vpc.vpcId,
       exportName: 'VpcId' + id
     })

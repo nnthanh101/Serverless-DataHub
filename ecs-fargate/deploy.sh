@@ -23,8 +23,8 @@ echo "[x] Verify AWS CLI": $(aws  --version)
 echo "[x] Verify git":     $(git  --version)
 echo "[x] Verify jq":      $(jq   --version)
 echo "[x] Verify nano":    $(nano --version)
-echo "[x] Verify Docker":  $(docker version)
-echo "[x] Verify Docker Deamon":  $(docker ps -q)
+# echo "[x] Verify Docker":  $(docker version)
+# echo "[x] Verify Docker Deamon":  $(docker ps -q)
 # echo "[x] Verify nvm":     $(nvm ls)
 echo "[x] Verify Node.js": $(node --version)
 echo "[x] Verify CDK":     $(cdk  --version)
@@ -86,10 +86,10 @@ echo
 ## FIXME
 # echo
 # echo "#########################################################"
-# _logger "[+] 2.2. [ECR]Deploy Backend - job4u-crawler"
+# _logger "[+] 2.2. [ECR]Deploy Backend - job4u-byod"
 # echo "#########################################################"
 # echo
-# sh ./deploy-docker-job4u-crawler.sh
+# sh ./deploy-docker-job4u-byod.sh
 
 ## FIXME
 # echo

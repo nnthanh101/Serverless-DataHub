@@ -43,17 +43,17 @@ export const Config = {
       job4uWebPathPattern:        "/*",
       job4uWebRepoName:           process.env.Job4UWebRepo+"",
 
-      /** [Node.js] Job4U-Crawl Config */
-      job4uCrawlCodeLocation:       "projects/job4u-crawl", 
-      job4uCrawlHealthCheckPath:    "/crawl/",
-      job4uCrawlPathPattern:        "/crawl/*",
-      job4uCrawlRepoName:           process.env.Job4UCrawlRepo+"",
+      /** [Node.js] Job4U-Byod Config */
+      job4UByodCodeLocation:       "projects/job4u-byod", 
+      job4UByodHealthCheckPath:    "/crawl/",
+      job4UByodPathPattern:        "/crawl/*",
+      job4UByodRepoName:           process.env.Job4UByodRepo+"",
 
       /** [SpringBoot] SpringBoot Config */
-      springbootCodeLocation:       "projects/springboot", 
-      springbootHealthCheckPath:    "/springboot/",
-      springbootPathPattern:        "/springboot/*",
-      springbootRepoName:           process.env.SpringbootRepo+"",
+      // springbootCodeLocation:       "projects/springboot", 
+      // springbootHealthCheckPath:    "/springboot/",
+      // springbootPathPattern:        "/springboot/*",
+      // springbootRepoName:           process.env.SpringbootRepo+"",
 
       /** CI/CD Pipeline */
       CicdPipelineConstructId:     "CICD-Pipeline",

@@ -1,4 +1,6 @@
-import * as cdk                             from '@aws-cdk/core';
+import { Stack, Construct, StackProps } from "@aws-cdk/core";
+
+import { InterfaceVpcEndpoint, InterfaceVpcEndpointAwsService, SubnetType }   from '@aws-cdk/aws-ec2';
 import { Config }                           from '../config/config';
 import { ApplicationLoadBalancerConstruct } from '../constructs/alb-construct';
 import { CiCdPipelineConstruct }            from '../constructs/cicd-pipeline-construct';
@@ -7,7 +9,7 @@ import { EcsFargateServiceConstruct }       from '../constructs/ecs-fargate-serv
 import { FargateAutoscalerConstruct }       from '../constructs/fargate-autoscaler-construct';
 import { VpcConstruct }                     from '../constructs/vpc-construct';
 import { VpcNoNatConstruct }                from '../constructs/vpc-no-nat-construct';
-
+import { VpcEndpointConstruct }             from "../constructs/vpc-endpoint-construct";
 
 /**
  * ECS-Fargate
@@ -15,12 +17,11 @@ import { VpcNoNatConstruct }                from '../constructs/vpc-no-nat-const
  * VPC0: 0 NAT-Gateway, Public/Isolated Subnets ONLY
  * VPC1: 2 NAT-Gateway, Public/Private/Isolated Subnets
  * 
- * /web        ==> React.js Frontend 1      <-- fargateAutoscalerStack(Connection) + CodePineline 1
- * /crawl      ==> Crawl Node.js Backend 1  <-- fargateAutoscalerStack(RAM)        + CodePineline 2
- * /sync       ==> Sync  Node.js Backend 2  <-- fargateAutoscalerStack(RAM)        + CodePineline 2
+ * /web   ==> React.js Micro-Frontend  <-- fargateAutoscalerStack(Connection) + CodePineline 1
+ * /data  ==> Node.js BYOD Backend     <-- fargateAutoscalerStack(RAM)        + CodePineline 2
  */
-export class EcsFargateStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+export class EcsFargateStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     // The code that defines your stack goes here
@@ -38,14 +39,61 @@ export class EcsFargateStack extends cdk.Stack {
 
     /** Step 1*. VpcNoNatConstruct: NAT-Gateway == 0 */
     const vpc = new VpcNoNatConstruct(this, Config.vpcConstructId, {
-        maxAzs: Config.maxAzs,
-        cidr: Config.cidr,
-        ports: Config.publicPorts,
-        natGateways: Config.natGateways,
+        maxAzs:        Config.maxAzs,
+        cidr:          Config.cidr,
+        ports:         Config.publicPorts,
+        natGateways:   Config.natGateways,
         useDefaultVpc: Config.useDefaultVpc,
-        vpcId: Config.vpcId,
-        useExistVpc: Config.useExistVpc
+        vpcId:         Config.vpcId,
+        useExistVpc:   Config.useExistVpc
+    }).vpc;
+
+    /**
+     * FIXME: Interface VPC Endpoint: SSM, API-Gateway, ...
+     * @see InterfaceVpcEndpointAwsService
+     */
+
+    /** [Interface VPC Endpoint] >> SSM */
+    const ssmVPCEndpoint = new VpcEndpointConstruct(this, id + "ssmvpce", {
+      service: {
+        name:             `com.amazonaws.${Stack.of(this).region}.ssm`,
+        port:             22
+      },
+      vpc:                vpc,
+      lookupSupportedAzs: true,
+      open:               true,
+      privateDnsEnabled:  true,
+      subnets: {
+        subnetType:       SubnetType.ISOLATED,
+        onePerAz:         true
+      }
     });
+
+    /** [Interface VPC Endpoint] >> SSM Messages */
+    const ssmMessagesVPCE = new VpcEndpointConstruct(this, id + "ssmmessagesvpce", {
+      service: {
+        name:             `com.amazonaws.${Stack.of(this).region}.ssmmessages`,
+        port:             22
+      },
+      vpc:                vpc,
+      lookupSupportedAzs: true,
+      open:               true,
+      privateDnsEnabled:  true,
+      subnets: {
+        subnetType:       SubnetType.ISOLATED,
+        onePerAz:         true
+      }
+    });
+
+    /** [Interface VPC Endpoint] >> API-Gateway */
+    const vpce = new InterfaceVpcEndpoint(this, 'VPC Private Interface Endpoint', {
+      service: InterfaceVpcEndpointAwsService.APIGATEWAY,
+      vpc: vpc,
+      privateDnsEnabled: true,
+      subnets: vpc.selectSubnets({
+          subnetType: SubnetType.ISOLATED
+      })
+    })
     
     /** Step 2. Application Load Balancer */
     const applicationLoadBalancer = new ApplicationLoadBalancerConstruct(this,Config.loadBalancerConstructName,{
