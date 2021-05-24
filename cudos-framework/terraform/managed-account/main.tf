@@ -28,6 +28,7 @@ module "cur_bucket" {
   source = "./modules/cur-bucket"
 
   account_id = data.aws_caller_identity.current.account_id
+  cost_usage_account_id = var.cost_usage_account_id
 }
 
 module "cost_usage_report" {

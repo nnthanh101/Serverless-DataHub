@@ -29,6 +29,36 @@ data "aws_iam_policy_document" "bucket_policy" {
       "arn:aws:s3:::${local.cur_bucket_name}/*",
     ]
   }
+
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${var.cost_usage_account_id}:root"]
+    }
+
+    actions = [
+      "s3:ListBucket"
+    ]
+
+    resources = [
+      "arn:aws:s3:::${local.cur_bucket_name}",
+    ]
+  }
+
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${var.cost_usage_account_id}:root"]
+    }
+
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = [
+      "arn:aws:s3:::${local.cur_bucket_name}/*",
+    ]
+  }
 }
 
 module "cur_bucket" {
