@@ -1,3 +1,14 @@
 elastic-beanstalk/projects/springboot
 cdk.context.json
 react-app-env.d.ts
+
+.terraform
+.terraform.tfstate*
+terraform.tfstate*
+.terraform.lock.hcl
+*.tfplan
+tfplan
+
+**/errored.tfstate*
+
+.idea
