@@ -73,6 +73,11 @@ module "cur_bucket" {
 
   attach_policy = true
   policy = data.aws_iam_policy_document.bucket_policy.json
+
+  block_public_acls = true
+  block_public_policy = true
+  ignore_public_acls = true
+  restrict_public_buckets = true
 }
 
 resource "aws_s3_bucket_ownership_controls" "cur_bucket" {
