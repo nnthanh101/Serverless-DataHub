@@ -18,38 +18,35 @@ export TF_DIR_MANAGED_ACCOUNT="terraform/managed-account"
 
 ## AWS Account, region and profile
 AWS_REGION="ap-southeast-1"
-AWS_MANAGE_ACCOUNT_PROFILE="default"
-AWS_COST_USAGE_ACCOUNT_PROFILE=${AWS_MANAGE_ACCOUNT_PROFILE}
+AWS_PROFILE="default"
+
+AWS_MANAGED_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
+AWS_COST_USAGE_ACCOUNT=AWS_MANAGED_ACCOUNT
 
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -m manageProfile -c costProfile -r region"
-   echo -e "\t-m The profile of the main AWS account, default to 'default'"
-   echo -e "\t-c The profile of the Cost and Usage AWS account, default to 'default'"
+   echo "Usage: $0 -p awsProfile -i costAndUsageAccount -r region"
+   echo -e "\t-p The AWS profile, default to 'default'"
+   echo -e "\t-i AWS Account ID of the CUDOS account, default to the current account of the selected profile"
    echo -e "\t-r AWS region, default to 'ap-southeast-1'"
    exit 1
 }
 
-while getopts "m:c:r:" opt
+while getopts "p:i:r:" opt
 do
   case "$opt" in
-    m ) AWS_MANAGE_ACCOUNT_PROFILE="$OPTARG" ;;
-    c ) AWS_COST_USAGE_ACCOUNT_PROFILE="$OPTARG" ;;
+    p ) AWS_PROFILE="$OPTARG" ;;
+    i ) AWS_COST_USAGE_ACCOUNT="$OPTARG" ;;
     r ) AWS_REGION="$OPTARG" ;;
     ? ) helpFunction ;;
   esac
 done
 
-
-AWS_MANAGED_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
-AWS_COST_USAGE_ACCOUNT=$(aws --profile "${AWS_COST_USAGE_ACCOUNT_PROFILE}" sts get-caller-identity | jq -r '.Account' | tr -d '\n')
-
 echo "AWS managed account: ${AWS_MANAGED_ACCOUNT}"
-echo "AWS cost usage account: ${AWS_COST_USAGE_ACCOUNT}"
+echo "AWS cost usage account ID: ${AWS_COST_USAGE_ACCOUNT}"
 echo "AWS region: ${AWS_REGION}"
-echo "Main AWS account profile: ${AWS_MANAGE_ACCOUNT_PROFILE}"
-echo "Cost and Usage AWS account profile: ${AWS_COST_USAGE_ACCOUNT_PROFILE}"
+echo "Main AWS account profile: ${AWS_PROFILE}"
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
@@ -68,9 +65,9 @@ TF_STATE_S3_BUCKET=$(echo "${PROJECT_ID}-state-${AWS_MANAGED_ACCOUNT}" | awk '{p
 export TF_STATE_S3_BUCKET
 echo "Terraform state S3 bucket: ${TF_STATE_S3_BUCKET}"
 ## Note: us-east-1 does not require a `location-constraint`:
-aws --profile "${AWS_MANAGE_ACCOUNT_PROFILE}" s3api create-bucket --bucket "${TF_STATE_S3_BUCKET}" --region "${AWS_REGION}" --create-bucket-configuration \
+aws --profile "${AWS_PROFILE}" s3api create-bucket --bucket "${TF_STATE_S3_BUCKET}" --region "${AWS_REGION}" --create-bucket-configuration \
     LocationConstraint="${AWS_REGION}" 2>/dev/null || true
-aws --profile "${AWS_MANAGE_ACCOUNT_PROFILE}" s3api put-bucket-versioning --bucket "${TF_STATE_S3_BUCKET}" --versioning-configuration Status=Enabled 2>/dev/null || true
+aws --profile "${AWS_PROFILE}" s3api put-bucket-versioning --bucket "${TF_STATE_S3_BUCKET}" --versioning-configuration Status=Enabled 2>/dev/null || true
 
 
 echo
@@ -81,7 +78,7 @@ echo
 terraform -chdir="${TF_DIR_MANAGED_ACCOUNT}" init -input=false -backend-config="region=${AWS_REGION}" -backend-config="bucket=${TF_STATE_S3_BUCKET}" && \
 terraform -chdir="${TF_DIR_MANAGED_ACCOUNT}" apply -input=false -auto-approve \
 -var="region=${AWS_REGION}" \
--var="aws_profile=${AWS_MANAGE_ACCOUNT_PROFILE}" \
+-var="aws_profile=${AWS_PROFILE}" \
 -var="cost_usage_account_id=${AWS_COST_USAGE_ACCOUNT}"
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
