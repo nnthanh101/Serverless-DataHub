@@ -1,251 +1,198 @@
-import * as cdk          from '@aws-cdk/core';
-import * as ec2          from '@aws-cdk/aws-ec2';
-import * as iam          from '@aws-cdk/aws-iam';
-import * as ecs          from "@aws-cdk/aws-ecs";
-import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
-// import { Repository } from "@aws-cdk/aws-ecr";
-// import { ApplicationTargetGroup, ApplicationLoadBalancer, IpAddressType, ApplicationProtocol, TargetType, ApplicationListener} as elb2 from "@aws-cdk/aws-elasticloadbalancingv2";
-// import { Bucket, BucketEncryption } from "@aws-cdk/aws-s3";
-// import { Repository } from "@aws-cdk/aws-codecommit";
-// import { Pipeline, Artifact } from "@aws-cdk/aws-codepipeline";
-// import { Project, LinuxBuildImage, BuildSpec, PipelineProject } from "@aws-cdk/aws-codebuild";
-// import { CodeBuildAction, CodeCommitSourceAction, EcsDeployAction } from "@aws-cdk/aws-codepipeline-actions";
+import { Stack, Construct, StackProps } from "@aws-cdk/core";
 
+import { InterfaceVpcEndpoint, InterfaceVpcEndpointAwsService, SubnetType }   from '@aws-cdk/aws-ec2';
+import { Config }                           from '../config/config';
+import { ApplicationLoadBalancerConstruct } from '../constructs/alb-construct';
+import { CiCdPipelineConstruct }            from '../constructs/cicd-pipeline-construct';
+import { EcsFargateClusterConstruct }       from '../constructs/ecs-fargate-cluster-construct';
+import { EcsFargateServiceConstruct }       from '../constructs/ecs-fargate-service-construct';
+import { FargateAutoscalerConstruct }       from '../constructs/fargate-autoscaler-construct';
+import { VpcConstruct }                     from '../constructs/vpc-construct';
+import { VpcNoNatConstruct }                from '../constructs/vpc-no-nat-construct';
+import { VpcEndpointConstruct }             from "../constructs/vpc-endpoint-construct";
+import { RDSConstruct }                     from "../constructs/rds-construct";
+import { Cloud9Construct }                  from "../constructs/cloud9-construct";
 
 /**
+ * ECS-Fargate
  * 
+ * VPC0: 0 NAT-Gateway, Public/Isolated Subnets ONLY
+ * VPC1: 2 NAT-Gateway, Public/Private/Isolated Subnets
+ * 
+ * /web   ==> React.js Micro-Frontend  <-- fargateAutoscalerStack(Connection) + CodePineline 1
+ * /data  ==> Node.js BYOD Backend     <-- fargateAutoscalerStack(RAM)        + CodePineline 2
  */
-export class EcsFargateStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+export class EcsFargateStack extends Stack {
+  constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
     // The code that defines your stack goes here
 
-    /**
-     * 1. Create a new VPC with NO NAT Gateway --> reduce cost!
-     */
-    const vpc = new ec2.Vpc(this, 'ECS-VPC', {
-      maxAzs: 2,
-      cidr: '10.0.0.0/18',
-      natGateways: 0
-    })
-
-
-    /**
-     * 2. ECS Cluster: IAM Role, ECS-Logs, ECS-Tasks Role
-     */    
-    const clusterAdmin = new iam.Role(this, 'AdminRole', {
-      assumedBy: new iam.AccountRootPrincipal()
+    /** Step 1. VpcConstruct: NAT-Gateway >= 1 */
+    const vpc = new VpcConstruct(this, Config.vpcConstructId, {
+      maxAzs:         Config.maxAzs,
+      cidr:           Config.cidr,
+      ports:          Config.publicPorts,
+      natGateways:    Config.natGateways,
+      useDefaultVpc:  Config.useDefaultVpc,
+      vpcId:          Config.vpcId,
+      useExistVpc:    Config.useExistVpc
     });
 
-    const cluster = new ecs.Cluster(this, "ecs-cluster", {
-      vpc: vpc,
-    });
-
-    const logging = new ecs.AwsLogDriver({
-      streamPrefix: "ecs-logs"
-    });
-
-    const taskRole = new iam.Role(this, `ecs-taskRole-${this.stackName}`, {
-      roleName: `ecs-taskRole-${this.stackName}`,
-      assumedBy: new iam.ServicePrincipal('ecs-tasks.amazonaws.com')
-    });
-    
-
-    /**
-     * 3. ECS Contructs
-     */
-
-    const executionRolePolicy =  new iam.PolicyStatement({
-      effect: iam.Effect.ALLOW,
-      resources: ['*'],
-      actions: [
-                "ecr:GetAuthorizationToken",
-                "ecr:BatchCheckLayerAvailability",
-                "ecr:GetDownloadUrlForLayer",
-                "ecr:BatchGetImage",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ]
-    });
-
-    const taskDef = new ecs.FargateTaskDefinition(this, "ecs-taskdef", {
-      taskRole: taskRole
-    });
-
-    taskDef.addToExecutionRolePolicy(executionRolePolicy);
-
-    /**
-     * codelocation: "react"      --> /react/*
-     * codelocation: "springboot" --> /springboot/*
-     */
-    const container = taskDef.addContainer('react', {
-      image: ecs.ContainerImage.fromRegistry("nnthanh101/react:latest"),
-      memoryLimitMiB: 256,
-      cpu: 256,
-      logging
-    });
-
-    container.addPortMappings({
-      containerPort: 80,
-      protocol: ecs.Protocol.TCP
-    });
-
-    const fargateService = new ecs_patterns.ApplicationLoadBalancedFargateService(this, "ecs-service", {
-      cluster: cluster,
-      taskDefinition: taskDef,
-      publicLoadBalancer: true,
-      desiredCount: 3,
-      listenerPort: 80
-    });
-
-    const scaling = fargateService.service.autoScaleTaskCount({ maxCapacity: 6 });
-    scaling.scaleOnCpuUtilization('CpuScaling', {
-      targetUtilizationPercent: 10,
-      scaleInCooldown: cdk.Duration.seconds(60),
-      scaleOutCooldown: cdk.Duration.seconds(60)
-    });  
-    
-    
-    // /**
-    //  * 4. PIPELINE CONSTRUCTS
-    //  */
-    
-    // /** 4.1. ECR - repo */
-    // const ecrRepo = new ecr.Repository(this, 'EcrRepo');
-
-    // const gitHubSource = codebuild.Source.gitHub({
-    //   owner: 'nnthanh101',
-    //   repo: 'cdk',
-    //   webhook: true, // optional, default: true if `webhookFilteres` were provided, false otherwise
-    //   webhookFilters: [
-    //     codebuild.FilterGroup.inEventOf(codebuild.EventAction.PUSH).andBranchIs('main'),
-    //   ], // optional, by default all pushes and Pull Requests will trigger a build
+    // /** Step 1*. VpcNoNatConstruct: NAT-Gateway == 0 */
+    // const vpc = new VpcNoNatConstruct(this, Config.vpcConstructId, {
+    //     maxAzs:        Config.maxAzs,
+    //     cidr:          Config.cidr,
+    //     ports:         Config.publicPorts,
+    //     natGateways:   Config.natGateways,
+    //     useDefaultVpc: Config.useDefaultVpc,
+    //     vpcId:         Config.vpcId,
+    //     useExistVpc:   Config.useExistVpc
+    // // }).vpc;
     // });
 
-    // /** 4.2. CODEBUILD - project */
-    // const project = new codebuild.Project(this, 'MyProject', {
-    //   projectName: `${this.stackName}`,
-    //   source: gitHubSource,
-    //   environment: {
-    //     buildImage: codebuild.LinuxBuildImage.AMAZON_LINUX_2_2,
-    //     privileged: true
+    /**
+     * FIXME: Interface VPC Endpoint: SSM, API-Gateway, ...
+     * @see InterfaceVpcEndpointAwsService
+     */
+
+    // /** [Interface VPC Endpoint] >> SSM */
+    // const ssmVPCEndpoint = new VpcEndpointConstruct(this, id + "ssmvpce", {
+    //   service: {
+    //     name:             `com.amazonaws.${Stack.of(this).region}.ssm`,
+    //     port:             22
     //   },
-    //   environmentVariables: {
-    //     'CLUSTER_NAME': {
-    //       value: `${cluster.clusterName}`
-    //     },
-    //     'ECR_REPO_URI': {
-    //       value: `${ecrRepo.repositoryUri}`
-    //     }
+    //   vpc:                vpc,
+    //   lookupSupportedAzs: true,
+    //   open:               true,
+    //   privateDnsEnabled:  true,
+    //   subnets: {
+    //     subnetType:       SubnetType.ISOLATED,
+    //     onePerAz:         true
+    //   }
+    // });
+
+    // /** [Interface VPC Endpoint] >> SSM Messages */
+    // const ssmMessagesVPCE = new VpcEndpointConstruct(this, id + "ssmmessagesvpce", {
+    //   service: {
+    //     name:             `com.amazonaws.${Stack.of(this).region}.ssmmessages`,
+    //     port:             22
     //   },
-    //   buildSpec: codebuild.BuildSpec.fromObject({
-    //     version: "0.2",
-    //     phases: {
-    //       pre_build: {
-    //         commands: [
-    //           'env',
-    //           'export TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION}'
-    //         ]
-    //       },
-    //       build: {
-    //         commands: [
-    //           'cd flask-docker-app',
-    //           `docker build -t $ECR_REPO_URI:$TAG .`,
-    //           '$(aws ecr get-login --no-include-email)',
-    //           'docker push $ECR_REPO_URI:$TAG'
-    //         ]
-    //       },
-    //       post_build: {
-    //         commands: [
-    //           'echo "In Post-Build Stage"',
-    //           'cd ..',
-    //           "printf '[{\"name\":\"react\",\"imageUri\":\"%s\"}]' $ECR_REPO_URI:$TAG > imagedefinitions.json",
-    //           "pwd; ls -al; cat imagedefinitions.json"
-    //         ]
-    //       }
-    //     },
-    //     artifacts: {
-    //       files: [
-    //         'imagedefinitions.json'
-    //       ]
-    //     }
+    //   vpc:                vpc,
+    //   lookupSupportedAzs: true,
+    //   open:               true,
+    //   privateDnsEnabled:  true,
+    //   subnets: {
+    //     subnetType:       SubnetType.ISOLATED,
+    //     onePerAz:         true
+    //   }
+    // });
+
+    // /** [Interface VPC Endpoint] >> API-Gateway */
+    // const vpce = new InterfaceVpcEndpoint(this, 'VPC Private Interface Endpoint', {
+    //   service: InterfaceVpcEndpointAwsService.APIGATEWAY,
+    //   vpc: vpc,
+    //   privateDnsEnabled: true,
+    //   subnets: vpc.selectSubnets({
+    //       subnetType: SubnetType.ISOLATED
     //   })
-    // });
+    // })
+    /** Step 2. Cloud9 Development Environment  */
+    const c9Env = new Cloud9Construct(this, id + '-C9', {
+          vpc: vpc.vpc
+    });
+    
+    /** Step 3. Application Load Balancer */
+    const applicationLoadBalancer = new ApplicationLoadBalancerConstruct(this,Config.loadBalancerConstructName,{
+      listerPort:                  Config.listenerPort,
+      publicLoadBalancer:          Config.publicLoadBalancer,
+      vpc:                         vpc.vpc,
+      securityGrp:                 vpc.securityGrp,
+      route53HostedZone:           Config.route53HostedZone,
+      route53HostedZoneRecordName: Config.route53HostedZoneRecordName,
+      acmArn:                      Config.acmArn,
+    })
+    
+    /** Step 4. RDS MySQL */
+    const rdsmysql =  new RDSConstruct(this, id + '-MysqlRDS', {
+      vpc:                 vpc.vpc,
+      rdsType:             'MYSQL',
+      rdsInstanceName:     Config.RDS_MYSQL_INSTANCE_NAME,
+      rdsCredentiallUser:  Config.RDS_MYSQL_CREDENTIAL_USERNAME,
+      rdsCredentialPass:   Config.RDS_MYSQL_CREDENTIAL_PAWSSWORD,
+      rdsDatabaseName:     Config.RDS_MYSQL_DATABASE_NAME,
+      allocatedStorage:    Config.RDS_MYSQL_ALLOCATED_STORAGE,
+      maxAllocatedStorage: Config.RDS_MYSQL_MAX_ALLOCATED_STORAGE,
+      port:                Config.RDS_MYSQL_PORT
+    });
 
-    // /**
-    //  * 5. PIPELINE ACTIONS
-    //  */
-    // const sourceOutput = new codepipeline.Artifact();
-    // const buildOutput = new codepipeline.Artifact();
+    /** Step 5.1. ECS Cluster */
+    const ecsFargateCluster = new EcsFargateClusterConstruct(this, Config.ecsClusterConstructName, {
+      vpc:         vpc.vpc,
+      // allowPort:   Config.TgrAllowPort,
+      clusterName: Config.clusterName, 
+      containerInsights:           true
+    });
+    
+    
+    const environmentECS = {
+        'MYSQL_PASS'                      :Config.RDS_MYSQL_CREDENTIAL_PAWSSWORD,
+        'MYSQL_USER'                      :Config.RDS_MYSQL_CREDENTIAL_USERNAME,
+        'MYSQL_URL'                       :rdsmysql.jdbcConnection,
+        'spring.datasource.initialize'    :'yes',
+        'spring.profiles.active'          :'mysql'
+    }
 
-    // const sourceAction = new codepipeline_actions.GitHubSourceAction({
-    //   actionName: 'GitHub_Source',
-    //   owner: 'nnthanh101',
-    //   repo: 'cdk',
-    //   branch: 'main',
-    //   oauthToken: cdk.SecretValue.secretsManager("/my/github/token"),
-    //   //oauthToken: cdk.SecretValue.plainText('<plain-text>'),
-    //   output: sourceOutput
-    // });
+    /** Step 5.2. ECS Service & Task */
+    const petstoreWeb = new EcsFargateServiceConstruct(this,"Petstore-Web"+ Config.ecsServiceConstructName, {
+      alb: applicationLoadBalancer.alb,
+      vpc: vpc.vpc,
+      loadBalancerListener: applicationLoadBalancer.loadBalancerListener,
+      cluster:              ecsFargateCluster.cluster,
+      codelocation:         Config.petstoreWebCodeLocation,
+      containerPort:        Config.containerPort,
+      hostPort:             Config.TgrAllowPort,
+      desiredCount:         Config.desiredCount,
+      healthCheckPath:      Config.petstoreWebHealthCheckPath,
+      healthyCheckTimeout:  Config.petstoreWebHealthCheckTimeout,
+      healthyCheckInterval: Config.petstoreWebHealthCheckInterval,
+      healthyThresholdCount:Config.petstoreWebHealthCheckCount,
+      unhealthyThresholdCount:Config.petstoreWebUnhealthCheckCount,
+      priority: 1,          /* => root path must have lowest priority */
+      pathPattern:          Config.petstoreWebPathPattern, 
+      // noNatVpc:false /** => set to true if use VpcNoNatConstruct for service's vpc */
+      noNatVpc:false,     /** Provision the EcsFargateService in Public Subnet */
+      environmentECS:       environmentECS
+    });
 
-    // const buildAction = new codepipeline_actions.CodeBuildAction({
-    //   actionName: 'CodeBuild',
-    //   project: project,
-    //   input: sourceOutput,
-    //   outputs: [buildOutput], // optional
-    // });
+    /** Step 6. CI/CD Pipeline */
+    const petstoreWebCicdPipeline = new CiCdPipelineConstruct(this,"Petstore-Web" + Config.CicdPipelineConstructId,{
+        clusterName:    ecsFargateCluster.cluster.clusterName,
+        ecsService:     petstoreWeb.fgservice,
+        containerName:  petstoreWeb.containerName,
+        dockerUsername: Config.dockerUsername,
+        // dockerCredentialSecretArn: Config.dockerCredentialSecretArn,
+        // runtimeEnv:                Config.runtimeEnv,
+        s3artifact:     ecsFargateCluster.s3artifact,
+        repoName:       Config.petstoreWebRepoName
+    });
 
-    // const manualApprovalAction = new codepipeline_actions.ManualApprovalAction({
-    //   actionName: 'Approve',
-    // });
-
-    // const deployAction = new codepipeline_actions.EcsDeployAction({
-    //   actionName: 'DeployAction',
-    //   service: fargateService.service,
-    //   imageFile: new codepipeline.ArtifactPath(buildOutput, `imagedefinitions.json`)
-    // });
-
-
-    // /** PIPELINE STAGES */
-    // new codepipeline.Pipeline(this, 'MyECSPipeline', {
-    //   stages: [
-    //     {
-    //       stageName: 'Source',
-    //       actions: [sourceAction],
-    //     },
-    //     {
-    //       stageName: 'Build',
-    //       actions: [buildAction],
-    //     },
-    //     {
-    //       stageName: 'Approve',
-    //       actions: [manualApprovalAction],
-    //     },
-    //     {
-    //       stageName: 'Deploy-to-ECS',
-    //       actions: [deployAction],
-    //     }
-    //   ]
-    // });
-
-    // ecrRepo.grantPullPush(project.role!)
-    // project.addToRolePolicy(new iam.PolicyStatement({
-    //   actions: [
-    //     "ecs:DescribeCluster",
-    //     "ecr:GetAuthorizationToken",
-    //     "ecr:BatchCheckLayerAvailability",
-    //     "ecr:BatchGetImage",
-    //     "ecr:GetDownloadUrlForLayer"
-    //     ],
-    //   resources: [`${cluster.clusterArn}`],
-    // }));
-
-
-    // /**
-    //  * 6. OUTPUT
-    //  */
-    // new cdk.CfnOutput(this, 'LoadBalancerDNS', { value: fargateService.loadBalancer.loadBalancerDnsName });
+    /** Step 7. ECS AutoScaler */
+     const petstoreWebAutoScaler = new FargateAutoscalerConstruct(this,"Petstore-Web"+Config.FargateAutoscalerConstructId,{
+      cluster:   ecsFargateCluster.cluster,
+      ecsService:petstoreWeb.fgservice,  
+      maxCapacity:      Config.maxCapacity,
+      minCapacity:      Config.minCapacity,
+      cpuTargetValue:   Config.cpuTargetValue,
+      memoryTargetValue:Config.memoryTargetValue,
+      scaleInCooldown:  Config.scaleInCooldown,
+      scaleOutCooldown: Config.scaleOutCooldown,
+      alb:              applicationLoadBalancer.alb,
+      scaleOutAvgPeriod:Config.scaleOutAvgPeriod,
+      scaleOutAvgNumber:Config.scaleOutAvgNumber,
+      scaleInAvgPeriod: Config.scaleInAvgPeriod,
+      scaleInAvgNumber: Config.scaleInAvgNumber
+    });
 
   }
 }
