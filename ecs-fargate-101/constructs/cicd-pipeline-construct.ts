@@ -1,7 +1,7 @@
 import { CfnOutput, Construct } from "@aws-cdk/core";
 import { Repository as EcrRepository } from "@aws-cdk/aws-ecr";
 import { Repository } from "@aws-cdk/aws-codecommit";
-import { Artifacts, Project, Source, LinuxBuildImage, BuildSpec, BuildEnvironmentVariableType } from "@aws-cdk/aws-codebuild";
+import { Artifacts, Project, Source, LinuxBuildImage, BuildSpec, BuildEnvironmentVariableType, Cache } from "@aws-cdk/aws-codebuild";
 import { Artifact, ArtifactPath, Pipeline } from "@aws-cdk/aws-codepipeline";
 import { CodeCommitSourceAction, CodeBuildAction, ManualApprovalAction, EcsDeployAction } from "@aws-cdk/aws-codepipeline-actions";
 import { PolicyStatement, Effect, Role, ServicePrincipal } from "@aws-cdk/aws-iam";
@@ -63,25 +63,25 @@ export class CiCdPipelineConstruct extends Construct {
         'ECR_REPO_URI': {
           value: ecrRepo.repositoryUri
         },
-        'DOCKER_USER': {
-          value: props.dockerUsername,
-        },
-        'DOCKER_PASSWORD': {
-          /** Secrets Manager */
-          // value: props.runtimeEnv + "/" + dockerCredential.secretName,
-          // type: BuildEnvironmentVariableType.SECRETS_MANAGER 
-          value: "ecs-dockerpassword",
-          type: BuildEnvironmentVariableType.PARAMETER_STORE
-        }
+        // 'DOCKER_USER': {
+        //   value: props.dockerUsername,
+        // },
+        // 'DOCKER_PASSWORD': {
+        //   /** Secrets Manager */
+        //   // value: props.runtimeEnv + "/" + dockerCredential.secretName,
+        //   // type: BuildEnvironmentVariableType.SECRETS_MANAGER 
+        //   value: "ecs-dockerpassword",
+        //   type: BuildEnvironmentVariableType.PARAMETER_STORE
+        // }
       },
       buildSpec: BuildSpec.fromObject({
         version: '0.2',
         phases: {
-          install: {
-            commands: [
-              'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
-            ]
-          },
+          // install: {
+          //   commands: [
+          //     'docker login -u $DOCKER_USER -p $DOCKER_PASSWORD'
+          //   ]
+          // },
           pre_build: {
             commands: [
               'env',
@@ -89,7 +89,10 @@ export class CiCdPipelineConstruct extends Construct {
           },
           build: {
             commands: [
-              'cd docker/',
+              'cd springboot',
+              'mvn spring-javaformat:apply',
+              'mvn package -DskipTests',
+              'cd ..',
               `docker build -t $ECR_REPO_URI .`,
               '$(aws ecr get-login --no-include-email)',
               'docker push $ECR_REPO_URI'
@@ -107,8 +110,15 @@ export class CiCdPipelineConstruct extends Construct {
           files: [
             'imagedefinitions.json'
           ],
-
+        },
+        cache: {
+          paths: [
+            '/root/.m2/**/*'
+          ],
         }
+      }),
+      cache: Cache.bucket(props.s3artifact, {
+        prefix: 'caches/codebuild/' + name + '-Project'
       })
     }); 
 

@@ -158,7 +158,7 @@ _logger "[+] 5. [Code Commit] Init repository "
 echo "#########################################################"
 echo
 
-# ./codecommit.sh
+./codecommit.sh
 
 ## FIXME
 # echo
