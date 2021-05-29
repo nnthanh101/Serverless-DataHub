@@ -18,7 +18,20 @@
 
 Required:
 * terraform is installed
-* run the following script
+
+Run the following script
+```shell
+./setup_cur.sh -i <the AWS account ID of the CUDOS lab> -p <AWS profile> -r <AWS region> 
 ```
-./setup_cur.sh -p <AWS profile> -i <the AWS account ID of the CUDOS lab> -r <AWS region> 
+
+### 1.2 Setup Glue database and Athena views
+
+Required:
+* terraform is installed
+* the S3 bucket and prefix of the CUR bucket created in the previous step
+
+
+Run the following script
+```shell
+./setup_data.sh -b <CUR S3 bucket name> -s <CUR S3 prefix> -p <AWS profile> -r <AWS region>
 ```

@@ -5,3 +5,7 @@ variable "s3_bucket" {
 variable "s3_region" {
   type = string
 }
+
+variable "s3_prefix" {
+  type = string
+}

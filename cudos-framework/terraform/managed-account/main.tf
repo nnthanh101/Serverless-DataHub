@@ -39,4 +39,5 @@ module "cost_usage_report" {
 
   s3_bucket = module.cur_bucket.bucket_id
   s3_region = module.cur_bucket.bucket_region
+  s3_prefix = local.cur_s3_prefix
 }
