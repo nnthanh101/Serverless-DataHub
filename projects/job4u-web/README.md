@@ -7,9 +7,5 @@ npm install
 npm start
 ```
 
-"scripts": {
-    "start": "serve -s build", // "react-scripts --max_old_space_size=2048 start",
-    "build": "react-scripts --max_old_space_size=4096 build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject", 
-  },
+export NODE_OPTIONS="--max-old-space-size=8192"
+node -e "console.log(require('v8').getHeapStatistics().total_available_size / 1024 / 1024)"

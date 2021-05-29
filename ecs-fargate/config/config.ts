@@ -17,10 +17,10 @@ export const Config = {
       listenerPort:        80,
       publicLoadBalancer:  true,
 
-      route53HostedZone:           "aws.job4u.io",
-      route53HostedZoneRecordName: "ecs",
-      // route53HostedZone:           "",
-      // route53HostedZoneRecordName: "",
+      //route53HostedZone:           "aws.job4u.io",
+      //route53HostedZoneRecordName: "ecs",
+      route53HostedZone:           "",
+      route53HostedZoneRecordName: "",
       
       /** FIXME SSM >> Parameter Store */ 
       acmArn:'arn:aws:acm:${AWS_REGION}:${AWS_ACCOUNT}:certificate/__YOUR-ACM__',

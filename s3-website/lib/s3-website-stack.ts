@@ -1,5 +1,5 @@
 import * as cdk from '@aws-cdk/core';
-import { S3WebsiteConstruct } from './s3-website-construct';
+import { S3WebsiteConstruct } from '../constructs/s3-website-construct';
 import { CloudFrontAllowedMethods, CloudFrontAllowedCachedMethods } from '@aws-cdk/aws-cloudfront';
 
 export class S3WebsiteStack extends cdk.Stack {
@@ -12,14 +12,14 @@ export class S3WebsiteStack extends cdk.Stack {
     new S3WebsiteConstruct(this, 'spaDeploy')
       .createBasicSite({
         indexDoc: 'index.html',
-        websiteFolder: 'static-website/website1'
+        websiteFolder: '../projects/job4u-web/build/',
       });
 
     /** Create Site with Cloudfront */
     new S3WebsiteConstruct(this, 'cfDeploy')
       .createSiteWithCloudfront({
         indexDoc: 'index.html',
-        websiteFolder: 'static-website/website2',
+        websiteFolder: '../projects/job4u-web/build/',
         cfBehaviors: [
           {
             isDefaultBehavior: true,
@@ -38,13 +38,17 @@ export class S3WebsiteStack extends cdk.Stack {
         ],
       });
 
-    /** Create Site with Cloudfront */
-    new S3WebsiteConstruct(this, 'hzDeploy')
-      .createSiteFromHostedZone({
-        indexDoc: 'index.html',
-        websiteFolder: 'static-website/website2',
-        zoneName: 'findajob4me.xyz', /** this zonename must have ACM cert validated */ 
-      });
+    /** Create Site with Cloudfront
+     * 
+     * You will need to have your own domain to run this example
+     * 
+     */
+    // new S3WebsiteConstruct(this, 'hzDeploy')
+    //   .createSiteFromHostedZone({
+    //     indexDoc: 'index.html',
+    //     websiteFolder: 'static-website/website2',
+    //     zoneName: 'findajob4me.xyz', /** this zonename must have ACM cert validated */ 
+    //   });
 
   }
 }

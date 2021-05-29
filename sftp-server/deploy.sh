@@ -48,31 +48,31 @@ echo
 npm install
 npm run build
 
-cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+echo cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
     --termination-protection                     \
     --tags Cost=${PROJECT_ID}
 ## cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} --show-template -v
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
-echo
-echo "#########################################################"
-_logger "[+] [START] Deploy ECS-Fargate at ${started_time}"
-echo "#########################################################"
-echo
+# echo
+# echo "#########################################################"
+# _logger "[+] [START] Deploy ECS-Fargate at ${started_time}"
+# echo "#########################################################"
+# echo
 
-echo
-echo "#########################################################"
-_logger "[+] 1. [AWS Infrastructure] S3, VPC, Cloud9"
-echo "#########################################################"
-echo
+# echo
+# echo "#########################################################"
+# _logger "[+] 1. [AWS Infrastructure] S3, VPC, Cloud9"
+# echo "#########################################################"
+# echo
 
 
-echo
-echo "#########################################################"
-_logger "[+] 3. [AWS CDK] Deploy"
-echo "#########################################################"
-echo
+# echo
+# echo "#########################################################"
+# _logger "[+] 3. [AWS CDK] Deploy"
+# echo "#########################################################"
+# echo
 
 ## DEBUG
 rm -rf cdk.out/*.* cdk.context.json

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+# set -euo pipefail
 
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -10,51 +10,40 @@ function _logger() {
 }
 
 source ./.env
-# source ./cloud9.sh
+# ./install-prerequisites.sh
 
 echo
 echo "#########################################################"
 _logger "[+] Verify the prerequisites environment"
 echo "#########################################################"
 echo
-
 ## DEBUG
 echo "[x] Verify AWS CLI": $(aws  --version)
-echo "[x] Verify git":     $(git  --version)
 echo "[x] Verify jq":      $(jq   --version)
-echo "[x] Verify nano":    $(nano --version)
 # echo "[x] Verify Docker":  $(docker version)
-# echo "[x] Verify Docker Deamon":  $(docker ps -q)
-# echo "[x] Verify nvm":     $(nvm ls)
-echo "[x] Verify Node.js": $(node --version)
 echo "[x] Verify CDK":     $(cdk  --version)
+echo "[x] Verify Node.js": $(node --version)
 # echo "[x] Verify Python":  $(python -V)
-# echo "[x] Verify Python3": $(python3 -V)
-# echo "[x] Verify kubectl":  $(kubectl version --client)
+# echo "[x] Verify Maven":   $(cdk  --version)
+# https://aws.amazon.com/visualstudio/
 
-echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET
+
+echo $AWS_ACCOUNT + $AWS_REGION + $AWS_S3_BUCKET + $AWS_CDK_STACK
 currentPrincipalArn=$(aws sts get-caller-identity --query Arn --output text)
 ## Just in case, you are using an IAM role, we will switch the identity from your STS arn to the underlying role ARN.
 currentPrincipalArn=$(sed 's/\(sts\)\(.*\)\(assumed-role\)\(.*\)\(\/.*\)/iam\2role\4/' <<< $currentPrincipalArn)
 echo $currentPrincipalArn
 
-
-echo
-echo "#########################################################"
-_logger "[+] Install TypeScript node_modules"
-echo "#########################################################"
-echo
-
+## Install node_modules typescript
 npm install
-npm run build
+npm run build 
 
 # echo cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
 #     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
 #     --termination-protection                     \
-#     --tags Cost=${PROJECT_ID}
+#     --tags type=cdk-bootstrap 
 ## export CDK_NEW_BOOTSTRAP=1
 ## cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} --show-template -v
-
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
@@ -62,75 +51,45 @@ echo "#########################################################"
 _logger "[+] [START] Deploy ECS-Fargate at ${started_time}"
 echo "#########################################################"
 echo
- 
-## FIXME
-# cd docker
-# docker rmi -f $(docker images -a -q) && docker container rm $(docker container ls -aq)
-# docker image prune -f
 
-## FIXME
-# echo
-# echo "#########################################################"
-# _logger "[+] 2.1. [ECR] Deploy Docker to ECR >> job4u-web"
-# echo "#########################################################"
-# echo
-# export ECR_REPOSITORY_JOB4U_WEB=job4u-web
-# sh ./deploy-docker-ecr.sh
+# 1. Deloy DockerHub & ECR
 
-## FIXME
-# echo
-# echo "#########################################################"
-# _logger "[+] 2.2. [ECR]Deploy Backend - job4u-byod"
-# echo "#########################################################"
-# echo
-# sh ./deploy-docker-job4u-byod.sh
-
-## FIXME
-# echo
-# echo "#########################################################"
-# _logger "[+] 2.3. [ECR]Deploy Backend - job4u-sync"
-# echo "#########################################################"
-# echo
-# sh ./deploy-docker-job4u-sync.sh
-
-# cd ..
-
-
+echo
+echo "#########################################################"
+_logger "[+] 1. [AWS Infrastructure] S3, VPC, Cloud9"
+echo "#########################################################"
+echo
 
 ## DEBUG
-# rm -rf cdk.out/*.* cdk.context.json
+## cd ecs-fargate
+echo rm -rf cdk.out/*.* cdk.context.json
 
+# echo
+# echo "#########################################################"
+# _logger "[+] 2.1. [ECR]Deploy Frontend - React"
+# echo "#########################################################"
+# echo
+# cd docker
+# echo sh ./deploy-docker-ecs-frontend.sh
+
+# echo
+# echo "#########################################################"
+# _logger "[+] 2.2. [ECR]Deploy Backend SpringBoot"
+# echo "#########################################################"
+# echo
+# echo sh ./deploy-docker-ecs-backend.sh
+
+# echo
+# echo "#########################################################"
+# _logger "[+] 2.3. [ECR]Deploy Backend - NodeJS"
+# echo "#########################################################"
+# echo
+# echo sh ./deploy-docker-ecs-backend-nodejs.sh
+ 
 ## cdk diff $AWS_CDK_STACK
-## cdk synth $AWS_CDK_STACK
+cdk synth $AWS_CDK_STACK
 ## cdk deploy $AWS_CDK_STACK --require-approval never
 cdk deploy --all --require-approval never  
-
-echo
-echo "#########################################################"
-_logger "[+] 3. [AWS CDK] Deploy Completed"
-echo "#########################################################"
-echo
-
-echo
-echo "#########################################################"
-_logger "[+] 4. [Code Commit] Init repository "
-echo "#########################################################"
-echo
-
-## FIXME
-# ./codecommit.sh
-
-## FIXME
-# echo
-# echo "#########################################################"
-# _logger "[+] 5. Danger!!! Cleanup"
-# echo "#########################################################"
-# echo
-
-## FIXME
-# echo "Cleanup ..."
-# cdk destroy --all --require-approval never
-# aws cloudformation delete-stack --stack-name ${PROJECT_ID}
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
