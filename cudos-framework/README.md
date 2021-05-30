@@ -35,3 +35,40 @@ Run the following script
 ```shell
 ./setup_data.sh -b <CUR S3 bucket name> -s <CUR S3 prefix> -p <AWS profile> -r <AWS region>
 ```
+
+
+## Demo
+
+### Preparation
+
+* 2 accounts
+* Quicksight configuration with Enterprise plan
+* configuration file (`.env` or `.ts`)
+[ ] The report generation frequency
+
+### Setup
+
+I) Data ingestion
+* Set up to generate S3 and provide access to governance account (see 1.1)
+* Verify after running: using cli, scripts or GUI
+
+* Extension: not only for cost but also any data related tasks
+* Can use AWS CFN cli to run the generated CloudFormation stack from the CUR bucket
+
+II) Data preparation
+* Create Glue crawler to prepare data from S3 bucket(s) to the Athena table(s) 
+  
+  Note: 
+  * https://github.com/aws-samples/aws-usage-queries/blob/main/lib/aws-usage-queries.ts#L242
+  * Glue crawler run every day
+  * If we have Glue Dev Endpoint, we must delete it when not in-use to prevent unwanted charges.
+  
+* Configure Athena results bucket for the Athena workgroup
+
+III) Run CUDOS
+* Have proper .gitignore file
+* Use git sub-modules for code reuse
+* Check if we have the ListAccounts permisions on the Organization then run the `map` step
+
+* Update the Cost intelligence dashboard to have all 4 tabs content in one screen. 
+  Ref: https://wellarchitectedlabs.com/cost/200_labs/200_enterprise_dashboards/
