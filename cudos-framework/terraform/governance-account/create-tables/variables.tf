@@ -13,3 +13,7 @@ variable "cur_s3_bucket_id" {
 variable "cur_s3_prefix" {
   type = string
 }
+
+variable "cur_report_name" {
+  type = string
+}

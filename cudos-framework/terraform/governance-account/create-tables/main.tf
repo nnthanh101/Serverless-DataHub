@@ -24,3 +24,9 @@ module "glue_crawler" {
   cur_s3_prefix = var.cur_s3_prefix
 }
 
+module "athena" {
+  source = "./modules/athena"
+
+  athena_results_bucket_name = "athena-results-${data.aws_caller_identity.current.account_id}-${var.region}"
+}
+

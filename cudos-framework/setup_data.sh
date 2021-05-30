@@ -21,31 +21,34 @@ AWS_PROFILE="default"
 
 CUR_S3_BUCKET=""
 CUR_S3_PREFIX=""
+CUR_REPORT_NAME=""
 
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -b curS3Bucket -s curS3Prefix -p awsProfile -r region"
+   echo "Usage: $0 -b curS3Bucket -s curS3Prefix -n curReportName -p awsProfile -r region"
    echo -e "\t-p The AWS profile, default to 'default'"
    echo -e "\t-r AWS region, default to 'ap-southeast-1'"
+   echo -e "\t-n CUR report name"
    echo -e "\t-b CUR S3 bucket name"
    echo -e "\t-s CUR S3 prefix"
    exit 1
 }
 
-while getopts "p:r:b:s:" opt
+while getopts "p:r:b:s:n:" opt
 do
   case "$opt" in
     p ) AWS_PROFILE="$OPTARG" ;;
     r ) AWS_REGION="$OPTARG" ;;
+    n ) CUR_REPORT_NAME="$OPTARG" ;;
     b ) CUR_S3_BUCKET="$OPTARG" ;;
     s ) CUR_S3_PREFIX="$OPTARG" ;;
     ? ) helpFunction ;;
   esac
 done
 
-if [ -z "${CUR_S3_BUCKET}" ] && [ -z "${CUR_S3_PREFIX}" ]; then
-  echo "Both CUR S3 bucket and prefix are required."
+if [ -z "${CUR_S3_BUCKET}" ] || [ -z "${CUR_S3_PREFIX}" ] || [ -z "${CUR_REPORT_NAME}" ]; then
+  echo "The CUR report name and both CUR S3 bucket and prefix are required."
   exit
 fi
 
@@ -56,6 +59,7 @@ echo "AWS region: ${AWS_REGION}"
 echo "Main AWS account profile: ${AWS_PROFILE}"
 echo "CUR S3 bucket: ${CUR_S3_BUCKET}"
 echo "CUR S3 prefix: ${CUR_S3_PREFIX}"
+echo "CUR report name: ${CUR_REPORT_NAME}"
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
@@ -80,7 +84,7 @@ aws --profile "${AWS_PROFILE}" s3api put-bucket-versioning --bucket "${TF_STATE_
 
 echo
 echo "#########################################################"
-_logger "[+] 2. Apply Terraform plan for managed account"
+_logger "[+] 2. Apply Terraform plan for governance account"
 echo "#########################################################"
 echo
 
@@ -92,11 +96,21 @@ terraform -chdir="${TF_WORKING_DIR}" init -input=false \
 -backend-config="bucket=${TF_STATE_S3_BUCKET}" \
 -backend-config="profile=${AWS_PROFILE}" \
 && \
+terraform -chdir="${TF_WORKING_DIR}" import \
+-input=false \
+-var="region=${AWS_REGION}" \
+-var="aws_profile=${AWS_PROFILE}" \
+-var="cur_s3_bucket_id=${CUR_S3_BUCKET}" \
+-var="cur_s3_prefix=${CUR_S3_PREFIX}" \
+-var="cur_report_name=${CUR_S3_PREFIX}" \
+module.athena.aws_athena_workgroup.primary primary \
+&& \
 terraform -chdir="${TF_WORKING_DIR}" apply -input=false -auto-approve \
 -var="region=${AWS_REGION}" \
 -var="aws_profile=${AWS_PROFILE}" \
 -var="cur_s3_bucket_id=${CUR_S3_BUCKET}" \
--var="cur_s3_prefix=${CUR_S3_PREFIX}"
+-var="cur_s3_prefix=${CUR_S3_PREFIX}" \
+-var="cur_report_name=${CUR_S3_PREFIX}"
 
 GLUE_CRAWLER_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw glue_crawler_name)
 

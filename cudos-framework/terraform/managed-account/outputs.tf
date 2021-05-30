@@ -12,3 +12,7 @@ output "cur_s3_prefix" {
   value = local.cur_s3_prefix
   description = "The prefix used for CUR in the S3 bucket"
 }
+
+output "cur_report_name" {
+  value = module.cost_usage_report.cur_report_name
+}
