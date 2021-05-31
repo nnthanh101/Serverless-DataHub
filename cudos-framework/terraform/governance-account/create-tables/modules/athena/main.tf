@@ -13,7 +13,7 @@ resource "aws_athena_workgroup" "cudos" {
   name = "cudos"
 
   configuration {
-    enforce_workgroup_configuration = true
+    enforce_workgroup_configuration = false
 
     result_configuration {
       output_location = "s3://${module.cur_bucket.s3_bucket_id}/workgroup/cudos/"

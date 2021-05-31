@@ -110,6 +110,7 @@ echo "#########################################################"
 _logger "[+] 3. Run the Glue crawler"
 echo "#########################################################"
 echo
+
 aws --profile "${AWS_PROFILE}" glue start-crawler --name "${GLUE_CRAWLER_NAME}"
 while : ; do
   CRAWLER_STATE=$(aws --profile "${AWS_PROFILE}" glue get-crawler --name "${GLUE_CRAWLER_NAME}" | jq -r ".Crawler.State")
@@ -128,6 +129,74 @@ _logger "[+] 4. Load the table partitions to Athena"
 echo "#########################################################"
 echo
 
+GLUE_DATABASE_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw glue_database_name)
+ATHENA_WORKGROUP_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw athena_workgroup_name)
+ATHENA_TABLE_NAME=$(echo $CUR_REPORT_NAME | tr '[:upper:]' '[:lower:]')
+
+query_execution_id=$(aws --profile "${AWS_PROFILE}" athena start-query-execution \
+--query-execution-context Database=${GLUE_DATABASE_NAME},Catalog=AwsDataCatalog \
+--work-group "${ATHENA_WORKGROUP_NAME}" \
+--query-string "MSCK REPAIR TABLE ${ATHENA_TABLE_NAME};" \
+--query 'QueryExecutionId' --output text)
+
+echo "Query Execution Id: ${query_execution_id}"
+
+ahq_query_status=$(aws --profile "${AWS_PROFILE}" athena get-query-execution \
+--query-execution-id "${query_execution_id}" \
+--query 'QueryExecution.Status.State' --output text)
+while [ "${ahq_query_status}" = "RUNNING" ]; do
+  echo "${ahq_query_status}"
+  sleep 1
+  ahq_query_status=$(aws --profile "${AWS_PROFILE}" athena get-query-execution \
+--query-execution-id "${query_execution_id}" \
+--query 'QueryExecution.Status.State' --output text)
+done
+echo "${ahq_query_status}"
+
+echo
+echo "#########################################################"
+_logger "[+] 5. Configure the CUDOS tool"
+echo "#########################################################"
+echo
+
+[[ -d "cudos-cli/cudos/work/${AWS_ACCOUNT}" ]] || mkdir -p "cudos-cli/cudos/work/${AWS_ACCOUNT}"
+
+aws_identity_region="us-east-1"
+athena_database_name=${GLUE_DATABASE_NAME}
+athena_cur_table_name=${ATHENA_TABLE_NAME}
+qs_user_arn=$(aws --profile "${AWS_PROFILE}" quicksight list-users --aws-account-id "${AWS_ACCOUNT}" --region "us-east-1" --namespace default --query 'UserList[*].Arn' --output text)
+
+echo "export region=${AWS_REGION}
+export aws_identity_region=${aws_identity_region}
+export aws_qs_identity_region=${aws_identity_region}
+export athena_database_name=${athena_database_name}
+export athena_cur_table_name=${athena_cur_table_name}
+export user_arn=$qs_user_arn
+export AWS_DEFAULT_REGION=${AWS_REGION}" > "cudos-cli/cudos/work/${AWS_ACCOUNT}/config"
+echo "
+config file stored in \"cudos-cli/cudos/work/${AWS_ACCOUNT}/config\"
+"
+
+echo
+echo "#########################################################"
+_logger "[+] 6. Setup the CUDOS tools"
+echo "#########################################################"
+echo
+
+cudos_dir="$(pwd)/cudos-cli/cudos"
+echo "Run the following commands inside \"${cudos_dir}\":
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh prepare
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-datasets
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-dashboard
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-cid-dashboard
+"
+
+echo "Entering: ${cudos_dir}"
+cd "${cudos_dir}"
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh prepare
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-datasets
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-dashboard
+AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-cid-dashboard
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
