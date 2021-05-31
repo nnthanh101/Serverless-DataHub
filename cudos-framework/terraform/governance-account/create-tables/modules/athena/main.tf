@@ -9,14 +9,14 @@ module "cur_bucket" {
   ignore_public_acls = true
   restrict_public_buckets = true
 }
-resource "aws_athena_workgroup" "primary" {
-  name = "primary"
+resource "aws_athena_workgroup" "cudos" {
+  name = "cudos"
 
   configuration {
     enforce_workgroup_configuration = true
 
     result_configuration {
-      output_location = "s3://${module.cur_bucket.s3_bucket_id}/workgroup/primary/"
+      output_location = "s3://${module.cur_bucket.s3_bucket_id}/workgroup/cudos/"
     }
   }
 }

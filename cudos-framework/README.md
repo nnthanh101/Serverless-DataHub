@@ -1,3 +1,5 @@
+# CUDOS
+
 * [ ] 1. Prerequisites: `prerequisites.md` >> `prerequisites.sh` (similar to https://github.com/nnthanh101/DevAx/blob/main/cloud9.sh)
   * [x] 1.1. An AWS Account with Cost Optimization team permissions
   * [x] 1.2. [A Cost and Usage Report (CUR)](https://wellarchitectedlabs.com/cost/100_labs/100_1_aws_account_setup/3_cur/): S3 & Policy, Region-Singapore, Daily, Athena/Parquet
@@ -13,6 +15,38 @@
 * [ ] 2.5. [Tear Down](https://wellarchitectedlabs.com/cost/200_labs/200_enterprise_dashboards/4_distribute_dashboards/)
 
 ## 1. Prerequisites
+
+* [ ] AWS Cli is installed 
+* [ ] Terraform Cli is installed
+* [ ] Two AWS accounts:
+  * The main account is the one generate the cost and usage reports
+  * The governance account is the one own the QuickSight dashboard
+
+## 2. Enable CUR data
+
+Run this command with the AWS profile that have the permission to configure the cost and usage reports.
+The command create a S3 bucket and set the appropriate permission to the governance account.
+
+```shell
+./setup_cur.sh -i <the AWS account ID of the governance acocunt> -p <AWS main account profile> -r <AWS region for S3 bucket> 
+```
+
+The only required arguments are `-i`, the rest are optional:
+* `-p` default to the `default` AWS profile.
+* `-r` default to `ap-southeast-1`.
+
+Output are written to `cur.output.env`
+
+### Verify the outcome
+
+```shell
+source cur.output.env && aws s3api list-objects --bucket $CUDOS_CUR_BUCKET
+```
+
+We should see some files listed.
+
+
+## 3. Build the CUDOS dashboard
 
 ### 1.1 Setup the Cost and Usage report on the main account
 

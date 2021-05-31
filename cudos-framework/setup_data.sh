@@ -96,21 +96,12 @@ terraform -chdir="${TF_WORKING_DIR}" init -input=false \
 -backend-config="bucket=${TF_STATE_S3_BUCKET}" \
 -backend-config="profile=${AWS_PROFILE}" \
 && \
-terraform -chdir="${TF_WORKING_DIR}" import \
--input=false \
--var="region=${AWS_REGION}" \
--var="aws_profile=${AWS_PROFILE}" \
--var="cur_s3_bucket_id=${CUR_S3_BUCKET}" \
--var="cur_s3_prefix=${CUR_S3_PREFIX}" \
--var="cur_report_name=${CUR_S3_PREFIX}" \
-module.athena.aws_athena_workgroup.primary primary \
-&& \
 terraform -chdir="${TF_WORKING_DIR}" apply -input=false -auto-approve \
 -var="region=${AWS_REGION}" \
 -var="aws_profile=${AWS_PROFILE}" \
 -var="cur_s3_bucket_id=${CUR_S3_BUCKET}" \
 -var="cur_s3_prefix=${CUR_S3_PREFIX}" \
--var="cur_report_name=${CUR_S3_PREFIX}"
+-var="cur_report_name=${CUR_REPORT_NAME}"
 
 GLUE_CRAWLER_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw glue_crawler_name)
 
@@ -130,6 +121,13 @@ while : ; do
     sleep 2
   fi
 done
+
+echo
+echo "#########################################################"
+_logger "[+] 4. Load the table partitions to Athena"
+echo "#########################################################"
+echo
+
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
