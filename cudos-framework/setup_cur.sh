@@ -9,19 +9,7 @@ function _logger() {
     echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
 }
 
-export org="DevAx"
-export tenant="CUDOS"
-
-export PROJECT_ID=${org}-${tenant}
-export WORKING_DIR=$PWD
-export TF_WORKING_DIR="terraform/managed-account"
-
-## AWS Account, region and profile
-AWS_REGION="ap-southeast-1"
-AWS_PROFILE="default"
-
-AWS_MANAGED_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
-AWS_COST_USAGE_ACCOUNT=AWS_MANAGED_ACCOUNT
+source ./env
 
 helpFunction()
 {
@@ -43,7 +31,7 @@ do
   esac
 done
 
-echo "AWS managed account: ${AWS_MANAGED_ACCOUNT}"
+echo "AWS managed account: ${AWS_ACCOUNT}"
 echo "AWS cost usage account ID: ${AWS_COST_USAGE_ACCOUNT}"
 echo "AWS region: ${AWS_REGION}"
 echo "Main AWS account profile: ${AWS_PROFILE}"
@@ -61,7 +49,7 @@ echo "#########################################################"
 _logger "[+] 1. Create S3 Bucket with Versioning Enabled to store Terraform State files & locks ..."
 echo "#########################################################"
 echo
-TF_STATE_S3_BUCKET=$(echo "${PROJECT_ID}-state-${AWS_MANAGED_ACCOUNT}" | awk '{print tolower($0)}')
+TF_STATE_S3_BUCKET=$(echo "${PROJECT_ID}-state-${AWS_ACCOUNT}" | awk '{print tolower($0)}')
 export TF_STATE_S3_BUCKET
 echo "Terraform state S3 bucket: ${TF_STATE_S3_BUCKET}"
 ## Note: us-east-1 does not require a `location-constraint`:

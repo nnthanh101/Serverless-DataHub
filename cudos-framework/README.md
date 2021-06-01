@@ -71,6 +71,14 @@ The command create a S3 bucket and set the appropriate permission to the governa
 ./setup_cur.sh -i <the AWS account ID of the governance acocunt> -p <AWS main account profile> -r <AWS region for S3 bucket> 
 ```
 
+```
+export AWS_PROFILE=default
+export AWS_ACCOUNT="11111111111"
+export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
+
+./setup_cur.sh -i ${AWS_ACCOUNT} -p ${AWS_PROFILE} -r ${AWS_REGION}
+```
+
 The only required arguments are `-i`, the rest are optional:
 * `-p` default to the `default` AWS profile.
 * `-r` default to `ap-southeast-1`.
@@ -135,3 +143,9 @@ III) Run CUDOS
 
 * Update the Cost intelligence dashboard to have all 4 tabs content in one screen. 
   Ref: https://wellarchitectedlabs.com/cost/200_labs/200_enterprise_dashboards/
+
+```
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+# brew upgrade hashicorp/tap/terraform
+```
