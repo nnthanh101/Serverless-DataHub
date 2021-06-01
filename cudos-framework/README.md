@@ -22,7 +22,47 @@
   * The main account is the one generate the cost and usage reports
   * The governance account is the one own the QuickSight dashboard
 
-## 2. Enable CUR data
+## 2. Prepare CUR data
+
+### If you already have CUR data in S3
+
+* Share the S3 bucket with the governance account by updating the bucket policy to adding this
+  
+```json
+{
+  "Sid": "",
+  "Effect": "Allow",
+  "Principal": {
+    "AWS": "arn:aws:iam::<AWS Governance account ID>:root"
+  },
+  "Action": "s3:ListBucket",
+  "Resource": "arn:aws:s3:::<CUR bucket name>"
+},
+{
+  "Sid": "",
+  "Effect": "Allow",
+  "Principal": {
+  "AWS": "arn:aws:iam::<AWS Governance account ID>:root"
+  },
+  "Action": "s3:GetObject",
+  "Resource": "arn:aws:s3:::<CUR bucket name>/*"
+}
+```
+* Take note the CUR bucket name and bucket region.
+* Find the path to the `crawler-cfn.yml` file in the CUR bucket. For example, if the path to that file is `s3://somebucket/MyPrefix/CostReport/crawler-cfn.yml`
+  * `MyPrefix/` is the S3 prefix.
+  * `CostReport` is the CUR report name.
+  
+Finally, give these pieces of information to the governance account
+
+```
+cur_bucket_name=Name of the CUR bucket
+cur_bucket_region=Region of the CUR bucket
+cur_prefix=The prefix defined in the previous step
+cur_report_name=The report name defined in the previous step
+```
+
+### If we don't have Cost and Usage report setup yet
 
 Run this command with the AWS profile that have the permission to configure the cost and usage reports.
 The command create a S3 bucket and set the appropriate permission to the governance account.
@@ -34,17 +74,6 @@ The command create a S3 bucket and set the appropriate permission to the governa
 The only required arguments are `-i`, the rest are optional:
 * `-p` default to the `default` AWS profile.
 * `-r` default to `ap-southeast-1`.
-
-Output are written to `cur.output.env`
-
-### Verify the outcome
-
-```shell
-source cur.output.env && aws s3api list-objects --bucket $CUDOS_CUR_BUCKET
-```
-
-We should see some files listed.
-
 
 ## 3. Build the CUDOS dashboard
 
