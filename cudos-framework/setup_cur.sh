@@ -14,9 +14,9 @@ source ./.env
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -p awsProfile -i costAndUsageAccount -r region"
+   echo "Usage: $0 -i costAndUsageAccount -p awsProfile -r region"
+   echo -e "\t-i AWS Account ID of the CUDOS account (required)"
    echo -e "\t-p The AWS profile, default to 'default'"
-   echo -e "\t-i AWS Account ID of the CUDOS account, default to the current account of the selected profile"
    echo -e "\t-r AWS region, default to 'ap-southeast-1'"
    exit 1
 }

@@ -7,6 +7,10 @@ output "athena_workgroup_name" {
   value = module.athena.athena_workgroup_name
 }
 
+output "athena_results_bucket" {
+  value = module.athena.athena_results_bucket
+}
+
 output "glue_database_name" {
   value = module.glue_crawler.glue_database_name
 }

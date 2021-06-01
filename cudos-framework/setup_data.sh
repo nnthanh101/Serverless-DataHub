@@ -153,6 +153,12 @@ while [ "${ahq_query_status}" = "RUNNING" ]; do
 done
 echo "${ahq_query_status}"
 
+echo "export aws_region=${AWS_REGION}
+export aws_profile=${AWS_PROFILE}
+export cur_report_name=${CUR_REPORT_NAME}
+export cur_s3_bucket=${CUR_S3_BUCKET}
+export cur_s3_prefix=${CUR_S3_PREFIX}" > "data.clean.env"
+
 echo
 echo "#########################################################"
 _logger "[+] 5. Configure the CUDOS tool"
@@ -171,7 +177,6 @@ export aws_identity_region=${aws_identity_region}
 export aws_qs_identity_region=${aws_identity_region}
 export athena_database_name=${athena_database_name}
 export athena_cur_table_name=${athena_cur_table_name}
-export user_arn=$qs_user_arn
 export AWS_DEFAULT_REGION=${AWS_REGION}" > "cudos-cli/cudos/work/${AWS_ACCOUNT}/config"
 echo "
 config file stored in \"cudos-cli/cudos/work/${AWS_ACCOUNT}/config\"
@@ -184,21 +189,25 @@ echo "#########################################################"
 echo
 
 cudos_dir="$(pwd)/cudos-cli/cudos"
-echo "Run the following commands inside \"${cudos_dir}\":
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh prepare
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-datasets
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-dashboard
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-cid-dashboard
-"
+echo "Now, you must setup QuickSight before running the following commands:
 
-echo "Entering: ${cudos_dir}"
-cd "${cudos_dir}"
+Run these commands inside \"${cudos_dir}\":
 AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh prepare
 AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-datasets
 AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-dashboard
 AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-cid-dashboard
+
+OR
+
+Run this command
+./setup_quicksight.sh
+"
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
 echo "#########################################################"
 echo -e "${RED} CUDOS Lab ended at ${ended_time} - ${started_time} ${NC}"
+
+echo "To clean the CUDOS Lab, run:"
+echo "./cleanup_data.sh"
+echo

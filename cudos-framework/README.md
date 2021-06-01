@@ -90,28 +90,39 @@ The only required arguments are `-i`, the rest are optional:
 
 ## 3. Build the CUDOS dashboard
 
-### 1.1 Setup the Cost and Usage report on the main account
+### 3.1 Setup Athena with Glue crawler
 
-Required:
-* terraform is installed
-
-Run the following script
-```shell
-./setup_cur.sh -i <the AWS account ID of the CUDOS lab> -p <AWS profile> -r <AWS region> 
-```
-
-### 1.2 Setup Glue database and Athena views
-
-Required:
-* terraform is installed
-* the S3 bucket and prefix of the CUR bucket created in the previous step
-
+The values of parameters is gotten from the previous step.
 
 Run the following script
 ```shell
-./setup_data.sh -b <CUR S3 bucket name> -s <CUR S3 prefix> -p <AWS profile> -r <AWS region>
+./setup_data.sh -b <cur_bucket_name> -s <cur_prefix> -n <cur_report_name> -p <AWS profile> -r <AWS region>
 ```
 
+### 3.2 Prepare the QuickSight account
+
+* [Enable QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/signing-up.html):
+  * Choose Enterprise Edition (to use the create dashboard API)
+  * Choose region: Singapore (the same as the CUR bucket region)
+  * Enable integration with Athena
+  * Enable integration with S3, choosing some buckets
+    * The CUR report bucket (with read permission)
+    * The Athena results bucket (with write permission)
+  
+* Prepare Athena primary [workgroup output location](https://docs.aws.amazon.com/athena/latest/ug/workgroups-settings.html)
+  
+### 3.3 Setup QuickSight dashboards
+
+Run the following script
+```shell
+./setup_quicksight.sh
+```
+
+## 4. Clean up
+
+* [Unsubscribe QuickSight](https://docs.aws.amazon.com/quicksight/latest/user/closing-account.html)
+* Remove QuickSight user managed policies and roles
+* Run `./cleanup_data.sh`
 
 ## Demo
 
