@@ -9,7 +9,7 @@ function _logger() {
     echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
 }
 
-source ./env
+source ./.env
 
 helpFunction()
 {

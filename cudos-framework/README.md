@@ -1,5 +1,9 @@
 # CUDOS
 
+* [x] `./cloud9.sh`
+* [x] `./setup_cur.sh`
+* [ ] 
+
 * [ ] 1. Prerequisites: `prerequisites.md` >> `prerequisites.sh` (similar to https://github.com/nnthanh101/DevAx/blob/main/cloud9.sh)
   * [x] 1.1. An AWS Account with Cost Optimization team permissions
   * [x] 1.2. [A Cost and Usage Report (CUR)](https://wellarchitectedlabs.com/cost/100_labs/100_1_aws_account_setup/3_cur/): S3 & Policy, Region-Singapore, Daily, Athena/Parquet
@@ -23,6 +27,7 @@
   * The governance account is the one own the QuickSight dashboard
 
 ## 2. Prepare CUR data
+
 
 ### If you already have CUR data in S3
 
