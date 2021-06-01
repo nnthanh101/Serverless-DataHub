@@ -170,7 +170,6 @@ echo
 aws_identity_region="us-east-1"
 athena_database_name=${GLUE_DATABASE_NAME}
 athena_cur_table_name=${ATHENA_TABLE_NAME}
-qs_user_arn=$(aws --profile "${AWS_PROFILE}" quicksight list-users --aws-account-id "${AWS_ACCOUNT}" --region "us-east-1" --namespace default --query 'UserList[*].Arn' --output text)
 
 echo "export region=${AWS_REGION}
 export aws_identity_region=${aws_identity_region}

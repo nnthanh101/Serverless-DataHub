@@ -61,6 +61,14 @@ terraform -chdir="${tf_working_dir}" destroy -input=false -auto-approve \
 -var="cur_s3_prefix=${cur_s3_prefix}" \
 -var="cur_report_name=${cur_report_name}"
 
+echo
+echo "#########################################################"
+_logger "[+] 3. Cleanup CUDOS tools configuration"
+echo "#########################################################"
+echo
+
+rm -rf "cudos-cli/cudos/work/${aws_account}"
+
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
 echo "#########################################################"
