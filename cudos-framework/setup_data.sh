@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-source "./script/lib/common"
+source "./script/lib/common.sh"
 source "data.input.env"
 
 export tf_working_base_dir="terraform/governance-account"
