@@ -24,6 +24,8 @@ do
   esac
 done
 
+aws_account=$(aws --profile "${aws_profile}" sts get-caller-identity | jq -r '.Account' | tr -d '\n')
+
 _logger "[+] Alternative command: ./setup_cur.sh -i ${aws_governance_account} -p ${aws_profile} -r ${aws_region}"
 
 echo "AWS managed account: ${aws_account}"
@@ -77,7 +79,8 @@ export cur_s3_prefix=$(terraform -chdir="${tf_working_dir}" output -raw cur_s3_p
 export cur_report_name=$(terraform -chdir="${tf_working_dir}" output -raw cur_report_name)" > "data.input.env"
 
 echo
-echo "Please review the 'data.input.env' file then run ./setup_data.sh"
+echo "Please review the 'data.input.env' file then run this command
+./setup_data.sh"
 echo
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')

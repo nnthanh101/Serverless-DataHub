@@ -1,21 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-function _logger() {
-    echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
-}
-export org="DevAx"
-export tenant="CUDOS"
-
-export project_id=${org}-${tenant}
-export working_dir=$PWD
-export tf_working_base_dir="terraform/governance-account"
-
+source "./script/lib/common.sh"
 source data.clean.env
+
+export tf_working_base_dir="terraform/governance-account"
 
 aws_account=$(aws --profile "${aws_profile}" sts get-caller-identity | jq -r '.Account' | tr -d '\n')
 
@@ -33,7 +22,13 @@ echo "CUDOS Tools setup start at ${started_time}"
 echo "#########################################################"
 echo
 
-cudos_dir="$(pwd)/cudos-cli/cudos"
+echo
+echo "#########################################################"
+_logger "[+] 1. Install CUDOS and CID dashboard"
+echo "#########################################################"
+echo
+current_dir="$(pwd)"
+cudos_dir="${current_dir}/cudos-cli/cudos"
 echo "Entering: ${cudos_dir}"
 cd "${cudos_dir}"
 user_arn=$(aws --profile "${aws_profile}" quicksight list-users --aws-account-id "${aws_account}" --region "us-east-1" --namespace default --query 'UserList[*].Arn' --output text)
@@ -42,6 +37,21 @@ AWS_PROFILE=${aws_profile} ./shell-script/customer-cudos.sh prepare
 AWS_PROFILE=${aws_profile} ./shell-script/customer-cudos.sh deploy-datasets || true
 AWS_PROFILE=${aws_profile} ./shell-script/customer-cudos.sh deploy-dashboard || true
 AWS_PROFILE=${aws_profile} ./shell-script/customer-cudos.sh deploy-cid-dashboard
+
+echo
+echo "#########################################################"
+_logger "[+] 2. Install trends dashboard"
+echo "#########################################################"
+echo
+trends_dir="${current_dir}/cudos-cli/trends"
+echo "Entering: ${trends_dir}"
+cd "${trends_dir}"
+AWS_PROFILE=${aws_profile} ./shell-script/trends.sh prepare
+AWS_PROFILE=${aws_profile} ./shell-script/trends.sh deploy-datasets || true
+AWS_PROFILE=${aws_profile} ./shell-script/trends.sh deploy-dashboard
+
+echo "Entering: ${current_dir}"
+cd "${current_dir}"
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo

@@ -1,27 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+source "./script/lib/common"
+source "data.input.env"
 
-function _logger() {
-    echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
-}
-export org="DevAx"
-export tenant="CUDOS"
-
-export PROJECT_ID=${org}-${tenant}
-export WORKING_DIR=$PWD
-export TF_WORKING_BASE_DIR="terraform/governance-account"
-
-## AWS Account, region and profile
-AWS_REGION="ap-southeast-1"
-AWS_PROFILE="default"
-
-CUR_S3_BUCKET=""
-CUR_S3_PREFIX=""
-CUR_REPORT_NAME=""
+export tf_working_base_dir="terraform/governance-account"
 
 helpFunction()
 {
@@ -38,28 +21,29 @@ helpFunction()
 while getopts "p:r:b:s:n:" opt
 do
   case "$opt" in
-    p ) AWS_PROFILE="$OPTARG" ;;
-    r ) AWS_REGION="$OPTARG" ;;
-    n ) CUR_REPORT_NAME="$OPTARG" ;;
-    b ) CUR_S3_BUCKET="$OPTARG" ;;
-    s ) CUR_S3_PREFIX="$OPTARG" ;;
+    p ) aws_profile="$OPTARG" ;;
+    r ) aws_region="$OPTARG" ;;
+    n ) cur_report_name="$OPTARG" ;;
+    b ) cur_s3_bucket="$OPTARG" ;;
+    s ) cur_s3_prefix="$OPTARG" ;;
     ? ) helpFunction ;;
   esac
 done
 
-if [ -z "${CUR_S3_BUCKET}" ] || [ -z "${CUR_S3_PREFIX}" ] || [ -z "${CUR_REPORT_NAME}" ]; then
+if [ -z "${cur_s3_bucket}" ] || [ -z "${cur_s3_prefix}" ] || [ -z "${cur_report_name}" ]; then
   echo "The CUR report name and both CUR S3 bucket and prefix are required."
   exit
 fi
 
-AWS_ACCOUNT=$(aws --profile "${AWS_PROFILE}" sts get-caller-identity | jq -r '.Account' | tr -d '\n')
+aws_account=$(aws --profile "${aws_profile}" sts get-caller-identity | jq -r '.Account' | tr -d '\n')
 
-echo "AWS managed account: ${AWS_ACCOUNT}"
-echo "AWS region: ${AWS_REGION}"
-echo "Main AWS account profile: ${AWS_PROFILE}"
-echo "CUR S3 bucket: ${CUR_S3_BUCKET}"
-echo "CUR S3 prefix: ${CUR_S3_PREFIX}"
-echo "CUR report name: ${CUR_REPORT_NAME}"
+_logger "[+] Alternative command: ./setup_data.sh -b ${cur_s3_bucket} -s ${cur_s3_prefix} -n ${cur_report_name} -p ${aws_profile} -r ${aws_region}"
+
+echo "AWS region: ${aws_region}"
+echo "Main AWS account profile: ${aws_profile}"
+echo "CUR S3 bucket: ${cur_s3_bucket}"
+echo "CUR S3 prefix: ${cur_s3_prefix}"
+echo "CUR report name: ${cur_report_name}"
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
@@ -73,13 +57,13 @@ echo "#########################################################"
 _logger "[+] 1. Create S3 Bucket with Versioning Enabled to store Terraform State files & locks ..."
 echo "#########################################################"
 echo
-TF_STATE_S3_BUCKET=$(echo "${PROJECT_ID}-state-${AWS_ACCOUNT}" | awk '{print tolower($0)}')
-export TF_STATE_S3_BUCKET
-echo "Terraform state S3 bucket: ${TF_STATE_S3_BUCKET}"
+tf_state_s3_bucket=$(echo "${project_id}-state-${aws_account}" | awk '{print tolower($0)}')
+export tf_state_s3_bucket
+echo "Terraform state S3 bucket: ${tf_state_s3_bucket}"
 ## Note: us-east-1 does not require a `location-constraint`:
-aws --profile "${AWS_PROFILE}" s3api create-bucket --bucket "${TF_STATE_S3_BUCKET}" --region "${AWS_REGION}" --create-bucket-configuration \
-    LocationConstraint="${AWS_REGION}" 2>/dev/null || true
-aws --profile "${AWS_PROFILE}" s3api put-bucket-versioning --bucket "${TF_STATE_S3_BUCKET}" --versioning-configuration Status=Enabled 2>/dev/null || true
+aws --profile "${aws_profile}" s3api create-bucket --bucket "${tf_state_s3_bucket}" --region "${aws_region}" --create-bucket-configuration \
+    LocationConstraint="${aws_region}" 2>/dev/null || true
+aws --profile "${aws_profile}" s3api put-bucket-versioning --bucket "${tf_state_s3_bucket}" --versioning-configuration Status=Enabled 2>/dev/null || true
 
 
 echo
@@ -88,22 +72,22 @@ _logger "[+] 2. Apply Terraform plan for governance account"
 echo "#########################################################"
 echo
 
-TF_WORKING_DIR="${TF_WORKING_BASE_DIR}/create-tables"
-echo "Terraform working dir: ${TF_WORKING_DIR}"
-terraform -chdir="${TF_WORKING_DIR}" init -input=false \
+tf_working_dir="${tf_working_base_dir}/create-tables"
+echo "Terraform working dir: ${tf_working_dir}"
+terraform -chdir="${tf_working_dir}" init -input=false \
 -reconfigure \
--backend-config="region=${AWS_REGION}" \
--backend-config="bucket=${TF_STATE_S3_BUCKET}" \
--backend-config="profile=${AWS_PROFILE}" \
+-backend-config="region=${aws_region}" \
+-backend-config="bucket=${tf_state_s3_bucket}" \
+-backend-config="profile=${aws_profile}" \
 && \
-terraform -chdir="${TF_WORKING_DIR}" apply -input=false -auto-approve \
--var="region=${AWS_REGION}" \
--var="aws_profile=${AWS_PROFILE}" \
--var="cur_s3_bucket_id=${CUR_S3_BUCKET}" \
--var="cur_s3_prefix=${CUR_S3_PREFIX}" \
--var="cur_report_name=${CUR_REPORT_NAME}"
+terraform -chdir="${tf_working_dir}" apply -input=false -auto-approve \
+-var="region=${aws_region}" \
+-var="aws_profile=${aws_profile}" \
+-var="cur_s3_bucket_id=${cur_s3_bucket}" \
+-var="cur_s3_prefix=${cur_s3_prefix}" \
+-var="cur_report_name=${cur_report_name}"
 
-GLUE_CRAWLER_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw glue_crawler_name)
+GLUE_CRAWLER_NAME=$(terraform -chdir="${tf_working_dir}" output -raw glue_crawler_name)
 
 echo
 echo "#########################################################"
@@ -111,9 +95,9 @@ _logger "[+] 3. Run the Glue crawler"
 echo "#########################################################"
 echo
 
-aws --profile "${AWS_PROFILE}" glue start-crawler --name "${GLUE_CRAWLER_NAME}"
+aws --profile "${aws_profile}" glue start-crawler --name "${GLUE_CRAWLER_NAME}"
 while : ; do
-  CRAWLER_STATE=$(aws --profile "${AWS_PROFILE}" glue get-crawler --name "${GLUE_CRAWLER_NAME}" | jq -r ".Crawler.State")
+  CRAWLER_STATE=$(aws --profile "${aws_profile}" glue get-crawler --name "${GLUE_CRAWLER_NAME}" | jq -r ".Crawler.State")
   if [  "${CRAWLER_STATE}" == "READY" ]; then
     echo "Crawler running results: ${CRAWLER_STATE}"
     break
@@ -129,35 +113,35 @@ _logger "[+] 4. Load the table partitions to Athena"
 echo "#########################################################"
 echo
 
-GLUE_DATABASE_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw glue_database_name)
-ATHENA_WORKGROUP_NAME=$(terraform -chdir="${TF_WORKING_DIR}" output -raw athena_workgroup_name)
-ATHENA_TABLE_NAME=$(echo $CUR_REPORT_NAME | tr '[:upper:]' '[:lower:]')
+glue_database_name=$(terraform -chdir="${tf_working_dir}" output -raw glue_database_name)
+athena_workgroup_name=$(terraform -chdir="${tf_working_dir}" output -raw athena_workgroup_name)
+athena_table_name=$(echo $cur_report_name | tr '[:upper:]' '[:lower:]')
 
-query_execution_id=$(aws --profile "${AWS_PROFILE}" athena start-query-execution \
---query-execution-context Database=${GLUE_DATABASE_NAME},Catalog=AwsDataCatalog \
---work-group "${ATHENA_WORKGROUP_NAME}" \
---query-string "MSCK REPAIR TABLE ${ATHENA_TABLE_NAME};" \
+query_execution_id=$(aws --profile "${aws_profile}" athena start-query-execution \
+--query-execution-context Database=${glue_database_name},Catalog=AwsDataCatalog \
+--work-group "${athena_workgroup_name}" \
+--query-string "MSCK REPAIR TABLE ${athena_table_name};" \
 --query 'QueryExecutionId' --output text)
 
 echo "Query Execution Id: ${query_execution_id}"
 
-ahq_query_status=$(aws --profile "${AWS_PROFILE}" athena get-query-execution \
+ahq_query_status=$(aws --profile "${aws_profile}" athena get-query-execution \
 --query-execution-id "${query_execution_id}" \
 --query 'QueryExecution.Status.State' --output text)
 while [ "${ahq_query_status}" = "RUNNING" ]; do
   echo "${ahq_query_status}"
   sleep 1
-  ahq_query_status=$(aws --profile "${AWS_PROFILE}" athena get-query-execution \
+  ahq_query_status=$(aws --profile "${aws_profile}" athena get-query-execution \
 --query-execution-id "${query_execution_id}" \
 --query 'QueryExecution.Status.State' --output text)
 done
 echo "${ahq_query_status}"
 
-echo "export aws_region=${AWS_REGION}
-export aws_profile=${AWS_PROFILE}
-export cur_report_name=${CUR_REPORT_NAME}
-export cur_s3_bucket=${CUR_S3_BUCKET}
-export cur_s3_prefix=${CUR_S3_PREFIX}" > "data.clean.env"
+echo "export aws_region=${aws_region}
+export aws_profile=${aws_profile}
+export cur_report_name=${cur_report_name}
+export cur_s3_bucket=${cur_s3_bucket}
+export cur_s3_prefix=${cur_s3_prefix}" > "data.clean.env"
 
 echo
 echo "#########################################################"
@@ -165,20 +149,30 @@ _logger "[+] 5. Configure the CUDOS tool"
 echo "#########################################################"
 echo
 
-[[ -d "cudos-cli/cudos/work/${AWS_ACCOUNT}" ]] || mkdir -p "cudos-cli/cudos/work/${AWS_ACCOUNT}"
+[[ -d "cudos-cli/cudos/work/${aws_account}" ]] || mkdir -p "cudos-cli/cudos/work/${aws_account}"
 
 aws_identity_region="us-east-1"
-athena_database_name=${GLUE_DATABASE_NAME}
-athena_cur_table_name=${ATHENA_TABLE_NAME}
+athena_database_name=${glue_database_name}
+athena_cur_table_name=${athena_table_name}
 
-echo "export region=${AWS_REGION}
+echo "export region=${aws_region}
 export aws_identity_region=${aws_identity_region}
 export aws_qs_identity_region=${aws_identity_region}
 export athena_database_name=${athena_database_name}
 export athena_cur_table_name=${athena_cur_table_name}
-export AWS_DEFAULT_REGION=${AWS_REGION}" > "cudos-cli/cudos/work/${AWS_ACCOUNT}/config"
+export AWS_DEFAULT_REGION=${aws_region}" > "cudos-cli/cudos/work/${aws_account}/config"
 echo "
-config file stored in \"cudos-cli/cudos/work/${AWS_ACCOUNT}/config\"
+config file stored in \"cudos-cli/cudos/work/${aws_account}/config\"
+"
+
+echo "export region=${aws_region}
+export aws_identity_region=${aws_identity_region}
+export aws_qs_identity_region=${aws_identity_region}
+export athena_database_name=${athena_database_name}
+export athena_cur_table_name=${athena_cur_table_name}
+export AWS_DEFAULT_REGION=${aws_region}" > "cudos-cli/trends/work/${aws_account}/config"
+echo "
+config file stored in \"cudos-cli/trends/work/${aws_account}/config\"
 "
 
 echo
@@ -187,18 +181,7 @@ _logger "[+] 6. Setup the CUDOS tools"
 echo "#########################################################"
 echo
 
-cudos_dir="$(pwd)/cudos-cli/cudos"
-echo "Now, you must setup QuickSight before running the following commands:
-
-Run these commands inside \"${cudos_dir}\":
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh prepare
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-datasets
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-dashboard
-AWS_PROFILE=${AWS_PROFILE} ./shell-script/customer-cudos.sh deploy-cid-dashboard
-
-OR
-
-Run this command
+echo "Please setup QuickSight and the primary Athena workgroup, then run this command
 ./setup_quicksight.sh
 "
 
