@@ -1,15 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
-
-function _logger() {
-    echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
-}
-
-source ./.env
+source "./cur.input.env"
+source "./script/lib/common.sh"
 
 helpFunction()
 {
@@ -30,6 +23,9 @@ do
     ? ) helpFunction ;;
   esac
 done
+
+echo "Or run the command with parameters:
+  ./setup_cur.sh -i ${AWS_GOVERNANCE_ACCOUNT} -p ${AWS_PROFILE} -r ${AWS_REGION}"
 
 echo "AWS managed account: ${AWS_ACCOUNT}"
 echo "AWS cost usage account ID: ${AWS_GOVERNANCE_ACCOUNT}"
@@ -73,6 +69,10 @@ terraform -chdir="${TF_WORKING_DIR}" apply -input=false -auto-approve \
 -var="region=${AWS_REGION}" \
 -var="aws_profile=${AWS_PROFILE}" \
 -var="cost_usage_account_id=${AWS_GOVERNANCE_ACCOUNT}"
+
+echo
+echo "Please run "
+echo
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
