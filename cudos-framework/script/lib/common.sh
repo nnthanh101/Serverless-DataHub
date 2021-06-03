@@ -1,21 +1,20 @@
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m'
+export NC='\033[0m'
+export RED='\033[0;31m'
+export YELLOW='\033[1;33m'
 
-export org="DevAx"
-export tenant="CUDOS"
+org="DevAx"
+tenant="CUDOS"
 
-export PROJECT_ID=${org}-${tenant}
-export WORKING_DIR=$PWD
-export AWS_PROFILE=default
+export project_id=${org}-${tenant}
+export aws_profile=default
 
-if [ $(uname -s) == 'Darwin' ] ; then
-    export AWS_ACCOUNT=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
-    export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
+if [ "$(uname -s)" == 'Darwin' ] ; then
+    export aws_account=$(aws sts get-caller-identity | jq -r '.Account' | tr -d '\n')
+    export aws_region=${AWS_REGION:-"ap-southeast-1"}
 else
-    export AWS_ACCOUNT=$(aws sts get-caller-identity --output text --query Account)
+    export aws_account=$(aws sts get-caller-identity --output text --query Account)
     # export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
-    export AWS_REGION=${AWS_REGION:-"ap-southeast-1"}
+    export aws_region=${AWS_REGION:-"ap-southeast-1"}
 fi
 
 function _logger() {
