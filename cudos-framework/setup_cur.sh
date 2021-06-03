@@ -15,7 +15,7 @@ helpFunction()
 {
    echo ""
    echo "Usage: $0 -i costAndUsageAccount -p awsProfile -r region"
-   echo -e "\t-i AWS Account ID of the CUDOS account (required)"
+   echo -e "\t-i AWS Account ID of the governance account"
    echo -e "\t-p The AWS profile, default to 'default'"
    echo -e "\t-r AWS region, default to 'ap-southeast-1'"
    exit 1
@@ -25,14 +25,14 @@ while getopts "p:i:r:" opt
 do
   case "$opt" in
     p ) AWS_PROFILE="$OPTARG" ;;
-    i ) AWS_COST_USAGE_ACCOUNT="$OPTARG" ;;
+    i ) AWS_GOVERNANCE_ACCOUNT="$OPTARG" ;;
     r ) AWS_REGION="$OPTARG" ;;
     ? ) helpFunction ;;
   esac
 done
 
 echo "AWS managed account: ${AWS_ACCOUNT}"
-echo "AWS cost usage account ID: ${AWS_COST_USAGE_ACCOUNT}"
+echo "AWS cost usage account ID: ${AWS_GOVERNANCE_ACCOUNT}"
 echo "AWS region: ${AWS_REGION}"
 echo "Main AWS account profile: ${AWS_PROFILE}"
 
@@ -72,7 +72,7 @@ terraform -chdir="${TF_WORKING_DIR}" init -input=false \
 terraform -chdir="${TF_WORKING_DIR}" apply -input=false -auto-approve \
 -var="region=${AWS_REGION}" \
 -var="aws_profile=${AWS_PROFILE}" \
--var="cost_usage_account_id=${AWS_COST_USAGE_ACCOUNT}"
+-var="cost_usage_account_id=${AWS_GOVERNANCE_ACCOUNT}"
 
 ended_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
