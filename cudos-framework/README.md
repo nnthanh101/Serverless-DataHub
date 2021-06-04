@@ -1,5 +1,7 @@
 # CUDOS
 
+![CUDOS architecture](assets/images/CUDOS.jpg)
+
 ## 1. Prerequisites
 
 * [ ] AWS Cli is installed 
