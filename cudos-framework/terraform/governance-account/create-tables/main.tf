@@ -32,7 +32,7 @@ module "athena" {
 
 resource "aws_glue_catalog_table" "cur" {
   database_name = module.glue_crawler.glue_database_name
-  name          = lower(var.cur_report_name)
+  name          = replace(lower(var.cur_report_name), '-', '_')
   retention     = 0
   table_type    = "EXTERNAL_TABLE"
 
