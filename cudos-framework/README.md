@@ -1,5 +1,11 @@
 # CUDOS
 
+This lab output is these 3 dashboards:
+
+* [CUDOS dashboard](https://cudos.workshop.aws/workshop.html)
+* [Cost Intelligence dashboard](https://wellarchitectedlabs.com/cost/200_labs/200_enterprise_dashboards/)
+* [Trends dashboard](https://cudos.workshop.aws/workshop-trends.html)
+
 ![CUDOS architecture](assets/images/CUDOS.jpg)
 
 ## 1. Prerequisites
