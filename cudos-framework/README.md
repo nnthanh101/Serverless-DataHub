@@ -95,7 +95,7 @@ Run the following script
     * The CUR report bucket (with read permission)
     * The Athena results bucket (with write permission)
   
-* Prepare Athena primary [workgroup output location](https://docs.aws.amazon.com/athena/latest/ug/workgroups-settings.html)
+* Prepare Athena primary [workgroup output location](https://cudos.workshop.aws/prerequisites/prepare-athena.html)
   
 ### 3.3 Setup QuickSight dashboards
 

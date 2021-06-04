@@ -165,6 +165,8 @@ echo "
 config file stored in \"cudos-cli/cudos/work/${aws_account}/config\"
 "
 
+[[ -d "cudos-cli/trends/work/${aws_account}" ]] || mkdir -p "cudos-cli/trends/work/${aws_account}"
+
 echo "export region=${aws_region}
 export aws_identity_region=${aws_identity_region}
 export aws_qs_identity_region=${aws_identity_region}
