@@ -115,7 +115,7 @@ echo
 
 glue_database_name=$(terraform -chdir="${tf_working_dir}" output -raw glue_database_name)
 athena_workgroup_name=$(terraform -chdir="${tf_working_dir}" output -raw athena_workgroup_name)
-athena_table_name=$(echo $cur_report_name | tr '[:upper:]' '[:lower:]')
+athena_table_name=$(echo $cur_report_name | tr '[:upper:]' '[:lower:]' | tr '-' '_')
 
 query_execution_id=$(aws --profile "${aws_profile}" athena start-query-execution \
 --query-execution-context Database=${glue_database_name},Catalog=AwsDataCatalog \

@@ -9,6 +9,9 @@
   * The governance account is the one own the QuickSight dashboard
 * [ ] `jq`
 
+If you're using AWS Cloud9, disable the AWS managed temporary credentials and 
+use an EC2 instance profile with enough permissions ([read more](https://devsecops.job4u.io/en/prerequisites/bootstrap/admin-iam-role/)).
+
 ## 2. Prepare CUR data
 
 
