@@ -1,4 +1,14 @@
 elastic-beanstalk/projects/springboot
+**/constructs/*.js
+**/lib/*.js
+**/bin/*.js
+**/test/*.js
+**/config/*.js
+!jest.config.js
+*.d.ts
+node_modules
+ecs-microservices/project/build
+
 cdk.context.json
 react-app-env.d.ts
 

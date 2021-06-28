@@ -20,12 +20,12 @@
     "react-plotly.js": "^2.4.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^4.0.0",
+    "react-scripts": "^4.0.3",
     "typescript": "~3.7.2"
   },
   "scripts": {
-    "start": "serve -s build",  
-    "build": "react-scripts build --max_old_space_size=4096",
+    "start": "serve -s build",
+    "build": "react-scripts build --max_old_space_size=8192",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
