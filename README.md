@@ -26,9 +26,16 @@ Module | Feature | Description
 
 ---
 
-## [CDK-Pattern] SPA-Website 
+## [0. Setup 🌥](https://microservices.job4u.vn/en/setup.html)
+
+* [x] **AWS Account**: using [AWS Free Tier](https://aws.amazon.com/free) or [AWS Workshop Portal](https://microservices.job4u.vn/en/setup/aws-account.html)
+* [x] **Development IDE**: using [**AWS Cloud9** Cloud-based IDE](https://microservices.job4u.vn/en/setup/cloud9-bootstrap/)
+
+---
+
+## [1. [CDK Pattern] SPA Website](/spa-website/index.md)
 
 * [ ] Focus on innovation and do more with less using **StoryBook** rapidly prototyping.  
-* [ ] Creating a **SPA Website** (ReactJS, VueJS, Angular) using AWS Cloud Development Kit (**CDK**) Infrastructure as Code.
+* [ ] Creating a **SPA Website** (ReactJS, VueJS, Angular) using **AWS CDK** Infrastructure as Code.
 
 ![SPA Website](/README/images/spa-website-architecture.png)
