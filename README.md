@@ -1,6 +1,6 @@
 # [DevAx] Cloud-Native Micro-Services 🌥🎯🚀
 
-[DevAx] **Monoliths to Micro-Services** is on the job training tech-series to helps Customers build the right developer skills for cloud adoption, and build developer cloud-native fluency across their organization.
+[DevAx Academy] **Monoliths to Micro-Services** is on the job training tech-series to helps Customers build the right developer skills for cloud adoption, and build developer cloud-native fluency across their organization.
 
 [Building Modern Applications using Micro-Services](https://microservices.job4u.vn) to build modern cloud-native applications that are designed and distributed for scale and agility 🎯🚀
 
