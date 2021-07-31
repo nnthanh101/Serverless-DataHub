@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-source ./ebs-resize-boto3.sh
+source ./ebs-resize.sh 30
 
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
@@ -27,15 +27,15 @@ _logger "[+] 1.2. Installing latest AWS CLI - version 2"
 echo "#########################################################"
 
 # if [[ "$KERNEL_TYPE" == "linux" ]]; then   
-    if [[ "$AWS_CLI_VERSION" < "aws-cli/2" ]]; then
-        echo "Uninstall the AWS CLI version 1 using pip"
-        sudo pip uninstall awscli
+    # if [[ "$AWS_CLI_VERSION" < "aws-cli/2" ]]; then
+    #     echo "Uninstall the AWS CLI version 1 using pip"
+    #     sudo pip uninstall awscli
         echo "Install the AWS CLI version 2 using pip"
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip awscliv2.zip
         sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
         rm -rf awscliv2.zip aws
-    fi
+    # fi
     python -m pip install --upgrade pip --user
     pip3 install boto3 --user
 # else
@@ -47,22 +47,22 @@ echo "#########################################################"
 # fi
 
 echo "#########################################################"
-_logger "[+] 2. Upgrade lts/erbium nodejs12.x & Installing CDK ..."
+_logger "[+] 2. Upgrade lts/fermium nodejs14.x & Installing CDK ..."
 echo "#########################################################"
-# nvm install lts/erbium
-# nvm use lts/erbium
-# nvm alias default lts/erbium
-# nvm uninstall v10.24.0
+# nvm install lts/fermium
+# nvm use lts/fermium
+# nvm alias default lts/fermium
+# nvm uninstall v10.24.1
 npm update && npm update -g
 sudo npm install -g aws-cdk --force
 
 
 _logger "[+] Verify Prerequisites ..."
-echo "[x] Verify Git client":        $(git --version)
-echo "[x] Verify jq":                $(jq   --version)
-echo "[x] Verify AWS CLI version 2": $(aws --version)
+echo "[x] Verify Git client":        $(git  --version)
+echo "[x] Verify jq":                $(jq   --version) 
+echo "[x] Verify AWS CLI version 2": $(aws  --version)
 echo "[x] Verify Node.js":           $(node --version)
-echo "[x] Verify CDK":               $(cdk --version)
+echo "[x] Verify CDK":               $(cdk  --version)
 # echo "[x] Verify Python": $(python -V)
 # echo "[x] Verify Python3":           $(python3 -V)
 # echo "[x] Verify Pip3":              $(pip3 -V)
