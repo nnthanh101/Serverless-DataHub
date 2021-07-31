@@ -224,20 +224,20 @@ export AWS_REGION=$(curl -s 169.254.169.254/latest/dynamic/instance-identity/doc
 test -n "$ACCOUNT_ID" && echo ACCOUNT_ID is "$ACCOUNT_ID" || echo ACCOUNT_ID is not set
 test -n "$AWS_REGION" && echo AWS_REGION is "$AWS_REGION" || echo AWS_REGION is not set
 
-echo "Validate the IAM role container-admin-role"
-aws sts get-caller-identity --query Arn | grep container-admin-role -q && echo "IAM role valid" || echo "EKS IAM Role - NOT valid!"
+echo "Validate the IAM role admin-role"
+aws sts get-caller-identity --query Arn | grep admin-role -q && echo "IAM role valid" || echo "EKS IAM Role - NOT valid!"
 
 # instance_id=`curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id`
 # # echo $instance_id
 # ip=`aws ec2 describe-iam-instance-profile-associations --filters "Name=instance-id,Values=$instance_id" | jq .IamInstanceProfileAssociations[0].IamInstanceProfile.Arn | cut -f2 -d'/' | tr -d '"'`
 # # echo $ip
-# if [ "$ip" != "container-admin-role" ] ; then
-# echo "ERROR: Could not find Instance profile container-admin-role! - DO NOT PROCEED exiting"
+# if [ "$ip" != "admin-role" ] ; then
+# echo "ERROR: Could not find Instance profile admin-role! - DO NOT PROCEED exiting"
 # exit
 # else
-# echo "PASSED: Found Instance profile container-admin-role - proceed with the workshop"
+# echo "PASSED: Found Instance profile admin-role - proceed with the workshop"
 # fi
-# aws sts get-caller-identity --query Arn | grep container-admin-role -q && echo "PASSED: IAM role valid - container-admin-role" || echo "ERROR: IAM role not valid - DO NOT PROCEED"
+# aws sts get-caller-identity --query Arn | grep admin-role -q && echo "PASSED: IAM role valid - admin-role" || echo "ERROR: IAM role not valid - DO NOT PROCEED"
 # iname=$(aws ec2 describe-tags --filters "Name=resource-type,Values=instance" "Name=resource-id,Values=$instance_id" | jq -r '.Tags[] | select(.Key=="Name").Value')
 # echo $iname| grep eks-terraform -q && echo "PASSED: Cloud9 IDE name is valid - contains eks-terraform" || echo "ERROR: Cloud9 IDE name invalid! - DO NOT PROCEED"
 # key_name=`aws ec2 describe-key-pairs --query "KeyPairs[?KeyName=='terraform-eks'].KeyName" | grep net | tr -d ' ' | tr -d '"'`
