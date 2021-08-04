@@ -13,12 +13,12 @@ export class SpaWebsiteStack extends cdk.Stack {
         websiteFolder: '../../projects/startup-blueprint'
       });
 
-    // /** Deploying a SPA-Website to AWS S3 behind CloudFront CDN */
-    // new SpaWebsite(this, 'SPA-Website-Cloudfront')
-    //   .createSiteWithCloudfront({
-    //     indexDoc: 'index.html',
-    //     websiteFolder: '../../projects/admin-dashboard'
-    //   });
+    /** Deploying a SPA-Website to AWS S3 behind CloudFront CDN */
+    new SpaWebsite(this, 'SPA-Website-Cloudfront')
+      .createSiteWithCloudfront({
+        indexDoc: 'index.html',
+        websiteFolder: '../../../projects/admin-dashboard'
+      });
 
   }
 }
