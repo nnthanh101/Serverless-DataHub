@@ -61,12 +61,6 @@ _logger "[+] [START] Deploy DevAx101 >> CDK at ${started_time}"
 echo "#########################################################"
 echo
 
-echo
-echo "#########################################################"
-_logger "[+] 1. [AWS Infrastructure] Startup-Blueprint"
-echo "#########################################################"
-echo
-
 CDK_PROJECT=spa-website
 cd $CDK_PROJECT
 
