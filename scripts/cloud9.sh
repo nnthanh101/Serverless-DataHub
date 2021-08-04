@@ -54,7 +54,7 @@ echo "#########################################################"
 # nvm alias default lts/fermium
 # nvm uninstall v10.24.1
 npm update && npm update -g
-sudo npm install -g aws-cdk --force
+sudo npm install -g aws-cdk yarn --force
 
 
 _logger "[+] Verify Prerequisites ..."
