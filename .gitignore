@@ -1,4 +1,4 @@
-*.js
+cdk/*.js
 !jest.config.js
 *.d.ts
 
