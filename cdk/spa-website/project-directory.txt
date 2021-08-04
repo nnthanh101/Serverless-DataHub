@@ -1,0 +1,14 @@
+/Volumes/Working/DevAx101/MicroServices/cdk/spa-website
+├── README.md
+├── bin
+|  └── spa-website.ts
+├── cdk.json
+├── jest.config.js
+├── lib
+|  └── spa-website-stack.ts
+├── package-lock.json
+├── package.json
+├── project-directory.txt
+├── test
+|  └── spa-website.test.ts
+└── tsconfig.json
