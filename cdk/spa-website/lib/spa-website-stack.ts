@@ -17,7 +17,7 @@ export class SpaWebsiteStack extends cdk.Stack {
     new SpaWebsite(this, 'SPA-Website-Cloudfront')
       .createSiteWithCloudfront({
         indexDoc: 'index.html',
-        websiteFolder: '../../../projects/admin-dashboard'
+        websiteFolder: '../../projects/admin-dashboard'
       });
 
   }
