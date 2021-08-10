@@ -38,19 +38,19 @@ echo "[x] Verify kubectl":  $(kubectl version --client)
 # echo $currentPrincipalArn
 
 
-echo
-echo "#########################################################"
-echo "[+] Install TypeScript node_modules & CDK Bootstrap ..."
-echo "#########################################################"
-echo
+# echo
+# echo "#########################################################"
+# echo "[+] Install TypeScript node_modules & CDK Bootstrap ..."
+# echo "#########################################################"
+# echo
 
 # npm install
 # npm run build
 
-cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
-    --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
-    --termination-protection                     \
-    --tags Cost=cdk
+# cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+#     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
+#     --termination-protection                     \
+#     --tags Cost=cdk
 ## cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} --show-template -v
 
 
