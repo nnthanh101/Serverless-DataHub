@@ -1,0 +1,54 @@
+## Workflow to CI/CD Pipeline with Github Actions: CDK Deployment
+
+name: CDK CI/CD
+
+## Controls when the action will run.
+on:
+  ## Triggers the workflow on push or pull request events but only for the main branch
+  push:
+      branches: [main]
+  pull_request:
+      branches: [main]
+
+  ## Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+## A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  ## This workflow contains a single job called "deploy"
+  deploy:
+    name: Build & Deploy
+    ## The type of runner that the job will run on Linux
+    runs-on: ubuntu-latest
+
+    ## Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      ## Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      ## Run the tests
+      - name: Run the tests
+        run: npm i && npm run build && npm run test
+
+      ## Sets up AWS profile.
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region:            ${{ secrets.AWS_REGION }}
+
+      ## Installs CDK and other prerequisites
+      - name: Prerequisite Installation
+        run: |
+          sudo npm install -g aws-cdk@1.117.0
+          cdk --version
+          aws s3 ls
+      ## Build and Deploy CDK application
+      - name: Build & Deploy
+        run: |
+          cd $GITHUB_WORKSPACE
+          ls -a
+          chmod +x deploy.sh
+          ./deploy.sh

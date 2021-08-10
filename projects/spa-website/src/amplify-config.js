@@ -6,9 +6,9 @@
 const awsConfig = {
     Auth: {
         region:              'ap-southeast-1',                                      // example: 'ap-southeast-1'
-        userPoolWebClientId: '5mq3vfn91bfc98te76616mc2s4',                          // example: ' 768l5okg32p4rtsl29lv7ck1uh'
-        identityPoolId:      'ap-southeast-1:b5bbaddc-c140-43de-938f-ca1b3cc226ab', // example: 'ap-southeast-1:e87499b0-f1ec-405b-8ad2-20d530cc97cc'
-        userPoolId:          'ap-southeast-1_qM4JKIICf'                             // example: 'ap-southeast-1_FpmviHBJe'
+        userPoolWebClientId: 'bc63lc7kjkun7u0asmtip1imd',                          // example: ' 768l5okg32p4rtsl29lv7ck1uh'
+        identityPoolId:      'ap-southeast-1:1e24eb09-fa4a-4154-8ef1-e0b6b77c09db', // example: 'ap-southeast-1:e87499b0-f1ec-405b-8ad2-20d530cc97cc'
+        userPoolId:          'ap-southeast-1_7WpRoj9af'                             // example: 'ap-southeast-1_FpmviHBJe'
     },
     API: {
         endpoints: [
