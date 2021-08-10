@@ -9,8 +9,7 @@ function _logger() {
     echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
 }
 
-
-source ./.env
+. ./.env
 
 echo
 echo "#########################################################"
@@ -83,7 +82,7 @@ echo
 
 echo "Please wait..."
 cd ${WORKING_DIR}/cdk/spa-website
-source ./.env
+
 cdk deploy --all --require-approval never 
 echo "Deploy Completed!"
 
