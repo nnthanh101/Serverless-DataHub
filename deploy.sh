@@ -75,19 +75,6 @@ echo
 ## cdk synth
 #cdk deploy --all --require-approval never
 
-
-echo
-echo "#########################################################"
-echo "[+] [START] Deploy EcsFargate Stack"
-echo "#########################################################"
-echo
-
-echo "Please wait..."
-cd ${WORKING_DIR}/ecs-fargate
-source ./.env
-cdk deploy --all --require-approval never 
-echo "Deploy Completed!"
-
 echo
 echo "#########################################################"
 echo "[+] [START] Deploy S3 Static website"
@@ -95,22 +82,34 @@ echo "#########################################################"
 echo
 
 echo "Please wait..."
-cd ${WORKING_DIR}/s3-website
+cd ${WORKING_DIR}/cdk/spa-website
 source ./.env
 cdk deploy --all --require-approval never 
 echo "Deploy Completed!"
 
-echo
-echo "#########################################################"
-echo "[+] [START] Deploy Transfer family stack"
-echo "#########################################################"
-echo
+# echo
+# echo "#########################################################"
+# echo "[+] [START] Deploy EcsFargate Stack"
+# echo "#########################################################"
+# echo
 
-echo "Please wait..."
-cd ${WORKING_DIR}/sftp-server
-source ./.env
-cdk deploy --all --require-approval never 
-echo "Deploy Completed!"
+# echo "Please wait..."
+# cd ${WORKING_DIR}/ecs-fargate
+# source ./.env
+# cdk deploy --all --require-approval never 
+# echo "Deploy Completed!"
+
+# echo
+# echo "#########################################################"
+# echo "[+] [START] Deploy Transfer family stack"
+# echo "#########################################################"
+# echo
+
+# echo "Please wait..."
+# cd ${WORKING_DIR}/sftp-server
+# source ./.env
+# cdk deploy --all --require-approval never 
+# echo "Deploy Completed!"
 
 
 # echo
@@ -133,4 +132,4 @@ echo -e "${RED} [END] CDK at ${ended_time} - ${started_time} ${NC}"
 echo "#########################################################"
 echo
 
-exit 1
+# exit 1
