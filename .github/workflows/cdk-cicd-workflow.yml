@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: cdk/spa-website
+      projects-directory: projects/spa-website
 
     ## Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -34,6 +35,12 @@ jobs:
         run: npm i && npm run build
         # run: npm i && npm run build && npm run test
         working-directory: ${{env.working-directory}}
+
+      ## Build the SPA-Website
+      - name: Build the SPA-Website
+        run: npm i && npm run build
+        # run: npm i && npm run build && npm run test
+        working-directory: ${{env.projects-directory}}
 
       ## Sets up AWS profile.
       - name: Configure AWS credentials
