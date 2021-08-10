@@ -30,17 +30,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      ## Build the SPA-Website
+      - name: Build the SPA-Website
+        run: npm i && npm run build
+        # run: npm i && npm run build && npm run test
+        working-directory: ${{env.projects-directory}}  
+
       ## Run the tests
       - name: Run the tests
         run: npm i && npm run build
         # run: npm i && npm run build && npm run test
         working-directory: ${{env.working-directory}}
-
-      ## Build the SPA-Website
-      - name: Build the SPA-Website
-        run: npm i && npm run build
-        # run: npm i && npm run build && npm run test
-        working-directory: ${{env.projects-directory}}
 
       ## Sets up AWS profile.
       - name: Configure AWS credentials
