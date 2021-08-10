@@ -31,7 +31,8 @@ jobs:
 
       ## Run the tests
       - name: Run the tests
-        run: npm i && npm run build && npm run test
+        run: npm i && npm run build
+        # run: npm i && npm run build && npm run test
         working-directory: ${{env.working-directory}}
 
       ## Sets up AWS profile.
