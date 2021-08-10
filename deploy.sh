@@ -11,6 +11,11 @@ function _logger() {
 
 . ./.env
 
+WORKSPACE=$(pwd)
+SPA_WEBSITE=${WORKSPACE}/cdk/spa-website
+# ECS_FARGATE=${WORKSPACE}/cdk/ecs-fargate
+# SFTP_SERVER=${WORKSPACE}/cdk/sftp-server
+
 echo
 echo "#########################################################"
 echo "[+] 0. Verify the prerequisites environment"
@@ -81,7 +86,7 @@ echo "#########################################################"
 echo
 
 echo "Please wait..."
-cd ${WORKING_DIR}/cdk/spa-website
+cd ${SPA_WEBSITE}
 
 cdk deploy --all --require-approval never 
 echo "Deploy Completed!"
@@ -93,7 +98,7 @@ echo "Deploy Completed!"
 # echo
 
 # echo "Please wait..."
-# cd ${WORKING_DIR}/ecs-fargate
+# cd ${ECS_FARGATE}
 # source ./.env
 # cdk deploy --all --require-approval never 
 # echo "Deploy Completed!"
@@ -105,7 +110,7 @@ echo "Deploy Completed!"
 # echo
 
 # echo "Please wait..."
-# cd ${WORKING_DIR}/sftp-server
+# cd ${SFTP_SERVER}
 # source ./.env
 # cdk deploy --all --require-approval never 
 # echo "Deploy Completed!"
