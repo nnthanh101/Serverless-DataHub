@@ -9,3 +9,4 @@ node_modules
 cdk.out
 
 BACKUP
+projects/spa-website/build/
