@@ -23,12 +23,23 @@ jobs:
     env:
       working-directory: cdk/spa-website
       projects-directory: projects/spa-website
+      ENVIRONMENT: prod
+      RELEASE_VERSION: ${{ github.event.inputs.tag }}
 
     ## Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       ## Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
+      
+      - name: Set ENVIRONMENT variable
+        run: |
+          if grep -q "main" <<< "${{github.ref}}" || grep -q "main" <<< "${{github.base_ref}}"; then
+            echo "::set-env name=ENVIRONMENT::staging"
+          elif grep -q "tags" <<< "${{github.ref}}"; then
+            echo "::set-env name=ENVIRONMENT::prod" && echo "::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})"
+          fi
+          echo $ENVIRONMENT
 
       ## Build the SPA-Website
       - name: Build the SPA-Website
