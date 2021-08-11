@@ -23,7 +23,7 @@ jobs:
     env:
       working-directory: cdk/spa-website
       projects-directory: projects/spa-website
-      ENVIRONMENT: prod
+      ENVIRONMENT: staging
       RELEASE_VERSION: ${{ github.event.inputs.tag }}
 
     ## Steps represent a sequence of tasks that will be executed as part of the job
@@ -35,11 +35,12 @@ jobs:
       - name: Set ENVIRONMENT variable
         run: |
           if grep -q "main" <<< "${{github.ref}}" || grep -q "main" <<< "${{github.base_ref}}"; then
-            echo "::set-env name=ENVIRONMENT::staging"
+           echo "ENVIRONMENT: staging"
           elif grep -q "tags" <<< "${{github.ref}}"; then
-            echo "::set-env name=ENVIRONMENT::prod" && echo "::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})"
+            echo "ENVIRONMENT: prod" && "RELEASE_VERSION: $(echo ${GITHUB_REF:10})"
           fi
           echo $ENVIRONMENT
+          echo $RELEASE_VERSION
 
       ## Build the SPA-Website
       - name: Build the SPA-Website
