@@ -9,10 +9,11 @@ function _logger() {
     echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
 }
 
-. ./.env
+source ./.env
 
 WORKSPACE=$(pwd)
 SPA_WEBSITE=${WORKSPACE}/cdk/spa-website
+SPA_WEBSITE_PROJECT=${WORKSPACE}/projects/spa-website
 # ECS_FARGATE=${WORKSPACE}/cdk/ecs-fargate
 # SFTP_SERVER=${WORKSPACE}/cdk/sftp-server
 
@@ -49,14 +50,15 @@ echo "[x] Verify kubectl":  $(kubectl version --client)
 # echo "#########################################################"
 # echo
 
-# npm install
-# npm run build
+cd ${SPA_WEBSITE}
+npm install
+npm run build
 
-# cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
-#     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
-#     --termination-protection                     \
-#     --tags Cost=cdk
-## cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} --show-template -v
+cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+    --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
+    --termination-protection                     \
+    --tags Cost=cdk
+# cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} --show-template -v
 
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
@@ -65,6 +67,10 @@ echo "#########################################################"
 echo "[+] [START] Deploy CDK at ${started_time}"
 echo "#########################################################"
 echo
+
+cd ${SPA_WEBSITE_PROJECT}
+npm install
+npm run build
 
 # echo
 # echo "#########################################################"
