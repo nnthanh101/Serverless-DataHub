@@ -74,4 +74,4 @@ jobs:
           cd $GITHUB_WORKSPACE
           ls -a
           chmod +x deploy.sh
-          ./deploy.sh
+          ./deploy-CI.sh
