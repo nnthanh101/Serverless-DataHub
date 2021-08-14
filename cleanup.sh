@@ -8,6 +8,8 @@ NC='\033[0m'
 function _logger() {
     echo -e "$(date) ${YELLOW}[*] $@ ${NC}"
 }
+WORKSPACE=$(pwd)
+SPA_WEBSITE=${WORKSPACE}/cdk/spa-website
 
 echo
 echo "#########################################################"
@@ -15,6 +17,7 @@ _logger "[+] ${RED} WARNING: This script will clean everything in your account"
 _logger "[+] ${RED} WARNING: This can't be roll back" 
 echo "#########################################################"
 echo
+
 options=("YES DO IT!" "NO STOPPP!!!")
 PS3='Please enter your choice: '
 select opt in "${options[@]}"
@@ -37,7 +40,11 @@ _logger "[+] Stop ECS in active status"
 echo "#########################################################"
 echo
 
-./ecs-fargate/cleanup.sh   
+cd ${SPA_WEBSITE}
+cdk destroy --all --require-approval never
+
+## TODO
+# ./ecs-fargate/cleanup.sh   
   
 echo
 echo "#########################################################" 
@@ -45,6 +52,7 @@ _logger "[+] Clear all S3 and artifact"
 echo "#########################################################"
 echo
 
+# FIXME
 echo aws s3 ls | cut -d" " -f 3 | xargs -I{} aws s3 rb s3://{} --force &> /dev/null
 echo "Cleaning completed"
 
@@ -55,6 +63,7 @@ _logger "[+] Delete All Stacks"
 echo "#########################################################"
 echo
 
+# FIXME
 for i in $(aws cloudformation list-stacks | jq -r '.StackSummaries' | jq -r -c '.[] | select(.StackName).StackName') ; do 
     echo "Disable termination protection" 
     aws cloudformation update-termination-protection --no-enable-termination-protection --stack-name $i &> /dev/null
