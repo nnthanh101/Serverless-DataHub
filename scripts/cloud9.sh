@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
+## Note: Wait at least 6 hours between modifications per EBS volume.
 source ./ebs-resize.sh 30
 
 RED='\033[0;31m'
@@ -14,7 +15,9 @@ function _logger() {
 echo "This script support Amazon Linux 2 ONLY !!!"
 
 KERNEL_TYPE=linux
-AWS_CLI_VERSION=$(aws --version)
+AWS_CLI_VERSION_FULL=$(aws --version)
+AWS_CLI_VERSION=${AWS_CLI_VERSION_FULL:0:9}
+echo $AWS_CLI_VERSION
 
 echo "#########################################################"
 _logger "[+] 1.1. Installing Utilities: jq, wget, unzip ..."
@@ -27,7 +30,7 @@ _logger "[+] 1.2. Installing latest AWS CLI - version 2"
 echo "#########################################################"
 
 # if [[ "$KERNEL_TYPE" == "linux" ]]; then   
-    # if [[ "$AWS_CLI_VERSION" < "aws-cli/2" ]]; then
+    if [[ "$AWS_CLI_VERSION" != "aws-cli/2" ]]; then
     #     echo "Uninstall the AWS CLI version 1 using pip"
     #     sudo pip uninstall awscli
         echo "Install the AWS CLI version 2 using pip"
@@ -35,7 +38,7 @@ echo "#########################################################"
         unzip awscliv2.zip
         sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
         rm -rf awscliv2.zip aws
-    # fi
+    fi
     python -m pip install --upgrade pip --user
     pip3 install boto3 --user
 # else
@@ -63,9 +66,9 @@ echo "[x] Verify jq":                $(jq   --version)
 echo "[x] Verify AWS CLI version 2": $(aws  --version)
 echo "[x] Verify Node.js":           $(node --version)
 echo "[x] Verify CDK":               $(cdk  --version)
-# echo "[x] Verify Python": $(python -V)
-# echo "[x] Verify Python3":           $(python3 -V)
-# echo "[x] Verify Pip3":              $(pip3 -V)
+echo "[x] Verify Python":            $(python -V)
+echo "[x] Verify Python3":           $(python3 -V)
+echo "[x] Verify Pip3":              $(pip3 -V)
 # echo "[x] Verify kubectl":           $(kubectl version --client)
 # echo "[x] Verify eksctl":            $(eksctl version)
 # echo "[x] Verify helm3":             $(helm version --short)
@@ -77,7 +80,7 @@ echo "#########################################################"
 _logger "[+] 3. Verify the binaries are in the path and executable! "
 echo "#########################################################"
 
-for command in aws wget jq envsubst
+for command in aws wget jq envsubst 
   do
     which $command &>/dev/null && echo "[x] $command in path" || echo "[ ] $command NOT FOUND"
   done
