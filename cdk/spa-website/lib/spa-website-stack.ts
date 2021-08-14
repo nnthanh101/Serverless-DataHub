@@ -7,11 +7,11 @@ export class SpaWebsiteStack extends cdk.Stack {
 
     // The code that defines your stack goes here
     /** Deploying a Website to AWS S3 */
-    // new SpaWebsite(this, 'SPA-Website-S3')
-    //   .createBasicSite({
-    //     indexDoc:        'index.html',
-    //     websiteFolder:   '../../projects/startup-blueprint'
-    //   });
+    new SpaWebsite(this, 'SPA-Website-S3')
+      .createBasicSite({
+        indexDoc:        'index.html',
+        websiteFolder:   '../../projects/startup-blueprint'
+      });
 
     /** Deploying a SPA-Website to AWS S3 behind CloudFront CDN */
     new SpaWebsite(this, 'SPA-Website-Cloudfront', { encryptBucket: true })
