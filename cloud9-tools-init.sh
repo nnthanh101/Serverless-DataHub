@@ -19,7 +19,7 @@ aws configure set default.region ${AWS_REGION}
 aws configure get default.region
 
 export NVM_VER=$(curl --silent "https://github.com/nvm-sh/nvm/releases/latest" | sed 's#.*tag/\(.*\)\".*#\1#') #v0.39.1
-export CDK_VER=$(curl --silent "https://github.com/DevAx101/MicroServices/releases/latest" | sed 's#.*tag/\(.*\)\".*#\1#') #v.3.1.0
+export CDK_VER=$(curl --silent "https://github.com/DevAx101/MicroServices/releases/latest" | sed 's#.*tag/\(.*\)\".*#\1#') #v.1.0.1
 export PACKER_VER=1.7.8
 
 ## Clone CDK and install dependencies ------------
@@ -31,8 +31,7 @@ cd $cwd
 echo "Installing dependencies ..."
 sudo yum install golang jq -y -q -e 0 >/dev/null 2>&1
 echo "Enabling utilities scripts ..."
-chmod +x cloud9-resize.sh
-chmod +x hosting-account/create-host-account.sh
+chmod +x cloud9-ebs-resize.sh
 echo "Resizing AWS Cloud9 Volume ..."
 # ./cloud9-ebs-resize.sh ## 50GB by default
 
