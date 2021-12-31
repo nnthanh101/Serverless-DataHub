@@ -190,10 +190,11 @@ echo "[x] Verify Terraform":         $(terraform -v)
 echo "[x] Verify InfraCost":         $(infracost -v)
 echo "[x] Verify helm3":             $(helm version --short)
 echo "[x] Verify kubectl":           $(kubectl version --client)
-echo "[x] Verify eksctl":            $(eksctl version)
+# echo "[x] Verify eksctl":            $(eksctl version)
 echo "[x] Verify k9s":               $(k9s version --short)
 # echo "[x] Verify Java":              $(java --version)
 # echo "[x] Verify Maven":             $(mvn --version)
+
 
 echo ""
 echo "Your AWS Cloud9 Environment is ready to use. "
