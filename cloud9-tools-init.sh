@@ -31,10 +31,6 @@ _logger "Python3.8 >> Lambda runtime compatible !!!"
 sudo amazon-linux-extras enable python3.8
 sudo yum install -y python3.8
 
-## Because yum does not support Python3
-echo "Replace python by python2.7 in /usr/bin/yum !!!"
-sudo sed -i 's/python/python2.7/' /usr/bin/yum
-
 ## [Note - yum issue] Nake 2.7 as default python
 # sudo ln -sf /usr/bin/python2.7 /usr/bin/python
 
@@ -120,9 +116,14 @@ echo '=== PREPARE REBOOT in 1 minute with at ==='
 FILE=$(mktemp) && echo $FILE && echo '#!/bin/bash' > $FILE && echo 'reboot -f --verbose' >> $FILE && at now + 1 minute -f $FILE
 echo "Bootstrap completed with return code $?"
 
-sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
+# sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
+echo alias python=/usr/bin/python3.8 >> ~/.bashrc
 # echo "alias python='/usr/bin/python3.8'" >> ~/.bashrc
 . ~/.bashrc
+
+## Because yum does not support Python3
+# echo "Replace python by python2.7 in /usr/bin/yum !!!"
+# sudo sed -i 's/python/python2.7/' /usr/bin/yum
 
 _logger "[+] Verify Prerequisites ..."
 echo "[x] Verify Git client":        $(git --version)
