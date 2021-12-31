@@ -153,7 +153,7 @@ sudo curl --silent --location -o /usr/local/bin/kubectl \
                    https://amazon-eks.s3.us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
-kubectl completion bash >>  ~/.bash_completion
+echo kubectl completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
 
@@ -184,6 +184,7 @@ echo "[x] Verify Node.js":           $(node --version)
 echo "[x] Verify CDK":               $(cdk --version)
 echo "[x] Verify Python":            $(python -V)
 echo "[x] Verify Python3":           $(python3 -V)
+echo "[x] Verify Pip":               $(pip -V)
 echo "[x] Verify Pip3":              $(pip3 -V)
 echo "[x] Verify Terraform":         $(terraform -v)
 echo "[x] Verify InfraCost":         $(infracost -v)
