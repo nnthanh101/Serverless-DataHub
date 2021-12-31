@@ -78,8 +78,8 @@ sudo yum -y remove aws-cli
 sudo yum install golang jq gettext bash-completion -y -q -e 0 >/dev/null 2>&1
 echo "Enabling utilities scripts ..."
 chmod +x cloud9-ebs-resize.sh
-_logger "Resizing AWS Cloud9 Volume >> 250GB ..."
-./cloud9-ebs-resize.sh 250
+# _logger "Resizing AWS Cloud9 Volume >> 250GB ..."
+# ./cloud9-ebs-resize.sh 250
 
 _logger "NVM & Node.js 14.x >> Lambda runtime compatible !!!"
 echo "Installing nvm ..."
