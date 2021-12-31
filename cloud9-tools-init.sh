@@ -119,6 +119,29 @@ export NVM_DIR="$HOME/.nvm"
 echo alias python=/usr/bin/python3.8 >> ~/.bashrc
 # echo "alias python='/usr/bin/python3.8'" >> ~/.bashrc
 
+_logger "Installing Terraform, InfraCost ..."
+version=$(curl https://api.github.com/repos/hashicorp/terraform/releases/latest --silent | jq ".tag_name" -r)
+# version=$(echo $version | sed 's/v//g') # get rid of 'v' from version number
+# version=${1:-1.1.2}
+echo "Installing Terraform $version."
+url="https://releases.hashicorp.com/terraform/$version/terraform_$(echo $version)_${KERNEL_TYPE}_amd64.zip"
+curl -L -o terraform_amd64.zip $url
+unzip terraform_amd64.zip
+chmod +x terraform
+sudo mv terraform /usr/local/bin/
+echo "Terraform $version installed."
+rm terraform_amd64.zip
+echo "Install terraform*.zip file cleaned up."
+
+## Downloads the CLI based on your OS/arch and puts it in /usr/local/bin
+curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
+
+echo "Installing helm ..."
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
+
 source ~/.bashrc
 . ~/.bashrc
 
@@ -137,10 +160,11 @@ echo "[x] Verify CDK":               $(cdk --version)
 echo "[x] Verify Python":            $(python -V)
 echo "[x] Verify Python3":           $(python3 -V)
 echo "[x] Verify Pip3":              $(pip3 -V)
-# echo "[x] Verify Terraform":         $(terraform -v)
+echo "[x] Verify Terraform":         $(terraform -v)
+echo "[x] Verify InfraCost":         $(infracost -v)
+echo "[x] Verify helm3":             $(helm version --short)
 # echo "[x] Verify kubectl":           $(kubectl version --client)
 # echo "[x] Verify eksctl":            $(eksctl version)
-# echo "[x] Verify helm3":             $(helm version --short)
 # echo "[x] Verify k9s":               $(k9s version --short)
 # echo "[x] Verify Java":              $(java --version)
 # echo "[x] Verify Maven":             $(mvn --version)
