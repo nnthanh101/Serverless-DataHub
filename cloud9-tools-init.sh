@@ -110,20 +110,22 @@ echo -e "alias cdk-ami-list='aws ec2 describe-images --owners self --query \"rev
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" 
-source ~/.bashrc 
+
+## Because yum does not support Python3
+# echo "Replace python by python2.7 in /usr/bin/yum !!!"
+# sudo sed -i 's/python/python2.7/' /usr/bin/yum
+
+# sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
+echo alias python=/usr/bin/python3.8 >> ~/.bashrc
+# echo "alias python='/usr/bin/python3.8'" >> ~/.bashrc
+
+source ~/.bashrc
+. ~/.bashrc
 
 echo '=== PREPARE REBOOT in 1 minute with at ==='
 FILE=$(mktemp) && echo $FILE && echo '#!/bin/bash' > $FILE && echo 'reboot -f --verbose' >> $FILE && at now + 1 minute -f $FILE
 echo "Bootstrap completed with return code $?"
 
-# sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
-echo alias python=/usr/bin/python3.8 >> ~/.bashrc
-# echo "alias python='/usr/bin/python3.8'" >> ~/.bashrc
-. ~/.bashrc
-
-## Because yum does not support Python3
-# echo "Replace python by python2.7 in /usr/bin/yum !!!"
-# sudo sed -i 's/python/python2.7/' /usr/bin/yum
 
 _logger "[+] Verify Prerequisites ..."
 echo "[x] Verify Git client":        $(git --version)
