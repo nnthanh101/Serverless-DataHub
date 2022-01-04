@@ -1,9 +1,0 @@
-git clone https://github.com/spring-projects/spring-petclinic.git projects/springboot
-
-mysql -u root -h springboot.cgmrtaygpeev.ap-southeast-1.rds.amazonaws.com -p SpringBoot
-
-__YOUR_PASSWORD__
-
-source ./projects/springboot/src/main/resources/db/mysql/schema.sql
-
-source ./projects/springboot/src/main/resources/db/mysql/data.sql
