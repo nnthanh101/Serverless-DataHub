@@ -1,10 +1,10 @@
-# [DevAx] Cloud-Native Micro-Services 🌥🎯🚀
+# [CDK] Cloud-Native Microservices 🌥🎯🚀
 
-![Build Status](https://github.com/DevAx101/MicroServices/workflows/cdk-construct-workflow.svg)
+![Build Status](https://github.com/DevAx101/cdk/workflows/cdk-workflow/badge.svg)
 
-[DevAx Academy] **Monoliths to Micro-Services** is on the job training tech-series to helps Customers build the right developer skills for cloud adoption, and build developer cloud-native fluency across their organization.
+[CDK] **Monoliths to Microservices** is on the job training tech-series to helps Customers build the right developer skills for cloud adoption, and build developer cloud-native fluency across their organization.
 
-[Building Modern Applications using Micro-Services](https://microservices.job4u.vn) to build modern cloud-native applications that are designed and distributed for scale and agility 🎯🚀
+[Building Modern Applications using Microservices](https://cdk.job4u.io) to build modern cloud-native applications that are designed and distributed for scale and agility 🎯🚀
 
 * [x] 🌥 Would you like to build cloud-native applications and modern architecture practices? 
 * [x] 🎯 Do you have the skills needed to build modern cloud applications that are designed and distributed for scale and agility? 
@@ -12,26 +12,19 @@
 
 ## Setup 🌥
 
-* [x] **AWS Account**: using [AWS Free Tier](https://aws.amazon.com/free) or [AWS Workshop Portal](https://microservices.job4u.vn/en/setup/aws-account.html)
-* [x] **Development IDE**: using [**AWS Cloud9** Cloud-based IDE](https://microservices.job4u.vn/en/setup/cloud9-bootstrap/)
+* [x] **AWS Account**: using [AWS Free Tier](https://aws.amazon.com/free) or [AWS Workshop Portal](https://cdk.job4u.io/en/setup/aws-account.html)
+* [x] **Development IDE**: using [**AWS Cloud9** Cloud-based IDE](https://cdk.job4u.io/en/setup/cloud9-ide.html)
 
-## Building Micro-Services Modern Applications
+## Building Microservices Modern Applications
 
 Module | Feature | Description
 ------------ | ------------- | -------------
-[1](./s3-website/README.md) | **[Cloud Developer & SPA-Website CDK-Pattern](https://www.facebook.com/groups/modernapps/permalink/794258977836330/)** | Creating a Single-Page Application (**SPA**), such as **ReactJS / VueJS / Angular**, using AWS Cloud Development Kit (**CDK**) Infrastructure as Code.
-[2](./elasticbeanstalk/README.md) | **[AWS ElasticBeanstalk](https://www.facebook.com/groups/modernapps/permalink/796401030955458/)** | Deploy, Scale and Modernize Web Applications using Platform as a Service (**PaaS**).
-[3](./docker/README.md) | **Docker DevSecOps** | Docker **CI/CD pipeline** & open-source **security vulnerability scanning** tools.
-[4](./ecs-fargate/README.md) | **Amazon ECS Fargate** | Simplified the task of running Docker Container securely, at scale.
-[5](./eks/README.md) | **Amazon EKS & K8s** | Enterprise-class platform to run production-grade **Kubernetes** workloads.
+[1](./s3-website/README.md) | **[SPA-Website]()** | Creating a Single-Page Application (**SPA**), such as **ReactJS / VueJS / Angular**, using AWS Cloud Development Kit (**CDK**) Infrastructure as Code.
+[2](./apprunner/README.md) | **[AppRunner]()** | Deploy, Scale and Modernize Web Applications using Platform as a Service (**PaaS**).
+[3](./devsecops/README.md) | **DevSecOps** | Docker **CI/CD pipeline** & open-source **security vulnerability scanning** tools.
+[4](./ecs-fargate/README.md) | **ECS Fargate** | Simplified the task of running Docker Container securely, at scale.
+[5](./eks/README.md) | **EKS Anywhere** | Enterprise-class platform to run production-grade **Kubernetes** workloads.
 [6](./serverless/README.md) | **Serverless** | Building a **scalable serverless** application >> up to 1 million users.
-
----
-
-## [0. Setup 🌥](https://microservices.job4u.vn/en/setup.html)
-
-* [x] **AWS Account**: using [AWS Free Tier](https://aws.amazon.com/free) or [AWS Workshop Portal](https://microservices.job4u.vn/en/setup/aws-account.html)
-* [x] **Development IDE**: using [**AWS Cloud9** Cloud-based IDE](https://microservices.job4u.vn/en/setup/cloud9-bootstrap/)
 
 ---
 
