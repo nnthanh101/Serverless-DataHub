@@ -174,6 +174,18 @@ curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/
 # sudo mv /tmp/k9s /usr/local/bin/k9s
 # sudo chmod +x /usr/local/bin/k9s
 
+## Postgres, python3.8-dev, docker
+sudo yum install -yq libpq-dev postgresql postgresql-contrib 
+sudo yum install -y python3.8-dev
+sudo yum install -y docker
+
+## docker-compose install
+# sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose`
+sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+echo "[x] Verify Docker":           $(docker --version)
+echo "[x] Verify Docker Compose":   $(docker-compose version)
+
 
 _logger "[+] Verify Prerequisites ..."
 echo "[x] Verify Git client":        $(git --version)
