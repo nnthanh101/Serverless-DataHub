@@ -118,7 +118,7 @@ export NVM_DIR="$HOME/.nvm"
 
 # sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
 echo alias python=/usr/bin/python3.8 >> ~/.bashrc
-# echo "alias python='/usr/bin/python3.8'" >> ~/.bashrc
+echo alias python3=/usr/bin/python3.8 >> ~/.bashrc
 
 source ~/.bashrc
 . ~/.bashrc
