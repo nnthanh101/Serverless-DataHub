@@ -1,0 +1,45 @@
+version: "2"
+
+services:
+  database:
+    image: mysql:5.7
+    container_name: database
+    environment:
+      MYSQL_ROOT_PASSWORD: mypassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - database:/var/lib/mysql
+    restart: always
+    networks:
+      - mauticnet
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci --sql-mode=""
+
+  mautic:
+    container_name: mautic
+    image: job4u/mautic:v4-apache
+    volumes:
+      - data:/var/www/html
+    environment:
+      - MAUTIC_URL=http://localhost:8888
+      - MAUTIC_ADMIN_EMAIL=digital@job4u.io
+      - MAUTIC_ADMIN_PASSWORD=mypassword
+      - MAUTIC_INSTALL_FORCE=true
+      - MAUTIC_DB_HOST=database
+      - MAUTIC_DB_USER=root
+      - MAUTIC_DB_PASSWORD=mypassword
+      - MAUTIC_DB_NAME=mautic4
+      - MAUTIC_RUN_CRON_JOBS=true
+      - PHP_INI_DATE_TIMEZONE=Asia/Ho_Chi_Minh
+    restart: always
+    networks:
+      - mauticnet
+    ports:
+      - "8888:80"
+
+volumes:
+  database:
+  data:
+
+networks:
+  mauticnet:
