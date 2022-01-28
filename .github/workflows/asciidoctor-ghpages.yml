@@ -1,32 +1,25 @@
 name: asciidoctor-ghpages
 
-## Controls when the action will run. Triggers the workflow on push or pull request events but only for the master branch
 on:
   push:
-    branches: [ startup-blueprint ]
-  pull_request:
-    branches: [ startup-blueprint ]
+    branches:
+    - startup-blueprint
 
-## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  ## This workflow contains a single job called "build"
-  build:
-    ## The type of runner that the job will run on
+  adoc_build:
     runs-on: ubuntu-latest
-
-    ## Steps represent a sequence of tasks that will be executed as part of the job
+    name: Asciidoctor the docs to pretty HTML!
     steps:
-    ## Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-      
-    ## Includes the AsciiDoctor GitHub Pages Action to convert adoc files to html and publish to gh-pages branch
-    - name: asciidoctor-ghpages
-      uses: manoelcampos/asciidoctor-ghpages-action@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Get build container
+      id: adocbuild
+      uses: avattathil/asciidoctor-action@master
       with:
-        asciidoctor_params: --attribute=nofooter
-        pdf_build: true
-        # adoc_file_ext: .ascii # default is .adoc
-        source_dir: docs/ # default is .
-        slides_build: true
-        # pre_build:
-        # post_build:
+          program: "asciidoctor --base-dir docs/ --backend=html5 -o ../docs/index.html -w --doctype=book -a toc2 -a production_build docs/boilerplate/index.adoc && echo 'startup-blueprint.job4u.io' > docs/CNAME"
+    - name: Deploy docs to ghpages
+      uses: peaceiris/actions-gh-pages@v3
+      with: 
+        deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+        publish_branch: gh-pages
+        publish_dir: ./docs/
