@@ -1,0 +1,9 @@
+// Replace the content in <>
+// Briefly describe the software. Use consistent and clear branding. 
+// Include the benefits of using the software on AWS, and provide details on usage scenarios.
+
+The {partner-product-name} Quick Start is called a blueprint because its architecture is analogous to an empty house. After you deploy it, you furnish it with the resources you need for your product or service.
+
+The architecture has partitioned virtual private clouds (VPCs) that separate fintech production, management, and development processes. The Quick Start configures this architecture for identity management, virtual private network (VPN) access control, encryption, network isolation, logging, alarms, and compliance auditing. 
+
+You can develop or host your B2B or B2C fintech products in this environment. In addition, you can use the https://aws.amazon.com/servicecatalog/[AWS Service Catalog^] to install prepackaged financial tools from leading fintech software vendors and open-source tools. You can also launch any applicable AWS Quick Start—such as https://fwd.aws/4bpjr?[SWIFT Client Connectivity^]—from the link provided on its webpage or in its deployment guide.

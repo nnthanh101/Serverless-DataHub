@@ -1,0 +1,36 @@
+// Replace the <n> in each row to specify the number of resources used in this deployment. Remove the rows for resources that aren’t used.
+|===
+|Resource |This deployment uses
+
+// Space needed to maintain table headers
+|Configuration recorders |1
+|AWS Config conformance packs |4
+|AWS Config delivery channels |1
+|AWS Client VPN authorization rules |3
+|AWS Client VPN endpoints |1
+|AWS Client VPN routes |4
+|AWS Client VPN target network associations |2
+|Elastic IP addresses |3
+|Internet gateways |3
+|Network address translation (NAT) gateways |3
+|Routes |30
+|Route tables |16
+|Security groups |1
+|Subnets |16
+|Subnet route table associations |32
+|VPCs |3
+|VPC endpoints |2
+|VPC gateway attachments |2
+|VPC peering connections |2
+|AWS Identity and Access Management (IAM) policies |1
+|IAM roles |2
+|AWS Lambda functions |1
+|Log groups |1
+|Log streams |1
+|Route 53 hosted zones |1
+|S3 buckets |2
+|S3 bucket policies |1
+|AWS Service Catalog AWS CloudFormation products |6
+|AWS Service Catalog portfolio product associations |6
+|AWS Service Catalog portfolios |1
+|===

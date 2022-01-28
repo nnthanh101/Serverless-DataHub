@@ -1,0 +1,4 @@
+[submodule "docs/boilerplate"]
+	path = docs/boilerplate
+	url = https://github.com/Academy4U/quickstart-documentation-base-common
+	branch = main
