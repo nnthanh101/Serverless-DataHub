@@ -25,30 +25,33 @@ echo '=== INSTALL and CONFIGURE default software components ==='
 sudo yum -y update 
 sudo yum -y remove aws-cli
 
+_logger "Python3.7 << Uninstall !!!"
+sudo yum -y remove python3.7 python3
 _logger "Python3.8 >> Lambda runtime compatible !!!"
 # sudo yum install -y amazon-linux-extras
 # amazon-linux-extras | grep -i python
 sudo amazon-linux-extras enable python3.8
 sudo yum install -y python3.8
 
-## [Note - yum issue] Nake 2.7 as default python
-# sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
 
-# sudo rm /usr/bin/python
-# sudo ln -s /usr/bin/python3.8 /usr/bin/python
-# virtualenv dh-env --python=/usr/bin/python3.8 --always-copysource dh-env/bin/activate
-# sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-# sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
-# sudo update-alternatives --list | grep python
-# alternatives --set python /usr/bin/python3.8
-# sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore awscli aws-sam-cli"
-sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore aws-sam-cli"
+## [Note - yum issue] Nake 2.7 as default python
+## sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+
+sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore"
 
 echo "Installing the AWS CLI version 2 ..."
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 rm -rf awscliv2.zip aws
+
+echo "Installing the AWS SAM CLI ..."
+wget https://github.com/aws/aws-sam-cli/releases/download/v1.38.1/aws-sam-cli-linux-x86_64.zip
+unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+sudo ./sam-installation/install --update
+rm -rf aws-sam-cli-linux-x86_64.zip sam-installation
 
 ## Check for AWS Region --------------------------
 export AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
@@ -116,12 +119,11 @@ export NVM_DIR="$HOME/.nvm"
 # echo "Replace python by python2.7 in /usr/bin/yum !!!"
 # sudo sed -i 's/python/python2.7/' /usr/bin/yum
 
-# sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
 echo alias python=/usr/bin/python3.8 >> ~/.bashrc
 echo alias python3=/usr/bin/python3.8 >> ~/.bashrc
 
 source ~/.bashrc
-. ~/.bashrc
+# . ~/.bashrc
 
 echo '=== PREPARE REBOOT in 1 minute with at ==='
 FILE=$(mktemp) && echo $FILE && echo '#!/bin/bash' > $FILE && echo 'reboot -f --verbose' >> $FILE && at now + 1 minute -f $FILE
