@@ -25,30 +25,33 @@ echo '=== INSTALL and CONFIGURE default software components ==='
 sudo yum -y update 
 sudo yum -y remove aws-cli
 
+_logger "Python3.7 << Uninstall !!!"
+sudo yum -y remove python3.7 python3
 _logger "Python3.8 >> Lambda runtime compatible !!!"
 # sudo yum install -y amazon-linux-extras
 # amazon-linux-extras | grep -i python
 sudo amazon-linux-extras enable python3.8
 sudo yum install -y python3.8
 
-## [Note - yum issue] Nake 2.7 as default python
-# sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
 
-# sudo rm /usr/bin/python
-# sudo ln -s /usr/bin/python3.8 /usr/bin/python
-# virtualenv dh-env --python=/usr/bin/python3.8 --always-copysource dh-env/bin/activate
-# sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-# sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1
-# sudo update-alternatives --list | grep python
-# alternatives --set python /usr/bin/python3.8
-# sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore awscli aws-sam-cli"
-sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore aws-sam-cli"
+## [Note - yum issue] Nake 2.7 as default python
+## sudo ln -sf /usr/bin/python2.7 /usr/bin/python
+
+sudo -H -u ec2-user bash -c "pip install --user -U boto boto3 botocore"
 
 echo "Installing the AWS CLI version 2 ..."
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
 rm -rf awscliv2.zip aws
+
+echo "Installing the AWS SAM CLI ..."
+wget https://github.com/aws/aws-sam-cli/releases/download/v1.38.1/aws-sam-cli-linux-x86_64.zip
+unzip aws-sam-cli-linux-x86_64.zip -d sam-installation
+sudo ./sam-installation/install --update
+rm -rf aws-sam-cli-linux-x86_64.zip sam-installation
 
 ## Check for AWS Region --------------------------
 export AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed 's/\(.*\)[a-z]/\1/')
@@ -65,7 +68,7 @@ aws configure get default.region
 
 export NVM_VER=$(curl --silent "https://github.com/nvm-sh/nvm/releases/latest" | sed 's#.*tag/\(.*\)\".*#\1#') #v0.39.1
 export CDK_VER=$(curl --silent "https://github.com/DevAx101/cdk/releases/latest" | sed 's#.*tag/\(.*\)\".*#\1#') #v.1.0.1
-export PACKER_VER=1.7.8
+export PACKER_VER=1.7.10
 
 ## Clone CDK and install dependencies ------------
 echo "Cloning CDK Repo ..."
@@ -78,9 +81,9 @@ sudo yum -y remove aws-cli
 sudo yum install golang jq gettext bash-completion moreutils -y -q -e 0 >/dev/null 2>&1
 
 echo "Enabling utilities scripts ..."
-chmod +x cloud9-ebs-resize.sh
-# _logger "Resizing AWS Cloud9 Volume >> 250GB ..."
-# ./cloud9-ebs-resize.sh 250
+# chmod +x cloud9-ebs-resize.sh
+# _logger "Resizing AWS Cloud9 Volume >> 60GB ..."
+# ./cloud9-ebs-resize.sh 60
 
 _logger "NVM & Node.js 14.x >> Lambda runtime compatible !!!"
 echo "Installing nvm ..."
@@ -116,12 +119,11 @@ export NVM_DIR="$HOME/.nvm"
 # echo "Replace python by python2.7 in /usr/bin/yum !!!"
 # sudo sed -i 's/python/python2.7/' /usr/bin/yum
 
-# sudo bash -c "echo alias python=/usr/bin/python3.8 >> ~/.bashrc"
 echo alias python=/usr/bin/python3.8 >> ~/.bashrc
 echo alias python3=/usr/bin/python3.8 >> ~/.bashrc
 
 source ~/.bashrc
-. ~/.bashrc
+# . ~/.bashrc
 
 echo '=== PREPARE REBOOT in 1 minute with at ==='
 FILE=$(mktemp) && echo $FILE && echo '#!/bin/bash' > $FILE && echo 'reboot -f --verbose' >> $FILE && at now + 1 minute -f $FILE
@@ -145,40 +147,40 @@ echo "Install terraform*.zip file cleaned up."
 ## Downloads the CLI based on your OS/arch and puts it in /usr/local/bin
 curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh
 
-# echo "#########################################################"
-# _logger "[+] Installing kubectl & eksctl"
-# echo "#########################################################"
-# KUBECTL_VERSION="1.19.6/2021-01-05"
-# sudo curl --silent --location -o /usr/local/bin/kubectl \
-#                   https://amazon-eks.s3.us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
-# sudo chmod +x /usr/local/bin/kubectl
+echo "#########################################################"
+_logger "[+] Installing kubectl & eksctl"
+echo "#########################################################"
+KUBECTL_VERSION="1.21.2/2021-07-05"
+sudo curl --silent --location -o /usr/local/bin/kubectl \
+                  https://amazon-eks.s3.us-west-2.amazonaws.com/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+sudo chmod +x /usr/local/bin/kubectl
 
-# echo kubectl completion bash >> ~/.bash_completion
-# . /etc/profile.d/bash_completion.sh
-# . ~/.bash_completion
+echo kubectl completion bash >> ~/.bash_completion
+. /etc/profile.d/bash_completion.sh
+. ~/.bash_completion
 
-# echo "Installing helm ..."
-# curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-# chmod 700 get_helm.sh
-# ./get_helm.sh
-# rm get_helm.sh
+echo "Installing helm ..."
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh
 
-# echo "#########################################################"
-# _logger "[+] Installing k9s"
-# echo "#########################################################"
-# version=$(curl https://api.github.com/repos/derailed/k9s/releases/latest --silent | jq ".tag_name" -r)
-# K9S_VERSION=$(echo $version | sed 's/v//g') # get rid of 'v' from version number
-# K9S_TAR_FILENAME=k9s_$(uname -s)_$(uname -m).tar.gz
-# curl -o /tmp/$K9S_TAR_FILENAME -L -k https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/$K9S_TAR_FILENAME
-# tar -xvf /tmp/$K9S_TAR_FILENAME -C /tmp/
-# sudo mv /tmp/k9s /usr/local/bin/k9s
-# sudo chmod +x /usr/local/bin/k9s
+echo "#########################################################"
+_logger "[+] Installing k9s"
+echo "#########################################################"
+version=$(curl https://api.github.com/repos/derailed/k9s/releases/latest --silent | jq ".tag_name" -r)
+K9S_VERSION=$(echo $version | sed 's/v//g') # get rid of 'v' from version number
+K9S_TAR_FILENAME=k9s_$(uname -s)_$(uname -m).tar.gz
+curl -o /tmp/$K9S_TAR_FILENAME -L -k https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/$K9S_TAR_FILENAME
+tar -xvf /tmp/$K9S_TAR_FILENAME -C /tmp/
+sudo mv /tmp/k9s /usr/local/bin/k9s
+sudo chmod +x /usr/local/bin/k9s
 
 ## Postgres, python3.8-dev, docker
-sudo yum install -yq libpq-dev postgresql postgresql-contrib 
-sudo yum install -y python3.8-dev
-sudo yum install -y docker
+# sudo yum install -yq libpq-dev postgresql postgresql-contrib 
+# sudo yum install -y python3.8-dev
 
+sudo yum install -y docker
 ## docker-compose install
 # sudo curl -L https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose`
 sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
@@ -192,6 +194,7 @@ echo "[x] Verify Git client":        $(git --version)
 echo "[x] Verify jq":                $(jq   --version)
 echo "[x] Verify AWS CLI version 2": $(aws --version)
 echo "[x] Verify AWS SAM":           $(sam --version)
+echo "[x] Verify Serverless":        $(serverless --version)
 echo "[x] Verify Node.js":           $(node --version)
 echo "[x] Verify CDK":               $(cdk --version)
 echo "[x] Verify Python":            $(python -V)
@@ -200,10 +203,11 @@ echo "[x] Verify Pip":               $(pip -V)
 echo "[x] Verify Pip3":              $(pip3 -V)
 echo "[x] Verify Terraform":         $(terraform -v)
 echo "[x] Verify InfraCost":         $(infracost -v)
-# echo "[x] Verify helm3":             $(helm version --short)
-# echo "[x] Verify kubectl":           $(kubectl version --client)
+echo "[x] Verify helm3":             $(helm version --short)
+echo "[x] Verify kubectl":           $(kubectl version --client)
 # echo "[x] Verify eksctl":            $(eksctl version)
-# echo "[x] Verify k9s":               $(k9s version --short)
+echo "[x] Verify k9s":               $(k9s version --short)
+echo "[x] Verify Packer":            $(packer --version)
 # echo "[x] Verify Java":              $(java --version)
 # echo "[x] Verify Maven":             $(mvn --version)
 
