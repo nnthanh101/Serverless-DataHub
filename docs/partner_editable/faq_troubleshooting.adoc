@@ -1,0 +1,49 @@
+// Add any tips or answers to anticipated questions.
+
+== FAQ
+
+*Q.* Which VPC and subnet should I deploy resources into?
+
+*A.* Think of VPCs as houses and the subnets as rooms. When you deploy a VPC-aware resource—such as an Application Load Balancer, EC2 instance, or Amazon Relational Database Service (Amazon RDS) database—choose the house first and then the room.
+
+* VPC ("house"): If the resource is for production or development purposes, use the production or development VPC. With separate production and development VPCs, you can manage the environments with different levels of controls and restrictions. Use the management VPC only for more operational resources, such as a DevOps tool, Active Directory, or a security appliance. For example, the {partner-product-name} Quick Start deploys the AWS Client VPN endpoint into the management VPC.
+
+* Subnet ("room"): If the resource must be publicly addressable by the internet at large, specify the public subnet. This should be only things like AWS Application Load Balancers. If you deploy an application server or other resource that needs outbound internet access but should not directly face the internet—perhaps it sits behind an Application Load Balancer—specify the private subnet. If you deploy a sensitive resource, such as a database that should be addressable only by your internal networks and needs no outbound internet access, use the isolated subnets.
+
+*Q.* What are some examples of things I might launch and where they should go?
+
+*A.* Here are some common situations that you might find yourself in:
+
+* Do you need a server to test installing an application on your own or to show a coworker?
+** Development VPC, private subnet
+* Are you restoring an Amazon RDS snapshot in development into production?
+** Production VPC, isolated subnet
+* Are you launching an Application Load Balancer to try installing a custom TLS certificate?
+** Development VPC, public subnet
+* Are you standing up a DevOps tool, such as Jenkins, to automate deployments into production and development?
+** Management VPC, private subnet
+* Are you standing up an Okta Cloud Connect appliance or Active Directory?
+** Management VPC, private subnet
+
+See <<architecture2>> for a visual example of deployed resources.
+
+*Q.* Why are there two subnets of the same class in each VPC? 
+
+*A.* This is a requirement for high availability. Each subnet of the same class is in a different Availability Zone: a physically distinct data center. If there's an Availability Zone outage, having a subnet in another Availability Zone allows your service or AWS services to fail over. For example, AWS Auto Scaling, Amazon RDS, and the AWS Client VPN endpoint all take advantage of Multi-AZ capability for clean failover if there's a physical disaster. Except for being in different Availability Zones, the subnets of the same class are identical from a networking perspective; it doesn't matter which one you choose.
+
+*Q.* I encountered a *CREATE_FAILED* error when I launched the Quick Start.
+
+*A.* If AWS CloudFormation fails to create the stack, the AWS CDK reports the issue for additional troubleshooting. If the CDK is unable to clean up the resources, go the AWS CloudFormation console where you can inspect the event log or manually delete any stacks that were created. 
+
+WARNING: When you set *Rollback on failure* to *Disabled*, you continue to incur AWS charges for this stack. Delete the stack when you finish troubleshooting.
+
+For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting AWS CloudFormation^].
+
+*Q.* I encountered a size-limitation error when I deployed the AWS CloudFormation templates.
+
+*A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
+
+
+// == Troubleshooting
+
+// <Steps for troubleshooting the deployment go here.>

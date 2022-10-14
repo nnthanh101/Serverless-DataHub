@@ -1,0 +1,7 @@
+// Replace the content in <>
+// Identify your target audience and explain how/why they would use this Quick Start.
+//Avoid borrowing text from third-party websites (copying text from AWS service documentation is fine). Also, avoid marketing-speak, focusing instead on the technical aspect.
+
+This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud.
+
+This Quick Start is for teams and individuals responsible for developing or hosting business-to-business (B2B) or business-to-consumer (B2C) products for a financial-technology (fintech) company. It helps you build a secure cloud environment following AWS and industry best practices. 

@@ -1,0 +1,5 @@
+// Include details about any licenses and how to sign up. Provide links as appropriate.
+
+The {partner-product-short-name} Quick Start is released under Apache License 2.0. 
+
+The Startup Blueprint Software Catalog portfolio in the AWS Service Catalog includes the https://fwd.aws/4bpjr?[SWIFT Client Connectivity^] Quick Start. This software requires a SWIFT account and software license. To register for a SWIFT account, see https://www.swift.com/myswift/how-to-become-a-swift_com-user_[How to become a swift.com user?^]

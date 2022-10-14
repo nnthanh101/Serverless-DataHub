@@ -1,0 +1,8 @@
+// Replace the content in <>
+// For example: “familiarity with basic concepts in networking, database operations, and data encryption” or “familiarity with <software>.”
+// Include links if helpful. 
+// You don't need to list AWS services or point to general info about AWS; the boilerplate already covers this.
+
+This Quick Start assumes familiarity with basic concepts of networking and using VPN client software, such as Open VPN Client Connect or AWS Client VPN. 
+
+This Quick Start also requires a moderate to high understanding of how to manage the {partner-product-short-name} infrastructure. And it requires a moderate understanding of the following: https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html[Service Quotas^], https://docs.aws.amazon.com/cdk/latest/guide/home.html[AWS Cloud Development Kit (CDK)^], and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html[AWS CloudFormation^].
