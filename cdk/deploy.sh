@@ -61,7 +61,7 @@ echo
 
 npm install
 
-echo "Boostrap the region you plan to deploy to ..."
+echo "Boostrap the AWS Account/Region you plan to deploy to ..."
 cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
     --termination-protection                     \
     --tags APP-ID=${PROJECT_ID}                  \
