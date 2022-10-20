@@ -62,14 +62,11 @@ echo
 npm install
 
 echo "Boostrap the region you plan to deploy to ..."
-# cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
-#     --bootstrap-bucket-name ${AWS_S3_BUCKET}     \
-#     --termination-protection                     \
-#     --tags APP-ID=${PROJECT_ID}
-cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION}  \
-    --tags APP-ID=${PROJECT_ID}
+cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
+    --termination-protection                     \
+    --tags APP-ID=${PROJECT_ID}                  \
     # --show-template -v
-    
+
 
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo

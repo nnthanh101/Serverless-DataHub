@@ -23,7 +23,8 @@ export class FrontendStack extends cdk.Stack {
       // ipFilter: true,
       // ipList: ['1.1.1.1']
     })
-      .createSiteWithCloudfront({
+      .createSiteS3({
+        // .createSiteWithCloudfront({
         // .createSiteFromHostedZone({
         //   zoneName: 'dashboard.aws.oceansoft.io',
         indexDoc: 'index.html',
