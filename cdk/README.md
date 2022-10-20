@@ -5,21 +5,27 @@ This is the CDK source code for deploying a Serverless Application on AWS, which
 > ☑️ TODO: To deploy the project properly, please refer to the [Installing Serverless Application](docs/installation.md).
 
 
-## Create an AWS CDK app `cdk`
+## Part 1. Create an AWS CDK app `cdk`
 
 <details>
-<summary>🚦 Prerequisites</summary>ls
-  npm install -g aws-cdk@1.177.0
+<summary>🚦 Prerequisites</summary>
+  
+  ~~npm install -g aws-cdk@1.177.0~~
+  
+  npm install -g aws-cdk
 </details>
 
 ```
 CDK_APP_ID=cdk
-mkdir $CDK_APP_ID
-cd $CDK_APP_ID
+mkdir $CDK_APP_ID && cd $CDK_APP_ID
 
 echo "Step 1. Create New CDK Project"
 cdk init app --language typescript
+```
 
+<details><summary>⚠️ ~~CDK v1~~ 👇</summary>
+
+```
 echo "Step 2. package.json: Frontend, Backend, Authentication, DevOps CI/CD, and Operation"
 
 echo "1. Hosting of React application code on S3 || As a CDN, CloudFront Distribution is placed in front of the S3 bucket to provide caching and HTTPS services."
@@ -38,9 +44,11 @@ echo "8. Operation: IAM, KMS, CloudWatch, CloudWatch Logs"
 npm install --save @aws-cdk/aws-iam @aws-cdk/aws-kms @aws-cdk/aws-cloudwatch @aws-cdk/aws-cloudwatch-actions @aws-cdk/aws-logs
 ```
 
+</details>
 
-## Useful commands
-
+<details>
+<summary>✍️ Useful commands</summary>
+  
 > The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 * `npm run build`   compile typescript to js
@@ -49,3 +57,18 @@ npm install --save @aws-cdk/aws-iam @aws-cdk/aws-kms @aws-cdk/aws-cloudwatch @aw
 * `cdk deploy`      deploy this stack to your default AWS account/region
 * `cdk diff`        compare deployed stack with current state
 * `cdk synth`       emits the synthesized CloudFormation template
+
+</details>
+
+## 💎 Part 2. Micro-Frontend: [] `cdk-spa` CDK Construct for deploying `frontend` SPA Website 🚀
+
+<details>
+<summary>✍️ Useful commands</summary>
+  
+> 💎 This **CDK TypeScript Construct Library** `cdk-spa` includes a construct `CdkSpa` and an interface `CdkSpaProps` to make deploying a Single Page Application (SPA) Website ([React.js](https://reactjs.org/docs/create-a-new-react-app.html) / [Vue.js](https://vuejs.org/) / [Angular](https://angular.io/)) to **AWS S3** behind **CloudFront CDN**, **Route53 DNS**, **AWS Certificate Manager SSL** as easy as 5 lines of code.
+
+```
+```
+
+</details>
+
