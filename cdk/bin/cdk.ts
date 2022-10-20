@@ -23,8 +23,8 @@ const app = new cdk.App();
  * 5. DashboardStack
  */
 
-const frontend = new FrontendStack(app, "Frontend", {
-  stackName: stackPrefix.concat("-Frontend"),
+const frontend = new FrontendStack(app, stackPrefix.concat("-Frontend"), {
+  // stackName: stackPrefix.concat("-Frontend"),
   contentBucket: contentBucketName,
 });
 
