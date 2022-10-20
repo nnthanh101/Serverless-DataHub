@@ -71,7 +71,7 @@ cdk bootstrap aws://${AWS_ACCOUNT}/${AWS_REGION} \
 started_time=$(date '+%d/%m/%Y %H:%M:%S')
 echo
 echo "#########################################################"
-echo -e "${RED} [+] [START] Deploy CDK at ${started_time}"
+_logger "[+] [START] Deploy CDK at ${started_time}"
 echo "#########################################################"
 echo
 
@@ -95,7 +95,7 @@ cdk deploy --all --require-approval never
 
 # echo
 # echo "#########################################################"
-# echo "[+] Danger!!! Cleanup ..."
+# echo -e "${RED} [+] Danger!!! Cleanup ..."
 # echo "#########################################################"
 # echo
 #
