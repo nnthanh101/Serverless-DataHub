@@ -1,6 +1,6 @@
 ## Workflow to CI/CD Pipeline with Github Actions: CDK Deployment
 
-name: CDK CI/CD Pipeline
+name: CDK CI-CD-Pipeline
 
 ## Controls when the action will run.
 on:
