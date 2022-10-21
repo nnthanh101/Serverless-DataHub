@@ -1,6 +1,6 @@
 ## Workflow to CI/CD Pipeline with Github Actions: CDK Deployment
 
-name: CDK CI/CD
+name: CDK CI-CD-Pipeline
 
 ## Controls when the action will run.
 on:
@@ -15,6 +15,7 @@ on:
 
 ## A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+
   ## This workflow contains a single job called "deploy"
   deploy:
     name: Build & Deploy
@@ -43,7 +44,7 @@ jobs:
           echo $RELEASE_VERSION
 
       ## Build the CDK-SPA Website
-      - name: Build the CDK-SPA Website
+      - name: [Frontend] Build the CDK-SPA Website
         run: npm ci && npm run build
         # run: npm i && npm run build && npm run test
         working-directory: ${{env.projects-directory}}  
@@ -69,7 +70,7 @@ jobs:
           cdk --version
           aws s3 ls
       ## Build and Deploy CDK application
-      - name: Build & Deploy
+      - name: [deploy.sh] Build & Deploy
         run: |
           # cd $GITHUB_WORKSPACE
           # ls -a
