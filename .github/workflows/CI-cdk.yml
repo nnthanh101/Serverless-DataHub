@@ -71,7 +71,7 @@ jobs:
       ## Build and Deploy CDK application
       - name: Build & Deploy
         run: |
-          cd $GITHUB_WORKSPACE
+          # cd $GITHUB_WORKSPACE
           # ls -a
           chmod +x *.sh
           ./deploy.sh
