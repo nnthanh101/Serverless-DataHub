@@ -6,9 +6,9 @@ name: CDK CI/CD
 on:
   ## Triggers the workflow on push or pull request events but only for the main branch
   push:
-      branches: [main]
+      branches: [cdk]
   pull_request:
-      branches: [main]
+      branches: [cdk]
 
   ## Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,8 +21,8 @@ jobs:
     ## The type of runner that the job will run on Linux
     runs-on: ubuntu-latest
     env:
-      working-directory: cdk/spa-website
-      projects-directory: projects/spa-website
+      working-directory: cdk
+      projects-directory: frontend
       ENVIRONMENT: staging
       RELEASE_VERSION: ${{ github.event.inputs.tag }}
 
@@ -42,9 +42,9 @@ jobs:
           echo $ENVIRONMENT
           echo $RELEASE_VERSION
 
-      ## Build the SPA-Website
-      - name: Build the SPA-Website
-        run: npm i && npm run build
+      ## Build the CDK-SPA Website
+      - name: Build the CDK-SPA Website
+        run: npm ci && npm run build
         # run: npm i && npm run build && npm run test
         working-directory: ${{env.projects-directory}}  
 
@@ -72,6 +72,7 @@ jobs:
       - name: Build & Deploy
         run: |
           cd $GITHUB_WORKSPACE
-          ls -a
+          # ls -a
           chmod +x *.sh
-          ./deploy-CI.sh
+          ./deploy.sh
+        working-directory: ${{env.working-directory}}

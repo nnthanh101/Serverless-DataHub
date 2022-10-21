@@ -96,6 +96,7 @@ echo
 cd ${CDK_PROJECT_DIR}
 # rm -rf cdk.out/*.* cdk.context.json
 npm run build
+wait 80
 
 # cdk diff
 # cdk synth
