@@ -78,6 +78,17 @@ echo
 
 echo
 echo "#########################################################"
+_logger "[+] 1. Deploying the Serverless Frontend: frontend"
+echo "#########################################################"
+echo
+
+cd ${CDK_PROJECT_DIR}/../frontend
+npm ci
+npm run build
+
+
+echo
+echo "#########################################################"
 _logger "[+] Deploying the CDK: $CDK_PROJECT_DIR"
 echo "#########################################################"
 echo
