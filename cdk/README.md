@@ -5,9 +5,10 @@ This is the CDK source code for deploying a Serverless Application on AWS, which
 > ☑️ TODO: To deploy the project properly, please refer to the [Installing Serverless Application](docs/installation.md).
 
 ```
-git clone -b cdk https://github.com/OceanSoftIO/Serverless
+git clone https://github.com/OceanSoftIO/Serverless
 
 cd Serverless/cdk
+./deploy.sh
 ```
 
 ## Part 1. Create an AWS CDK app `cdk`
