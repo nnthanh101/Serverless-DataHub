@@ -1,12 +1,13 @@
+.vscode/
+.DS_Store
+
+node_modules
+
 cdk/*.js
 !jest.config.js
 *.d.ts
 
-node_modules
-
-# CDK asset staging directory
+## CDK asset staging directory
 .cdk.staging
 cdk.out
 
-BACKUP
-projects/spa-website/build/
