@@ -125,5 +125,6 @@ The Tech Stack is built with:
 - [x] [Next.js](https://nextjs.org/)
 - [x] [Typescript](https://www.typescriptlang.org/)
 - [x] [Tailwind CSS](https://tailwindcss.com/)
-- [Medusa](https://medusajs.com/)
-- [Search]
+- [ ] [Cypress](https://www.cypress.io/)
+- [ ] [Medusa](https://medusajs.com/)
+- [ ] [Search]
