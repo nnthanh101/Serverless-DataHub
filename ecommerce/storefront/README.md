@@ -14,13 +14,13 @@
 
 <p align="center">
   <a href="https://github.com/OceanSoftIO/ecommerce-storefront/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Released under the MIT license." />
+    <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="Released under the Apache 2.0 license." />
   </a>
   <a href="https://discord.gg/KAS8GBjs">
     <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
   </a>
-  <a href="https://twitter.com/intent/follow?screen_name=job4u101">
-    <img src="https://img.shields.io/twitter/follow/job4u101.svg?label=Follow%20@job4u101" alt="Follow @job4u101" />
+  <a href="https://twitter.com/intent/follow?screen_name=OceanSoft101">
+    <img src="https://img.shields.io/twitter/follow/OceanSoft101.svg?label=Follow%20@OceanSoft101" alt="Follow @OceanSoft101" />
   </a>
 </p>
 
@@ -122,8 +122,8 @@ After this you will need to set up Algolia with your Medusa server, and then you
 
 The Tech Stack is built with:
 
-- [Next.js](https://nextjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Typescript](https://www.typescriptlang.org/)
+- [x] [Next.js](https://nextjs.org/)
+- [x] [Typescript](https://www.typescriptlang.org/)
+- [x] [Tailwind CSS](https://tailwindcss.com/)
 - [Medusa](https://medusajs.com/)
-- []
+- [Search]
