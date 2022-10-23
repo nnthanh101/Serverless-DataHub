@@ -1,0 +1,40 @@
+{
+  "name": "storefront",
+  "version": "0.5.0",
+  "private": true,
+  "author": "Thanh Nguyen <nnthanh101@gmail.com> (https://aws.oceansoft.io)",
+  "license": "Apache-2.0",
+  "description": "⚡ A Next.js storefront for the Shopify-like digital commerce platform that includes ready integrations with PayPal, MeiliSearch, Stripe, and many more! 💰",
+  "keywords": [
+    "ecommerce",
+    "storefront",
+    "medusa",
+    "shopify",
+    "nextjs"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "cypress": "cypress open",
+    "analyze": "ANALYZE=true next build"
+  },
+  "dependencies": {
+    "next": "12.3.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.3",
+    "@types/react": "18.0.21",
+    "@types/react-dom": "18.0.6",
+    "autoprefixer": "^10.4.12",
+    "cypress": "^10.10.0",
+    "eslint": "8.26.0",
+    "eslint-config-next": "12.3.1",
+    "postcss": "^8.4.18",
+    "tailwindcss": "^3.2.1",
+    "typescript": "4.8.4"
+  }
+}
