@@ -30,7 +30,9 @@
 
 ## Deploy in 5 minutes
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/OceanSoftIO/ecommerce-storefront)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/OceanSoftIO/Serverless)
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1bf35fab-4d78-4932-91f3-8c8c88c81622/deploy-status)](https://app.netlify.com/sites/serverless-ecommerce-storefront/deploys)
 
 ## Setting up the environment variables
 
