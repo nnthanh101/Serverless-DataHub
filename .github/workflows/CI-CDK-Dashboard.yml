@@ -1,14 +1,14 @@
 ## Workflow to CI/CD Pipeline with Github Actions: CDK Deployment
 
-name: CDK-CI-CD-Pipeline
+name: CDK-CICD-Pipeline
 
 ## Controls when the action will run.
 on:
   ## Triggers the workflow on push or pull request events but only for the main branch
   push:
-      branches: [cdk]
+      branches: [dashboard]
   pull_request:
-      branches: [cdk]
+      branches: [dashboard]
 
   ## Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,8 +22,8 @@ jobs:
     ## The type of runner that the job will run on Linux
     runs-on: ubuntu-latest
     env:
-      working-directory: cdk
-      projects-directory: frontend
+      working-directory: dashboard/cdk
+      projects-directory: dashboard/frontend
       ENVIRONMENT: staging
       RELEASE_VERSION: ${{ github.event.inputs.tag }}
 
