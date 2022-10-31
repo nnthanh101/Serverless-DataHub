@@ -27,7 +27,7 @@ function prerequisites_with_brew() {
 
     ### TODO Installing Python3 & Pip3
 
-    # _logger "[+] Upgrade Python 3.8"
+    # _logger "[+] Upgrade python 3.9"
     # brew install python@3.8
     # echo 'export PATH="/usr/local/opt/python@3.8/bin:$PATH"'      >> ~/.bash_profile
     # echo 'export PATH="/usr/local/opt/python@3.8/bin/pip3:$PATH"' >> ~/.bash_profile
