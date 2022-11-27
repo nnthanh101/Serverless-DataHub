@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "5c72dcbc-373f-4657-a30d-bce8557ff8c3",
+		"name": "ServerlessTokenizer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreateOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJhWWJTRm1BUVRKSmV3ckhtcFQzUFJydlBXb280dndOQ1h1S05udU5cL1hzaz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJkOTU3MDZlYy1jMTY0LTRhNGQtODQ5NC02YjVlYjJjMGMwODgiLCJhdWQiOiI2a2kyaWV0ZHAwNmw5bmh0azdiamE1Y2o5cCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6Ijk2OTczMDIwLTliNTUtNGY1Yi1iMWQ0LTZjMTk5OTI2ZTBkNyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjE2MDgzNjQ4LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTIuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTJfTXpNWVN1dW5zIiwiY29nbml0bzp1c2VybmFtZSI6ImQ5NTcwNmVjLWMxNjQtNGE0ZC04NDk0LTZiNWViMmMwYzA4OCIsImV4cCI6MTYxNjA4NzI0OCwiaWF0IjoxNjE2MDgzNjQ4LCJlbWFpbCI6Imh1eW5oaGFjLm5ndXllbkBnbWFpbC5jb20ifQ.Agx21gYrugb8dxRUWIZMwrpqKKFb-pvS41_dHfpydGMichckuv97zqTBBZtwAwDg0iSX1DylQI47E7cv3xEtaPrtg5Gn2M2b-BMWt6f4CFXoJOnyi2ykJaI8rT26ohU1HikgvT5c4pbqHQ409gwabGFvIqiJGzQLovA8Rfb-PBkw0iXE-jf8NfKnxPOk9GMlei6dqI7rYQWDoZkQLIRSizn5haXjRZwsHIlkdJEiY3JW98aaWFkcqkxa5JkeWTf1_jiBSIfwNhK6RJqoInDOaNqt-jwneGPUe73pnvFptUCphkFSKr2f6Vv8p4U9mQGMqR0FhuF6uBMeMyp6fzNfLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"CustomerOrder\": \"1234567890\",\n\"CustomerName\": \"AWS UG\",\n\"CreditCard\": \"0000-0000-0000-0000\",\n\"Address\": \"Unicorn Gym - APJ 2021\"\n}"
+				},
+				"url": {
+					"raw": "https://ywaza4b2r9.execute-api.ap-southeast-2.amazonaws.com/dev/order",
+					"protocol": "https",
+					"host": [
+						"ywaza4b2r9",
+						"execute-api",
+						"ap-southeast-2",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PayBill",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJraWQiOiJhWWJTRm1BUVRKSmV3ckhtcFQzUFJydlBXb280dndOQ1h1S05udU5cL1hzaz0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJkOTU3MDZlYy1jMTY0LTRhNGQtODQ5NC02YjVlYjJjMGMwODgiLCJhdWQiOiI2a2kyaWV0ZHAwNmw5bmh0azdiamE1Y2o5cCIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJldmVudF9pZCI6Ijk2OTczMDIwLTliNTUtNGY1Yi1iMWQ0LTZjMTk5OTI2ZTBkNyIsInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjE2MDgzNjQ4LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAuYXAtc291dGhlYXN0LTIuYW1hem9uYXdzLmNvbVwvYXAtc291dGhlYXN0LTJfTXpNWVN1dW5zIiwiY29nbml0bzp1c2VybmFtZSI6ImQ5NTcwNmVjLWMxNjQtNGE0ZC04NDk0LTZiNWViMmMwYzA4OCIsImV4cCI6MTYxNjA4NzI0OCwiaWF0IjoxNjE2MDgzNjQ4LCJlbWFpbCI6Imh1eW5oaGFjLm5ndXllbkBnbWFpbC5jb20ifQ.Agx21gYrugb8dxRUWIZMwrpqKKFb-pvS41_dHfpydGMichckuv97zqTBBZtwAwDg0iSX1DylQI47E7cv3xEtaPrtg5Gn2M2b-BMWt6f4CFXoJOnyi2ykJaI8rT26ohU1HikgvT5c4pbqHQ409gwabGFvIqiJGzQLovA8Rfb-PBkw0iXE-jf8NfKnxPOk9GMlei6dqI7rYQWDoZkQLIRSizn5haXjRZwsHIlkdJEiY3JW98aaWFkcqkxa5JkeWTf1_jiBSIfwNhK6RJqoInDOaNqt-jwneGPUe73pnvFptUCphkFSKr2f6Vv8p4U9mQGMqR0FhuF6uBMeMyp6fzNfLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\"CustomerOrder\": \"1234567890\"\n}"
+				},
+				"url": {
+					"raw": "https://ywaza4b2r9.execute-api.ap-southeast-2.amazonaws.com/dev/paybill",
+					"protocol": "https",
+					"host": [
+						"ywaza4b2r9",
+						"execute-api",
+						"ap-southeast-2",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"dev",
+						"paybill"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "1227237b-1556-4a88-988e-21b02d1b74f2"
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				],
+				"id": "7ab27efc-ac18-4792-9d21-6c6c8b0211a6"
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "0b5cdfa4-43a0-4446-94d4-a304cfad0948",
+			"key": "YourPaymentMethodApiURL",
+			"value": "https://jsdyi1ywwj.execute-api.ap-southeast-2.amazonaws.com/dev"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
