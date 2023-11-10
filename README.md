@@ -22,7 +22,8 @@
 
 ## 💎 Business Case 💰
 
-* [ ] TODO
+* [ ] Serverless DataHub
+* [x] https://youtu.be/A3miMT1CKYI
 
 ## ⚡ Serverless Architecture for Web Application 🌏
 
