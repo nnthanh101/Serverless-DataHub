@@ -1,4 +1,4 @@
-# ⛅ [Hands-on] Building Scalable Cloud-Native Serverless Applications ⚡
+# ⛅ [Hands-on] Building Scalable Cloud-Native FullStack Serverless Applications ⚡
 
 > 🎯 A Real-World Guide to Building Production-Ready Serverless Web Application ⚡
 

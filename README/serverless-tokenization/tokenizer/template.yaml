@@ -1,0 +1,60 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Lambdsa Layer for tokenization of sensitive data
+
+## More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+
+  LambdaLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: 'TokenizeData'
+      Description: 'This layer contains the libraries for DynamoDB client for encryption which provides client side encryption of DynamoDB items to help protect your data before you send to DynamoDB.'
+      ContentUri: 'dynamodb-client/'
+      CompatibleRuntimes:
+      - python3.7
+      RetentionPolicy: Delete
+    # Metadata:
+    #   BuildMethod: python3.7
+
+  LambdaLayerPermission:
+    Type: "AWS::Lambda::LayerVersionPermission"
+    Properties:
+      Action: lambda:GetLayerVersion
+      LayerVersionArn: !Ref LambdaLayer
+      Principal: !Ref AWS::AccountId
+
+  TokenDatabase:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'CreditCardTokenizerTable'
+      AttributeDefinitions: 
+        - AttributeName: "Hash_Key"
+          AttributeType: "S"
+        - AttributeName: "Account_Id"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "Hash_Key"
+          KeyType: "HASH"
+        - AttributeName: "Account_Id"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      SSESpecification:
+        SSEEnabled: Yes
+        SSEType: 'KMS'
+Outputs:
+  LayerVersionArn:
+    Description: ARN for the published Layer version
+    Value: !Ref LambdaLayer
+    Export:
+      Name:
+        Fn::Sub: 'TokenizeData'
+  DynamoDBArn:
+    Description: ARN for DynamoDB Table
+    Value: !GetAtt TokenDatabase.Arn

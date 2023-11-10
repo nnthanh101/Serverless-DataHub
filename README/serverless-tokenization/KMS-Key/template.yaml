@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Create KMS - Customer Managed Keys
+
+Resources:
+  CMKey:
+    Type: AWS::KMS::Key
+    Properties: 
+      Description: 'Customer Managed Key to be used for DynamoDB items encryption'
+      Enabled: Yes
+      EnableKeyRotation: Yes
+      KeyPolicy:
+        Version: 2012-10-17
+        Id: kms-cmk-1
+        Statement:
+          - Sid: Enable IAM User Permissions
+            Effect: Allow
+            Principal:
+              AWS: !Join 
+                - ''
+                - - 'arn:aws:iam::'
+                  - !Ref 'AWS::AccountId'
+                  - ':root'
+            Action: 'kms:*'
+            Resource: '*'
+  KeyAlias:
+    Type: 'AWS::KMS::Alias'
+    Properties:
+      AliasName: !Sub 'alias/${AWS::StackName}'
+      TargetKeyId: !Ref CMKey
+
+Outputs:
+  KMSKeyID:
+    Description: ARN for KMS-CMK Key created
+    Value: !GetAtt CMKey.Arn
